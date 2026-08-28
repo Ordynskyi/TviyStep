@@ -1,60 +1,43 @@
-# Tviy STEP Web
+# Tviy STEP
 
-Landing page for the Tviy STEP community, built with Astro.
+Repository for the Tviy STEP project.
 
-## Requirements
+## Repository Layout
 
+- concept: Strategy, notes, and source materials.
+- web: Astro website codebase.
+
+## Web App
+
+The Astro app lives in the web folder.
+
+Requirements:
 - Node.js 22.12.0 or newer
 
-## Development
+Run locally:
+- cd web
+- npm install
+- npm run dev
 
-Run commands from this folder:
+Default local URL: http://localhost:4321
 
-```sh
-npm install
-npm run dev
-```
+Build and preview:
+- cd web
+- npm run build
+- npm run preview
 
-The dev server runs at http://localhost:4321 by default.
+## Current Structure
 
-## Build and Preview
-
-```sh
-npm run build
-npm run preview
-```
-
-## Project Structure
-
-```text
-web/
-├── public/
-│   ├── android-chrome-192x192.png
-│   ├── android-chrome-512x512.png
-│   ├── apple-touch-icon.png
-│   ├── favicon-16x16.png
-│   ├── favicon-32x32.png
-│   ├── favicon.ico
-│   ├── images/
-│   │   └── home/
-│   │       ├── community-flag-group.webp
-│   │       ├── community-skyline-group.webp
-│   │       ├── community-view-selfie.webp
-│   │       ├── cycling-crew-banner.webp
-│   │       └── tviy_step_logo64.png
-│   └── site.webmanifest
-├── src/
-│   ├── layouts/
-│   │   └── Layout.astro
-│   └── pages/
-│       └── index.astro
-├── astro.config.mjs
-├── package.json
-└── tsconfig.json
-```
+- concept/
+- concept/raw/
+- web/
+- web/public/
+- web/public/images/home/
+- web/src/layouts/Layout.astro
+- web/src/pages/index.astro
 
 ## Notes
 
-- Files in `public/` are served at stable root URLs (for example `/favicon.ico` and `/images/home/...`).
-- `src/pages/index.astro` contains the page content and styling.
-- `src/layouts/Layout.astro` contains shared document metadata and favicon links.
+- Static public files are in web/public and served from root URLs at runtime.
+- Shared document shell and metadata are defined in web/src/layouts/Layout.astro.
+- Main landing page content and styles are in web/src/pages/index.astro.
