@@ -216,12 +216,6 @@ const pageDescription = "Tviy STEP - відкрита спільнота рух�
         border: none;
         background: transparent !important;
         color: var(--ink);
-        opacity: 0.65;
-      }
-
-      .button.icon-btn:hover {
-        opacity: 1;
-        transform: translateY(-1px);
       }
 
       main section {
@@ -504,6 +498,16 @@ const pageDescription = "Tviy STEP - відкрита спільнота рух�
         color: var(--muted);
       }
 
+      .social-icon {
+        color: var(--ink);
+        transition: transform 0.2s ease;
+        display: flex;
+      }
+
+      .social-icon:hover {
+        transform: scale(1.1);
+      }
+
       @media (max-width: 980px) {
         .hero-grid,
         .grid-3,
@@ -571,9 +575,9 @@ const pageDescription = "Tviy STEP - відкрита спільнота рух�
         </nav>
 
         <div class="nav-actions">
-          <a class="button secondary icon-btn" href={site.social.instagram} target="_blank" rel="noreferrer" aria-label="Instagram"><Fragment set:html={icons.instagram} /></a>
-          <a class="button secondary icon-btn" href={site.social.tiktok} target="_blank" rel="noreferrer" aria-label="TikTok"><Fragment set:html={icons.tiktok} /></a>
-          <a class="button primary icon-btn" href={site.social.telegram} target="_blank" rel="noreferrer" aria-label="Telegram"><Fragment set:html={icons.telegram} /></a>
+          <a class="button secondary icon-btn social-icon" href={site.social.instagram} target="_blank" rel="noreferrer" aria-label="Instagram"><Fragment set:html={icons.instagram} /></a>
+          <a class="button secondary icon-btn social-icon" href={site.social.tiktok} target="_blank" rel="noreferrer" aria-label="TikTok"><Fragment set:html={icons.tiktok} /></a>
+          <a class="button primary icon-btn social-icon" href={site.social.telegram} target="_blank" rel="noreferrer" aria-label="Telegram"><Fragment set:html={icons.telegram} /></a>
         </div>
       </div>
     </header>
@@ -751,9 +755,9 @@ const pageDescription = "Tviy STEP - відкрита спільнота рух�
           {navLinks.map((link) => (
             <a href={link.href}>{link.label}</a>
           ))}
-          <a href={site.social.telegram} target="_blank" rel="noreferrer" aria-label="Telegram"><Fragment set:html={icons.telegram} /></a>
-          <a href={site.social.instagram} target="_blank" rel="noreferrer" aria-label="Instagram"><Fragment set:html={icons.instagram} /></a>
-          <a href={site.social.tiktok} target="_blank" rel="noreferrer" aria-label="TikTok"><Fragment set:html={icons.tiktok} /></a>
+          <a class="social-icon" href={site.social.telegram} target="_blank" rel="noreferrer" aria-label="Telegram"><Fragment set:html={icons.telegram} /></a>
+          <a class="social-icon" href={site.social.instagram} target="_blank" rel="noreferrer" aria-label="Instagram"><Fragment set:html={icons.instagram} /></a>
+          <a class="social-icon" href={site.social.tiktok} target="_blank" rel="noreferrer" aria-label="TikTok"><Fragment set:html={icons.tiktok} /></a>
         </div>
       </div>
     </footer>
