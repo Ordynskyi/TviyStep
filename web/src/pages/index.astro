@@ -15,15 +15,6 @@ const site = {
 
 const titleLines = ["Твій крок.", "Твій шлях.", "Твій степ."];
 
-const vision = {
-  intro: "МИ - РІЗНІ.",
-  body: [
-    "АЛЕ НАМ ПОДОБАЄТЬСЯ БУТИ В РУСІ.",
-    "І БУТИ СЕРЕД СВОЇХ."
-  ],
-  outro: "ТВІЙ STEP - ЦЕ ЛЮДИ."
-};
-
 const heroImageSrc = "/images/home/cycling-crew-banner.webp";
 
 const navLinks = [
@@ -259,53 +250,6 @@ const pageDescription = "Tviy STEP - відкрита спільнота рух�
         max-width: 56ch;
       }
 
-      .vision-manifesto {
-        margin: 0 0 24px;
-        max-width: 48ch;
-        display: grid;
-        gap: 14px;
-        opacity: 0;
-        transform: translateY(10px);
-        animation: hero-manifesto-in 520ms 260ms both cubic-bezier(0.2, 0.65, 0.2, 1);
-      }
-
-      .vision-rule {
-        width: 72px;
-        height: 1px;
-        background: rgba(216, 194, 138, 0.85);
-      }
-
-      .vision-intro,
-      .vision-body,
-      .vision-outro {
-        margin: 0;
-        text-transform: uppercase;
-        letter-spacing: 0.06em;
-      }
-
-      .vision-intro {
-        font-size: 2rem;
-        font-weight: 700;
-        line-height: 1.05;
-        color: var(--ink);
-      }
-
-      .vision-body {
-        display: grid;
-        gap: 6px;
-        font-size: 1rem;
-        font-weight: 650;
-        line-height: 1.45;
-        color: var(--muted);
-      }
-
-      .vision-outro {
-        font-size: 1.38rem;
-        font-weight: 700;
-        line-height: 1.12;
-        color: var(--ink);
-      }
-
       .hero-actions {
         margin-bottom: 16px;
       }
@@ -498,17 +442,6 @@ const pageDescription = "Tviy STEP - відкрита спільнота рух�
         }
       }
 
-      @keyframes hero-manifesto-in {
-        from {
-          opacity: 0;
-          transform: translateY(10px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-
       @keyframes drift {
         from { transform: translate3d(-1.8%, 0, 0); }
         to { transform: translate3d(2.2%, -2.2%, 0); }
@@ -584,24 +517,6 @@ const pageDescription = "Tviy STEP - відкрита спільнота рух�
           margin-bottom: 16px;
         }
 
-        .vision-manifesto {
-          margin-bottom: 22px;
-          gap: 10px;
-        }
-
-        .vision-intro {
-          font-size: 1.5rem;
-        }
-
-        .vision-body {
-          font-size: 0.88rem;
-          letter-spacing: 0.045em;
-        }
-
-        .vision-outro {
-          font-size: 1.08rem;
-        }
-
         .hero-actions {
           margin-bottom: 8px;
           gap: 10px;
@@ -646,27 +561,13 @@ const pageDescription = "Tviy STEP - відкрита спільнота рух�
       <section class="hero">
         <div class="container hero-grid">
           <div>
-              <span class="eyebrow">Відкрита спільнота руху для тих, хто хоче бути в ритмі</span>
+              <span class="eyebrow">Твій ритм. Твої люди.</span>
             <h1>
               {titleLines.map((line) => (
                 <span class="title-line">{line}</span>
               ))}
             </h1>
             <p class="lead">{site.subtitle}</p>
-
-            <div class="vision-manifesto" aria-label="Маніфест спільноти">
-              <p class="vision-intro">{vision.intro}</p>
-              <span class="vision-rule" aria-hidden="true"></span>
-              <p class="vision-body">
-                {vision.body.map((line) => (
-                  <span>{line}</span>
-                ))}
-              </p>
-              <span class="vision-rule" aria-hidden="true"></span>
-              <p class="vision-outro">
-                {vision.outro}
-              </p>
-            </div>
 
             <div class="nav-actions hero-actions">
               <a class="button primary" href={site.social.telegram} target="_blank" rel="noreferrer">Приєднатися в Telegram</a>
