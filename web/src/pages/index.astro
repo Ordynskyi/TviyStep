@@ -1,0 +1,857 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+const site = {
+  brand: "Tviy STEP",
+  title: "Твій крок. Твій шлях. Твій степ.",
+  subtitle:
+    "Для різного досвіду - від першого кроку до довгих дистанцій, без тиску і гонки за цифрами.",
+  social: {
+    telegram: "https://t.me/+S6yg2WuoqAI0ZmVi",
+    instagram: "https://www.instagram.com/tviy.step",
+    tiktok: "https://www.tiktok.com/@tviy.step?_r=1"
+  }
+};
+
+const titleLines = ["Твій крок.", "Твій шлях.", "Твій степ."];
+
+const vision = {
+  intro: "МИ - РІЗНІ.",
+  body: [
+    "АЛЕ НАМ ПОДОБАЄТЬСЯ БУТИ В РУСІ.",
+    "І БУТИ СЕРЕД СВОЇХ."
+  ],
+  outro: "ТВІЙ STEP - ЦЕ ЛЮДИ."
+};
+
+const heroImageSrc = "/images/home/cycling-crew-banner.webp";
+
+const navLinks = [
+  { href: "#about", label: "Про спільноту" },
+  { href: "#meaning", label: "Що означає назва" },
+  { href: "#join", label: "Як долучитись" },
+  { href: "#team", label: "Команда" },
+  { href: "#faq", label: "FAQ" }
+];
+
+const manifesto = [
+  {
+    title: "Ми про людей",
+    text: "Ми різні за темпом і досвідом, але нас об'єднує бажання рухатися разом."
+  },
+  {
+    title: "Ми про ритм",
+    text: "Рух стає частиною життя, коли є підтримка, простір і зрозумілий перший крок."
+  },
+  {
+    title: "Ми про свободу руху",
+    text: "Рух - це простір для зустрічей, підтримки й нових знайомств без прив'язки до конкретного місця."
+  }
+];
+
+const meaning = [
+  {
+    label: "ТВІЙ",
+    text: "Про відчуття приналежності: твій темп, твоє місце, твої люди."
+  },
+  {
+    label: "STEP",
+    text: "Про щоденний крок вперед: невеликий, але чесний і регулярний."
+  },
+  {
+    label: "СТЕП",
+    text: "Про простір, свободу, горизонт і витривалість українського ландшафту."
+  }
+];
+
+const joinSteps = [
+  {
+    title: "Приєднайся до Telegram-каналу",
+    text: "Це головна точка входу в спільноту. Там живий діалог, анонси та знайомства."
+  },
+  {
+    title: "Запитай у чаті про найближчий вихід",
+    text: "Просто напиши, чи хтось планує рух найближчим часом. Це нормальний спосіб почати."
+  },
+  {
+    title: "Стеж за сповіщеннями від команди та учасників",
+    text: "Учасники самі створюють динаміку: хто, де і коли рухається."
+  }
+];
+
+const faq = [
+  {
+    q: "Чи можна прийти, якщо я новачок?",
+    a: "Так. Спільнота відкрита для всіх рівнів. Тут підтримують перший крок, а не оцінюють темп."
+  },
+  {
+    q: "Чи є зараз фіксований графік?",
+    a: "Ні, зараз немає стабільного розкладу. Домовленості відбуваються в Telegram."
+  },
+  {
+    q: "Скільки коштує участь?",
+    a: "Участь у спільноті безкоштовна."
+  },
+  {
+    q: "Що важливо перед першим кроком?",
+    a: "Зручний одяг, вода і готовність знайомитися. Усе інше формується в процесі."
+  }
+];
+
+const pageTitle = `${site.brand} - ${site.title}`;
+const pageDescription = "Tviy STEP - відкрита спільнота руху. Рух у своєму темпі, атмосфера підтримки, люди та горизонт.";
+---
+
+<Layout title={pageTitle} description={pageDescription} lang="uk">
+  <style>
+      :root {
+        --bg: #f4f0e8;
+        --ink: #1b1b1f;
+        --muted: rgba(27, 27, 31, 0.74);
+        --sand: #d8c28a;
+        --line: rgba(27, 27, 31, 0.12);
+        --panel: rgba(255, 255, 255, 0.2);
+      }
+
+      * { box-sizing: border-box; }
+
+      html { scroll-behavior: smooth; }
+
+      body {
+        margin: 0;
+        color: var(--ink);
+        line-height: 1.6;
+        font-family: "Segoe UI", "Inter", sans-serif;
+        background:
+          radial-gradient(circle at 10% 8%, rgba(216, 194, 138, 0.28), transparent 35%),
+          radial-gradient(circle at 86% 12%, rgba(27, 27, 31, 0.1), transparent 30%),
+          var(--bg);
+        animation: page-fade 540ms ease-out;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .container {
+        width: min(1140px, calc(100% - 32px));
+        margin: 0 auto;
+      }
+
+      .topbar {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        background: rgba(244, 240, 232, 0.84);
+        backdrop-filter: blur(12px);
+        border-bottom: 1px solid var(--line);
+      }
+
+      .nav {
+        min-height: 74px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 0;
+      }
+
+      .brand-mark {
+        width: 64px;
+        height: 64px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .brand-mark img {
+        width: 64px;
+        height: 64px;
+        display: block;
+        object-fit: contain;
+      }
+
+      .nav-links,
+      .nav-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .nav-links {
+        gap: 24px;
+        color: var(--muted);
+      }
+
+      .button {
+        min-height: 46px;
+        padding: 0 20px;
+        border-radius: 999px;
+        border: 1px solid var(--ink);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: 0.2s ease;
+        font-weight: 600;
+      }
+
+      .button:hover { transform: translateY(-1px); }
+
+      .button.primary {
+        color: var(--bg);
+        background: var(--ink);
+      }
+
+      .button.secondary {
+        background: transparent;
+      }
+
+      main section {
+        padding: 78px 0;
+      }
+
+      .hero {
+        padding-top: 68px;
+      }
+
+      .hero > .container > div:first-child {
+        animation: rise-in 760ms 80ms both cubic-bezier(0.2, 0.65, 0.2, 1);
+      }
+
+      .hero-grid {
+        display: grid;
+        grid-template-columns: 1.1fr 0.9fr;
+        gap: 30px;
+        align-items: stretch;
+      }
+
+      .eyebrow {
+        display: inline-block;
+        margin-bottom: 14px;
+        font-size: 0.74rem;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--muted);
+        font-weight: 700;
+      }
+
+      h1 {
+        margin: 0 0 14px;
+        font-size: clamp(2.8rem, 5.4vw, 5.2rem);
+        line-height: 0.92;
+        letter-spacing: -0.05em;
+      }
+
+      .title-line {
+        display: block;
+      }
+
+      .lead {
+        margin: 0 0 20px;
+        color: var(--muted);
+        font-size: 1.05rem;
+        max-width: 56ch;
+      }
+
+      .vision-manifesto {
+        margin: 0 0 24px;
+        max-width: 48ch;
+        display: grid;
+        gap: 14px;
+        opacity: 0;
+        transform: translateY(10px);
+        animation: hero-manifesto-in 520ms 260ms both cubic-bezier(0.2, 0.65, 0.2, 1);
+      }
+
+      .vision-rule {
+        width: 72px;
+        height: 1px;
+        background: rgba(216, 194, 138, 0.85);
+      }
+
+      .vision-intro,
+      .vision-body,
+      .vision-outro {
+        margin: 0;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
+
+      .vision-intro {
+        font-size: 2rem;
+        font-weight: 700;
+        line-height: 1.05;
+        color: var(--ink);
+      }
+
+      .vision-body {
+        display: grid;
+        gap: 6px;
+        font-size: 1rem;
+        font-weight: 650;
+        line-height: 1.45;
+        color: var(--muted);
+      }
+
+      .vision-outro {
+        font-size: 1.38rem;
+        font-weight: 700;
+        line-height: 1.12;
+        color: var(--ink);
+      }
+
+      .hero-actions {
+        margin-bottom: 16px;
+      }
+
+      .hero-visual {
+        border: 1px solid var(--line);
+        border-radius: 30px;
+        padding: 0;
+        background: transparent;
+        display: block;
+        min-height: 460px;
+        box-shadow: 0 26px 46px rgba(27, 27, 31, 0.18);
+        overflow: hidden;
+        position: relative;
+        animation: rise-in 820ms 180ms both cubic-bezier(0.2, 0.65, 0.2, 1);
+      }
+
+      .hero-visual::before {
+        content: none;
+      }
+
+      .hero-visual img {
+        width: 100%;
+        height: 100%;
+        min-height: 460px;
+        display: block;
+        object-fit: cover;
+        border: 0;
+        border-radius: 0;
+      }
+
+      .hero-visual video {
+        width: 100%;
+        border-radius: 16px;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        aspect-ratio: 16 / 9;
+        object-fit: cover;
+      }
+
+
+
+      .photo-card {
+        display: grid;
+        gap: 10px;
+      }
+
+      .photo-card img {
+        width: 100%;
+        border-radius: 16px;
+        border: 1px solid var(--line);
+      }
+
+      .photo-caption {
+        color: var(--muted);
+        font-size: 0.9rem;
+      }
+
+      .section-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: end;
+        gap: 22px;
+        margin-bottom: 24px;
+      }
+
+
+      .section-head h2 {
+        margin: 0;
+        font-size: clamp(2rem, 4.2vw, 3.2rem);
+        letter-spacing: -0.05em;
+        line-height: 1.03;
+      }
+
+      .section-head p {
+        margin: 0;
+        color: var(--muted);
+        max-width: 620px;
+      }
+
+      .grid-3 {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 18px;
+      }
+
+      .grid-2 {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+      }
+
+      .card {
+        border: 1px solid var(--line);
+        background: var(--panel);
+        border-radius: 22px;
+        padding: 22px 20px;
+        transition: transform 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+      }
+
+      .card:hover {
+        transform: translateY(-4px);
+        border-color: rgba(27, 27, 31, 0.24);
+        box-shadow: 0 14px 30px rgba(27, 27, 31, 0.08);
+      }
+
+      .card h3 {
+        margin: 0 0 8px;
+        font-size: 1.24rem;
+        letter-spacing: -0.03em;
+      }
+
+      .card p {
+        margin: 0;
+        color: var(--muted);
+      }
+
+      .label {
+        display: inline-block;
+        margin-bottom: 10px;
+        padding: 6px 10px;
+        border-radius: 999px;
+        border: 1px solid rgba(216, 194, 138, 0.72);
+        background: rgba(216, 194, 138, 0.2);
+        font-size: 0.75rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .faq details {
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 12px 14px;
+        background: var(--panel);
+      }
+
+      .faq details + details {
+        margin-top: 10px;
+      }
+
+      .faq summary {
+        cursor: pointer;
+        font-weight: 600;
+      }
+
+      .faq p {
+        margin: 10px 0 0;
+      }
+
+      .team-note {
+        border: 1px dashed var(--line);
+        border-radius: 18px;
+        padding: 16px;
+        color: var(--muted);
+        font-size: 0.95rem;
+      }
+
+      .reveal {
+        opacity: 0;
+        transform: translateY(28px);
+        transition: opacity 640ms cubic-bezier(0.2, 0.65, 0.2, 1), transform 640ms cubic-bezier(0.2, 0.65, 0.2, 1);
+      }
+
+      .reveal.in-view {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .stagger > * {
+        transition-delay: 0ms;
+      }
+
+      .stagger.in-view > :nth-child(1) { transition-delay: 40ms; }
+      .stagger.in-view > :nth-child(2) { transition-delay: 140ms; }
+      .stagger.in-view > :nth-child(3) { transition-delay: 240ms; }
+      .stagger.in-view > :nth-child(4) { transition-delay: 340ms; }
+
+      @keyframes page-fade {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+
+      @keyframes rise-in {
+        from {
+          opacity: 0;
+          transform: translateY(26px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes hero-manifesto-in {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes drift {
+        from { transform: translate3d(-1.8%, 0, 0); }
+        to { transform: translate3d(2.2%, -2.2%, 0); }
+      }
+
+
+
+
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+          animation: none !important;
+          transition: none !important;
+          scroll-behavior: auto !important;
+        }
+
+        .reveal {
+          opacity: 1;
+          transform: none;
+        }
+      }
+
+      footer {
+        border-top: 1px solid var(--line);
+        padding: 28px 0 52px;
+      }
+
+      .footer-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+        flex-wrap: wrap;
+      }
+
+      .footer-links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 14px;
+        color: var(--muted);
+      }
+
+      @media (max-width: 980px) {
+        .hero-grid,
+        .grid-3,
+        .grid-2 {
+          grid-template-columns: 1fr;
+        }
+
+        .hero-visual {
+          min-height: 0;
+          aspect-ratio: auto;
+        }
+
+        .hero-visual img {
+          min-height: 0;
+          height: auto;
+          object-fit: contain;
+          object-position: 54% 50%;
+        }
+
+        .eyebrow {
+          margin-bottom: 10px;
+          font-size: 0.7rem;
+        }
+
+        h1 {
+          margin-bottom: 12px;
+          line-height: 0.96;
+        }
+
+        .lead {
+          font-size: 1rem;
+          margin-bottom: 16px;
+        }
+
+        .vision-manifesto {
+          margin-bottom: 22px;
+          gap: 10px;
+        }
+
+        .vision-intro {
+          font-size: 1.5rem;
+        }
+
+        .vision-body {
+          font-size: 0.88rem;
+          letter-spacing: 0.045em;
+        }
+
+        .vision-outro {
+          font-size: 1.08rem;
+        }
+
+        .hero-actions {
+          margin-bottom: 8px;
+          gap: 10px;
+          flex-wrap: wrap;
+        }
+
+        .section-head {
+          display: block;
+        }
+
+        .section-head p {
+          margin-top: 10px;
+        }
+
+        .nav-links {
+          display: none;
+        }
+      }
+    </style>
+
+    <header class="topbar">
+      <div class="container nav">
+        <a href="/" class="brand">
+          <span class="brand-mark"><img src="/images/home/tviy_step_logo64.png" alt="Логотип Tviy STEP" /></span>
+        </a>
+
+        <nav class="nav-links" aria-label="Головна навігація">
+          {navLinks.map((link) => (
+            <a href={link.href}>{link.label}</a>
+          ))}
+        </nav>
+
+        <div class="nav-actions">
+          <a class="button secondary" href={site.social.instagram} target="_blank" rel="noreferrer">Instagram</a>
+          <a class="button secondary" href={site.social.tiktok} target="_blank" rel="noreferrer">TikTok</a>
+          <a class="button primary" href={site.social.telegram} target="_blank" rel="noreferrer">Telegram</a>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="container hero-grid">
+          <div>
+              <span class="eyebrow">Відкрита спільнота руху для тих, хто хоче бути в ритмі</span>
+            <h1>
+              {titleLines.map((line) => (
+                <span class="title-line">{line}</span>
+              ))}
+            </h1>
+            <p class="lead">{site.subtitle}</p>
+
+            <div class="vision-manifesto" aria-label="Маніфест спільноти">
+              <p class="vision-intro">{vision.intro}</p>
+              <span class="vision-rule" aria-hidden="true"></span>
+              <p class="vision-body">
+                {vision.body.map((line) => (
+                  <span>{line}</span>
+                ))}
+              </p>
+              <span class="vision-rule" aria-hidden="true"></span>
+              <p class="vision-outro">
+                {vision.outro}
+              </p>
+            </div>
+
+            <div class="nav-actions hero-actions">
+              <a class="button primary" href={site.social.telegram} target="_blank" rel="noreferrer">Приєднатися в Telegram</a>
+              <a class="button secondary" href="#join">Як це працює</a>
+            </div>
+
+          </div>
+
+          <aside class="hero-visual" aria-label="Обкладинка спільноти">
+            <img src={heroImageSrc} alt="Головне фото спільноти" />
+          </aside>
+        </div>
+      </section>
+
+      <section id="about" class="reveal">
+        <div class="container">
+          <div class="section-head reveal">
+            <h2>Хто ми</h2>
+            <p>
+              Tviy STEP - це більше, ніж спортивний клуб. Це простір свободи, руху і підтримки,
+              де кожен крок робиться разом.
+            </p>
+          </div>
+
+          <div class="grid-3 reveal stagger">
+            {manifesto.map((item) => (
+              <article class="card reveal">
+                <h3>{item.title}</h3>
+                <p>{item.text}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section id="meaning" class="reveal">
+        <div class="container">
+          <div class="section-head reveal">
+            <h2>Що означає назва</h2>
+            <p>
+              У назві одночасно є особистий сенс, щоденна дія і культурний образ простору.
+            </p>
+          </div>
+
+          <div class="grid-3 reveal stagger">
+            {meaning.map((item) => (
+              <article class="card reveal">
+                <span class="label">{item.label}</span>
+                <p>{item.text}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section class="reveal">
+        <div class="container">
+          <div class="section-head reveal">
+            <h2>Люди та атмосфера</h2>
+            <p>
+              Тут важливе відчуття "я тут свій" - підтримка, довіра і жива атмосфера людей поруч.
+            </p>
+          </div>
+
+          <div class="grid-2 reveal stagger">
+            <article class="card reveal">
+              <div class="photo-card">
+                <img src="/images/home/community-flag-group.webp" alt="Учасники Tviy STEP після спільного руху з прапором клубу" />
+                <div class="photo-caption">
+                  Після спільного кроку: команда, усмішки і прапор Tviy STEP як знак спільної дороги.
+                </div>
+              </div>
+            </article>
+            <article class="card reveal">
+              <div class="photo-card">
+                <img src="/images/home/community-skyline-group.webp" alt="Учасники спільноти на оглядовому майданчику" />
+                <div class="photo-caption">
+                  Після руху: розмова, відновлення і відчуття, що ти серед своїх людей.
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="join" class="reveal">
+        <div class="container">
+          <div class="section-head reveal">
+            <h2>Як долучитися</h2>
+          </div>
+
+          <div class="grid-3 reveal stagger">
+            {joinSteps.map((step, index) => (
+              <article class="card reveal">
+                <h3>{index + 1}. {step.title}</h3>
+                <p>{step.text}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section id="team" class="reveal">
+        <div class="container">
+          <div class="section-head reveal">
+            <h2>Команда</h2>
+            <p>
+              Люди, які тримають ритм спільноти і підтримують атмосферу відкритості.
+            </p>
+          </div>
+
+          <div class="grid-3 reveal stagger" style="margin-bottom: 14px;">
+            <article class="card reveal">
+              <span class="label">Координація старту</span>
+              <p>Підтримують спільний темп і допомагають новим учасникам пройти перший маршрут без тиску.</p>
+            </article>
+            <article class="card reveal">
+              <span class="label">Координація маршрутів</span>
+              <p>Продумують безпечні міські траєкторії, щоб рухатися було комфортно в будь-якому досвіді.</p>
+            </article>
+            <article class="card reveal">
+              <span class="label">Координація спільноти</span>
+              <p>Тримають тепло спільноти: знайомства, підтримка, розмова після руху і відчуття приналежності.</p>
+            </article>
+          </div>
+
+          <div class="team-note photo-card reveal">
+            <img src="/images/home/community-view-selfie.webp" alt="Команда Tviy STEP на фоні річки та міського горизонту" />
+            <div class="photo-caption">
+              Живий погляд зсередини спільноти: люди, горизонт і легкість бути разом у русі.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="faq" class="faq reveal">
+        <div class="container">
+          <div class="section-head reveal">
+            <h2>Питання та відповіді</h2>
+            <p>Коротко закриваємо головні запитання перед першим кроком.</p>
+          </div>
+
+          {faq.map((item) => (
+            <details class="reveal">
+              <summary>{item.q}</summary>
+              <p>{item.a}</p>
+            </details>
+          ))}
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="container footer-row">
+        <div class="brand">
+          <span class="brand-mark"><img src="/images/home/tviy_step_logo64.png" alt="Логотип Tviy STEP" /></span>
+        </div>
+
+        <div class="footer-links">
+          {navLinks.map((link) => (
+            <a href={link.href}>{link.label}</a>
+          ))}
+          <a href={site.social.telegram} target="_blank" rel="noreferrer">Telegram</a>
+          <a href={site.social.instagram} target="_blank" rel="noreferrer">Instagram</a>
+          <a href={site.social.tiktok} target="_blank" rel="noreferrer">TikTok</a>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      const items = Array.from(document.querySelectorAll('.reveal'));
+
+      if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches && 'IntersectionObserver' in window) {
+        const io = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('in-view');
+              io.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.14, rootMargin: '0px 0px -8% 0px' });
+
+        items.forEach((item) => io.observe(item));
+      } else {
+        items.forEach((item) => item.classList.add('in-view'));
+      }
+    </script>
+ </Layout>
