@@ -4,14 +4,18 @@ import Layout from "../layouts/Layout.astro";
 const site = {
   brand: "Твій STEP",
   title: "Твій крок. Твій шлях. Твій степ.",
-  subtitle:
-    "Для різного досвіду - від першого кроку до довгих дистанцій, без тиску і гонки за цифрами.",
   social: {
     telegram: "https://t.me/+S6yg2WuoqAI0ZmVi",
     instagram: "https://www.instagram.com/tviy.step",
     tiktok: "https://www.tiktok.com/@tviy.step?_r=1"
   }
 };
+
+const heroLead = [
+  "Кожне тренування, кожна подія, кожна мандрівка,  кожен старт і кожен фініш починається з першого кроку.",
+  "Шлях це сума стежин, обʼєднаних спільним напрямком. Спільнота  -  це люди, що поєдналися  довкола цінностей, які близькі серцю.",
+  "Степ - це простір, що загартовує дух, що живить душу і зачаровує око. Твій степ - твоя площина для росту над собою. Як за ним доглядатимеш, такі він і принесе плоди."
+];
 
 const titleLines = ["Твій крок.", "Твій шлях.", "Твій степ."];
 
@@ -249,7 +253,7 @@ const pageDescription = "Твій STEP - відкрита спільнота р�
 
       h1 {
         margin: 0 0 14px;
-        font-size: clamp(2.8rem, 5.4vw, 5.2rem);
+        font-size: clamp(1.4rem, 2.7vw, 2.6rem);
         line-height: 0.92;
         letter-spacing: -0.05em;
       }
@@ -258,11 +262,19 @@ const pageDescription = "Твій STEP - відкрита спільнота р�
         display: block;
       }
 
-      .lead {
+      .lead-copy {
         margin: 0 0 20px;
+      }
+
+      .lead {
+        margin: 0 0 12px;
         color: var(--muted);
         font-size: 1.05rem;
         max-width: 56ch;
+      }
+
+      .lead:last-child {
+        margin-bottom: 0;
       }
 
       .hero-actions {
@@ -592,7 +604,11 @@ const pageDescription = "Твій STEP - відкрита спільнота р�
                 <span class="title-line">{line}</span>
               ))}
             </h1>
-            <p class="lead">{site.subtitle}</p>
+            <div class="lead-copy">
+              {heroLead.map((paragraph) => (
+                <p class="lead">{paragraph}</p>
+              ))}
+            </div>
 
             <div class="nav-actions hero-actions">
               <a class="button primary" href={site.social.telegram} target="_blank" rel="noreferrer">Приєднатися в Telegram</a>
