@@ -104,14 +104,27 @@ const pageDescription = "Твій STEP - відкрита спільнота р�
 ---
 
 <Layout title={pageTitle} description={pageDescription} lang="uk">
+  <Fragment slot="head">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
+  </Fragment>
+
   <style>
       :root {
-        --bg: #f4f0e8;
-        --ink: #1b1b1f;
-        --muted: rgba(27, 27, 31, 0.74);
-        --sand: #d8c28a;
-        --line: rgba(27, 27, 31, 0.12);
-        --panel: rgba(255, 255, 255, 0.2);
+        --bg: #f3efe7;
+        --ink: #17181d;
+        --muted: rgba(23, 24, 29, 0.72);
+        --sand: #d0b57a;
+        --line: rgba(23, 24, 29, 0.14);
+        --panel: rgba(255, 255, 255, 0.52);
+        --panel-strong: rgba(255, 255, 255, 0.72);
+        --hero-ink: #111218;
+        --font-body: "Manrope", "Segoe UI", sans-serif;
+        --font-display: "Playfair Display", "Times New Roman", serif;
+        --space-section: clamp(46px, 5vw, 64px);
+        --space-section-tight: clamp(40px, 5vw, 60px);
+        --topbar-height: 74px;
       }
 
       * { box-sizing: border-box; }
@@ -122,10 +135,11 @@ const pageDescription = "Твій STEP - відкрита спільнота р�
         margin: 0;
         color: var(--ink);
         line-height: 1.6;
-        font-family: "Segoe UI", "Inter", sans-serif;
+        font-family: var(--font-body);
         background:
-          radial-gradient(circle at 10% 8%, rgba(216, 194, 138, 0.28), transparent 35%),
-          radial-gradient(circle at 86% 12%, rgba(27, 27, 31, 0.1), transparent 30%),
+          radial-gradient(circle at 12% 10%, rgba(208, 181, 122, 0.24), transparent 34%),
+          radial-gradient(circle at 85% 7%, rgba(23, 24, 29, 0.11), transparent 31%),
+          linear-gradient(110deg, rgba(255, 255, 255, 0.24), rgba(255, 255, 255, 0) 34%),
           var(--bg);
         animation: page-fade 540ms ease-out;
       }
@@ -140,11 +154,15 @@ const pageDescription = "Твій STEP - відкрита спільнота р�
         margin: 0 auto;
       }
 
+      section[id] {
+        scroll-margin-top: calc(var(--topbar-height) + 16px);
+      }
+
       .topbar {
         position: sticky;
         top: 0;
         z-index: 10;
-        background: rgba(244, 240, 232, 0.84);
+        background: rgba(243, 239, 231, 0.78);
         backdrop-filter: blur(12px);
         border-bottom: 1px solid var(--line);
       }
@@ -188,6 +206,29 @@ const pageDescription = "Твій STEP - відкрита спільнота р�
       .nav-links {
         gap: 24px;
         color: var(--muted);
+        font-size: 0.92rem;
+      }
+
+      .nav-links a {
+        position: relative;
+        padding-bottom: 3px;
+      }
+
+      .nav-links a::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        height: 1px;
+        background: rgba(23, 24, 29, 0.46);
+        transform: scaleX(0);
+        transform-origin: left center;
+        transition: transform 220ms ease;
+      }
+
+      .nav-links a:hover::after {
+        transform: scaleX(1);
       }
 
       .button {
@@ -200,34 +241,37 @@ const pageDescription = "Твій STEP - відкрита спільнота р�
         justify-content: center;
         transition: 0.2s ease;
         font-weight: 600;
+        letter-spacing: 0.01em;
       }
 
       .button:hover { transform: translateY(-1px); }
 
       .button.primary {
-        color: var(--bg);
-        background: var(--ink);
+        color: #f8f4ea;
+        background: var(--hero-ink);
+        border-color: var(--hero-ink);
       }
 
       .button.secondary {
-        background: transparent;
+        background: rgba(255, 255, 255, 0.5);
       }
 
       .button.icon-btn {
         padding: 0;
-        width: 36px;
-        min-height: 36px;
+        width: 44px;
+        min-height: 44px;
         border: none;
         background: transparent !important;
         color: var(--ink);
       }
 
       main section {
-        padding: 78px 0;
+        padding: var(--space-section) 0;
       }
 
       .hero {
-        padding-top: 68px;
+        padding-top: var(--space-section-tight);
+        padding-bottom: clamp(44px, 6vw, 74px);
       }
 
       .hero > .container > div:first-child {
@@ -237,25 +281,30 @@ const pageDescription = "Твій STEP - відкрита спільнота р�
       .hero-grid {
         display: grid;
         grid-template-columns: 1.1fr 0.9fr;
-        gap: 30px;
+        gap: clamp(28px, 4vw, 48px);
         align-items: stretch;
       }
 
       .eyebrow {
         display: inline-block;
-        margin-bottom: 14px;
-        font-size: 0.74rem;
-        letter-spacing: 0.14em;
+        margin-bottom: 16px;
+        font-size: 0.76rem;
+        letter-spacing: 0.18em;
         text-transform: uppercase;
-        color: var(--muted);
+        color: rgba(23, 24, 29, 0.64);
         font-weight: 700;
+        border-bottom: 1px solid rgba(23, 24, 29, 0.24);
+        padding-bottom: 3px;
       }
 
       h1 {
-        margin: 0 0 14px;
-        font-size: clamp(1.4rem, 2.7vw, 2.6rem);
-        line-height: 0.92;
-        letter-spacing: -0.05em;
+        margin: 0 0 16px;
+        font-family: var(--font-display);
+        font-size: clamp(2.1rem, 5.8vw, 4.8rem);
+        line-height: 0.97;
+        letter-spacing: -0.015em;
+        color: var(--hero-ink);
+        text-wrap: balance;
       }
 
       .title-line {
@@ -263,13 +312,14 @@ const pageDescription = "Твій STEP - відкрита спільнота р�
       }
 
       .lead-copy {
-        margin: 0 0 20px;
+        margin: 0 0 22px;
+        max-width: 60ch;
       }
 
       .lead {
-        margin: 0 0 12px;
+        margin: 0 0 10px;
         color: var(--muted);
-        font-size: 1.05rem;
+        font-size: 1rem;
         max-width: 56ch;
       }
 
@@ -278,24 +328,28 @@ const pageDescription = "Твій STEP - відкрита спільнота р�
       }
 
       .hero-actions {
-        margin-bottom: 16px;
+        margin-bottom: 10px;
       }
 
       .hero-visual {
         border: 1px solid var(--line);
-        border-radius: 30px;
+        border-radius: 36px;
         padding: 0;
         background: transparent;
         display: block;
         min-height: 460px;
-        box-shadow: 0 26px 46px rgba(27, 27, 31, 0.18);
+        box-shadow: 0 28px 52px rgba(23, 24, 29, 0.18);
         overflow: hidden;
         position: relative;
         animation: rise-in 820ms 180ms both cubic-bezier(0.2, 0.65, 0.2, 1);
       }
 
       .hero-visual::before {
-        content: none;
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(170deg, rgba(255, 255, 255, 0) 35%, rgba(23, 24, 29, 0.24) 100%);
+        pointer-events: none;
       }
 
       .hero-visual img {
@@ -332,22 +386,25 @@ const pageDescription = "Твій STEP - відкрита спільнота р�
       .photo-caption {
         color: var(--muted);
         font-size: 0.9rem;
+        line-height: 1.55;
       }
 
       .section-head {
         display: flex;
         justify-content: space-between;
         align-items: end;
-        gap: 22px;
-        margin-bottom: 24px;
+        gap: 20px;
+        margin-bottom: 20px;
       }
 
 
       .section-head h2 {
         margin: 0;
-        font-size: clamp(2rem, 4.2vw, 3.2rem);
-        letter-spacing: -0.05em;
-        line-height: 1.03;
+        font-family: var(--font-display);
+        font-size: clamp(1.9rem, 3.9vw, 3.1rem);
+        letter-spacing: -0.02em;
+        line-height: 1;
+        text-wrap: balance;
       }
 
       .section-head p {
@@ -359,33 +416,35 @@ const pageDescription = "Твій STEP - відкрита спільнота р�
       .grid-3 {
         display: grid;
         grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 18px;
+        gap: 16px;
       }
 
       .grid-2 {
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 18px;
+        gap: 16px;
       }
 
       .card {
         border: 1px solid var(--line);
-        background: var(--panel);
+        background: var(--panel-strong);
         border-radius: 22px;
         padding: 22px 20px;
-        transition: transform 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+        transition: transform 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease, background 0.35s ease;
       }
 
       .card:hover {
         transform: translateY(-4px);
-        border-color: rgba(27, 27, 31, 0.24);
-        box-shadow: 0 14px 30px rgba(27, 27, 31, 0.08);
+        border-color: rgba(23, 24, 29, 0.3);
+        background: rgba(255, 255, 255, 0.86);
+        box-shadow: 0 16px 30px rgba(23, 24, 29, 0.09);
       }
 
       .card h3 {
         margin: 0 0 8px;
-        font-size: 1.24rem;
-        letter-spacing: -0.03em;
+        font-size: 1.2rem;
+        letter-spacing: -0.02em;
+        font-family: var(--font-display);
       }
 
       .card p {
@@ -398,18 +457,25 @@ const pageDescription = "Твій STEP - відкрита спільнота р�
         margin-bottom: 10px;
         padding: 6px 10px;
         border-radius: 999px;
-        border: 1px solid rgba(216, 194, 138, 0.72);
-        background: rgba(216, 194, 138, 0.2);
+        border: 1px solid rgba(208, 181, 122, 0.7);
+        background: rgba(208, 181, 122, 0.2);
         font-size: 0.75rem;
         letter-spacing: 0.08em;
         text-transform: uppercase;
+      }
+
+      .band .container {
+        padding: clamp(20px, 3vw, 34px);
+        border-radius: 28px;
+        border: 1px solid var(--line);
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.64), rgba(255, 255, 255, 0.4));
       }
 
       .faq details {
         border: 1px solid var(--line);
         border-radius: 16px;
         padding: 12px 14px;
-        background: var(--panel);
+        background: var(--panel-strong);
       }
 
       .faq details + details {
@@ -426,9 +492,9 @@ const pageDescription = "Твій STEP - відкрита спільнота р�
       }
 
       .team-note {
-        border: 1px dashed var(--line);
+        border: 1px dashed rgba(23, 24, 29, 0.26);
         border-radius: 18px;
-        padding: 16px;
+        padding: 18px;
         color: var(--muted);
         font-size: 0.95rem;
       }
@@ -546,7 +612,8 @@ const pageDescription = "Твій STEP - відкрита спільнота р�
 
         h1 {
           margin-bottom: 12px;
-          line-height: 0.96;
+          font-size: clamp(2rem, 12vw, 3.1rem);
+          line-height: 1.02;
         }
 
         .lead {
@@ -571,12 +638,16 @@ const pageDescription = "Твій STEP - відкрита спільнота р�
         .nav-links {
           display: none;
         }
+
+        .band .container {
+          padding: 18px;
+        }
       }
     </style>
 
     <header class="topbar">
       <div class="container nav">
-        <a href="/" class="brand">
+        <a href="#top" class="brand" aria-label="Плавно прокрутити до початку сторінки">
           <span class="brand-mark"><img src="/images/home/tviy_step_logo64.png" alt="Логотип Твій STEP" /></span>
         </a>
 
@@ -594,7 +665,7 @@ const pageDescription = "Твій STEP - відкрита спільнота р�
       </div>
     </header>
 
-    <main>
+    <main id="top">
       <section class="hero">
         <div class="container hero-grid">
           <div>
@@ -623,7 +694,7 @@ const pageDescription = "Твій STEP - відкрита спільнота р�
         </div>
       </section>
 
-      <section id="about" class="reveal">
+      <section id="about" class="reveal band">
         <div class="container">
           <div class="section-head reveal">
             <h2>Хто ми</h2>
@@ -664,7 +735,7 @@ const pageDescription = "Твій STEP - відкрита спільнота р�
         </div>
       </section>
 
-      <section class="reveal">
+      <section class="reveal band">
         <div class="container">
           <div class="section-head reveal">
             <h2>Люди та атмосфера</h2>
@@ -711,7 +782,7 @@ const pageDescription = "Твій STEP - відкрита спільнота р�
         </div>
       </section>
 
-      <section id="team" class="reveal">
+      <section id="team" class="reveal band">
         <div class="container">
           <div class="section-head reveal">
             <h2>Команда</h2>
@@ -744,7 +815,7 @@ const pageDescription = "Твій STEP - відкрита спільнота р�
         </div>
       </section>
 
-      <section id="faq" class="faq reveal">
+      <section id="faq" class="faq reveal band">
         <div class="container">
           <div class="section-head reveal">
             <h2>Питання та відповіді</h2>
@@ -763,9 +834,9 @@ const pageDescription = "Твій STEP - відкрита спільнота р�
 
     <footer>
       <div class="container footer-row">
-        <div class="brand">
+        <a href="#top" class="brand" aria-label="Плавно прокрутити до початку сторінки">
           <span class="brand-mark"><img src="/images/home/tviy_step_logo64.png" alt="Логотип Твій STEP" /></span>
-        </div>
+        </a>
 
         <div class="footer-links">
           {navLinks.map((link) => (
