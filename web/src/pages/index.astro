@@ -11,10 +11,18 @@ const site = {
   }
 };
 
-const heroLead = [
-  "Кожне тренування, кожна подія, кожна мандрівка,  кожен старт і кожен фініш починається з першого кроку.",
-  "Шлях це сума стежин, обʼєднаних спільним напрямком. Спільнота  -  це люди, що поєдналися  довкола цінностей, які близькі серцю.",
-  "Степ - це простір, що загартовує дух, що живить душу і зачаровує око. Твій степ - твоя площина для росту над собою. Як за ним доглядатимеш, такі він і принесе плоди."
+const heroLeadPrimary = "Кожне тренування, подія і мандрівка починається з першого кроку. Твій STEP об'єднує людей різного темпу навколо руху, підтримки й спільного горизонту.";
+
+const heroLeadExtended = [
+  "Шлях - це сума стежин, обʼєднаних спільним напрямком. Спільнота - це люди, що поєдналися довкола цінностей, які близькі серцю.",
+  "Степ - це простір, що загартовує дух, живить душу і зачаровує око. Твій степ - твоя площина для росту над собою."
+];
+
+const socialProof = [
+  { label: "Формат", value: "Відкрита спільнота" },
+  { label: "Участь", value: "Безкоштовно" },
+  { label: "Канали", value: "Telegram + Instagram" },
+  { label: "Географія", value: "Київ" }
 ];
 
 const titleLines = ["Твій крок.", "Твій шлях.", "Твій степ."];
@@ -122,8 +130,8 @@ const pageDescription = "Твій STEP - відкрита спільнота р�
         --hero-ink: #111218;
         --font-body: "Manrope", "Segoe UI", sans-serif;
         --font-display: "Playfair Display", "Times New Roman", serif;
-        --space-section: clamp(46px, 5vw, 64px);
-        --space-section-tight: clamp(40px, 5vw, 60px);
+        --space-section: clamp(38px, 4.2vw, 54px);
+        --space-section-tight: clamp(30px, 4vw, 46px);
         --topbar-height: 74px;
       }
 
@@ -203,6 +211,10 @@ const pageDescription = "Твій STEP - відкрита спільнота р�
         gap: 12px;
       }
 
+      .nav-toggle {
+        display: none;
+      }
+
       .nav-links {
         gap: 24px;
         color: var(--muted);
@@ -271,7 +283,7 @@ const pageDescription = "Твій STEP - відкрита спільнота р�
 
       .hero {
         padding-top: var(--space-section-tight);
-        padding-bottom: clamp(44px, 6vw, 74px);
+        padding-bottom: clamp(32px, 4.5vw, 56px);
       }
 
       .hero > .container > div:first-child {
@@ -281,8 +293,8 @@ const pageDescription = "Твій STEP - відкрита спільнота р�
       .hero-grid {
         display: grid;
         grid-template-columns: 1.1fr 0.9fr;
-        gap: clamp(28px, 4vw, 48px);
-        align-items: stretch;
+        gap: clamp(22px, 3vw, 34px);
+        align-items: start;
       }
 
       .eyebrow {
@@ -312,7 +324,7 @@ const pageDescription = "Твій STEP - відкрита спільнота р�
       }
 
       .lead-copy {
-        margin: 0 0 22px;
+        margin: 0 0 18px;
         max-width: 60ch;
       }
 
@@ -331,13 +343,62 @@ const pageDescription = "Твій STEP - відкрита спільнота р�
         margin-bottom: 10px;
       }
 
+      .hero-more {
+        margin-top: 8px;
+      }
+
+      .hero-more details {
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 8px 12px;
+        background: rgba(255, 255, 255, 0.46);
+      }
+
+      .hero-more summary {
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 0.94rem;
+      }
+
+      .hero-more p {
+        margin: 10px 0 0;
+      }
+
+      .proof-strip {
+        margin-top: 16px;
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .proof-chip {
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 9px 11px;
+        background: rgba(255, 255, 255, 0.56);
+        display: grid;
+        gap: 2px;
+      }
+
+      .proof-chip .k {
+        font-size: 0.72rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: rgba(23, 24, 29, 0.62);
+      }
+
+      .proof-chip .v {
+        font-size: 0.94rem;
+        font-weight: 600;
+      }
+
       .hero-visual {
         border: 1px solid var(--line);
         border-radius: 36px;
         padding: 0;
         background: transparent;
         display: block;
-        min-height: 460px;
+        min-height: 0;
         box-shadow: 0 28px 52px rgba(23, 24, 29, 0.18);
         overflow: hidden;
         position: relative;
@@ -354,10 +415,10 @@ const pageDescription = "Твій STEP - відкрита спільнота р�
 
       .hero-visual img {
         width: 100%;
-        height: 100%;
-        min-height: 460px;
+        height: auto;
+        min-height: 0;
         display: block;
-        object-fit: cover;
+        object-fit: contain;
         border: 0;
         border-radius: 0;
       }
@@ -394,7 +455,7 @@ const pageDescription = "Твій STEP - відкрита спільнота р�
         justify-content: space-between;
         align-items: end;
         gap: 20px;
-        margin-bottom: 20px;
+        margin-bottom: 16px;
       }
 
 
@@ -416,13 +477,13 @@ const pageDescription = "Твій STEP - відкрита спільнота р�
       .grid-3 {
         display: grid;
         grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 16px;
+        gap: 14px;
       }
 
       .grid-2 {
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 16px;
+        gap: 14px;
       }
 
       .card {
@@ -465,7 +526,7 @@ const pageDescription = "Твій STEP - відкрита спільнота р�
       }
 
       .band .container {
-        padding: clamp(20px, 3vw, 34px);
+        padding: clamp(14px, 2.2vw, 24px);
         border-radius: 28px;
         border: 1px solid var(--line);
         background: linear-gradient(180deg, rgba(255, 255, 255, 0.64), rgba(255, 255, 255, 0.4));
@@ -494,7 +555,7 @@ const pageDescription = "Твій STEP - відкрита спільнота р�
       .team-note {
         border: 1px dashed rgba(23, 24, 29, 0.26);
         border-radius: 18px;
-        padding: 18px;
+        padding: 14px;
         color: var(--muted);
         font-size: 0.95rem;
       }
@@ -558,7 +619,45 @@ const pageDescription = "Твій STEP - відкрита спільнота р�
 
       footer {
         border-top: 1px solid var(--line);
-        padding: 28px 0 52px;
+        padding: 22px 0 38px;
+      }
+
+      .join-band {
+        margin-top: 6px;
+      }
+
+      .join-band .container {
+        border: 1px solid rgba(23, 24, 29, 0.22);
+        border-radius: 24px;
+        background: linear-gradient(120deg, rgba(17, 18, 24, 0.95), rgba(36, 38, 49, 0.94));
+        color: #f8f4ea;
+        padding: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+        flex-wrap: wrap;
+      }
+
+      .join-band h3 {
+        margin: 0;
+        font-family: var(--font-display);
+        font-size: clamp(1.3rem, 2.6vw, 1.9rem);
+      }
+
+      .join-band p {
+        margin: 4px 0 0;
+        color: rgba(248, 244, 234, 0.85);
+      }
+
+      .join-band .button.primary {
+        background: #f8f4ea;
+        color: #17181d;
+        border-color: #f8f4ea;
+      }
+
+      .mobile-drawer {
+        display: none;
       }
 
       .footer-row {
@@ -639,8 +738,59 @@ const pageDescription = "Твій STEP - відкрита спільнота р�
           display: none;
         }
 
+        .nav-toggle {
+          display: inline-flex;
+          min-height: 42px;
+          padding: 0 14px;
+          border: 1px solid var(--line);
+          border-radius: 999px;
+          background: rgba(255, 255, 255, 0.56);
+          font-weight: 600;
+          font-family: var(--font-body);
+        }
+
+        .nav-actions {
+          gap: 6px;
+        }
+
+        .proof-strip {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 8px;
+        }
+
+        .mobile-drawer {
+          display: block;
+          max-height: 0;
+          overflow: hidden;
+          opacity: 0;
+          border-top: 1px solid transparent;
+          transition: max-height 260ms ease, opacity 220ms ease, border-color 220ms ease;
+        }
+
+        .mobile-drawer.open {
+          max-height: 360px;
+          opacity: 1;
+          border-color: var(--line);
+        }
+
+        .mobile-drawer .container {
+          display: grid;
+          gap: 8px;
+          padding: 12px 0 14px;
+        }
+
+        .mobile-drawer a {
+          padding: 10px 12px;
+          border-radius: 10px;
+          background: rgba(255, 255, 255, 0.48);
+        }
+
+        .join-band .container {
+          padding: 16px;
+        }
+
         .band .container {
-          padding: 18px;
+          padding: 14px;
         }
       }
     </style>
@@ -648,7 +798,7 @@ const pageDescription = "Твій STEP - відкрита спільнота р�
     <header class="topbar">
       <div class="container nav">
         <a href="#top" class="brand" aria-label="Плавно прокрутити до початку сторінки">
-          <span class="brand-mark"><img src="/images/home/tviy_step_logo64.png" alt="Логотип Твій STEP" /></span>
+          <span class="brand-mark"><img src="/images/home/logo.svg" alt="Логотип Твій STEP" /></span>
         </a>
 
         <nav class="nav-links" aria-label="Головна навігація">
@@ -658,11 +808,20 @@ const pageDescription = "Твій STEP - відкрита спільнота р�
         </nav>
 
         <div class="nav-actions">
+          <button class="nav-toggle" id="navToggle" type="button" aria-expanded="false" aria-controls="mobileMenu">Меню</button>
           <a class="button secondary icon-btn social-icon" href={site.social.instagram} target="_blank" rel="noreferrer" aria-label="Instagram"><Fragment set:html={icons.instagram} /></a>
           <a class="button secondary icon-btn social-icon" href={site.social.tiktok} target="_blank" rel="noreferrer" aria-label="TikTok"><Fragment set:html={icons.tiktok} /></a>
           <a class="button primary icon-btn social-icon" href={site.social.telegram} target="_blank" rel="noreferrer" aria-label="Telegram"><Fragment set:html={icons.telegram} /></a>
         </div>
       </div>
+
+      <nav class="mobile-drawer" id="mobileMenu" aria-label="Мобільна навігація">
+        <div class="container">
+          {navLinks.map((link) => (
+            <a href={link.href}>{link.label}</a>
+          ))}
+        </div>
+      </nav>
     </header>
 
     <main id="top">
@@ -676,14 +835,29 @@ const pageDescription = "Твій STEP - відкрита спільнота р�
               ))}
             </h1>
             <div class="lead-copy">
-              {heroLead.map((paragraph) => (
-                <p class="lead">{paragraph}</p>
-              ))}
+              <p class="lead">{heroLeadPrimary}</p>
+              <div class="hero-more">
+                <details>
+                  <summary>Читати маніфест спільноти</summary>
+                  {heroLeadExtended.map((paragraph) => (
+                    <p class="lead">{paragraph}</p>
+                  ))}
+                </details>
+              </div>
             </div>
 
             <div class="nav-actions hero-actions">
               <a class="button primary" href={site.social.telegram} target="_blank" rel="noreferrer">Приєднатися в Telegram</a>
               <a class="button secondary" href="#join">Як це працює</a>
+            </div>
+
+            <div class="proof-strip" aria-label="Ключові факти про спільноту">
+              {socialProof.map((item) => (
+                <div class="proof-chip">
+                  <span class="k">{item.label}</span>
+                  <span class="v">{item.value}</span>
+                </div>
+              ))}
             </div>
 
           </div>
@@ -832,10 +1006,20 @@ const pageDescription = "Твій STEP - відкрита спільнота р�
       </section>
     </main>
 
+    <section class="join-band reveal">
+      <div class="container">
+        <div>
+          <h3>Готовий зробити свій перший крок?</h3>
+          <p>Знайомся з людьми, рухайся у своєму темпі та будь частиною Твій STEP.</p>
+        </div>
+        <a class="button primary" href={site.social.telegram} target="_blank" rel="noreferrer">Увійти в Telegram</a>
+      </div>
+    </section>
+
     <footer>
       <div class="container footer-row">
         <a href="#top" class="brand" aria-label="Плавно прокрутити до початку сторінки">
-          <span class="brand-mark"><img src="/images/home/tviy_step_logo64.png" alt="Логотип Твій STEP" /></span>
+          <span class="brand-mark"><img src="/images/home/logo.svg" alt="Логотип Твій STEP" /></span>
         </a>
 
         <div class="footer-links">
@@ -851,6 +1035,22 @@ const pageDescription = "Твій STEP - відкрита спільнота р�
 
     <script>
       const items = Array.from(document.querySelectorAll('.reveal'));
+      const navToggle = document.getElementById('navToggle');
+      const mobileMenu = document.getElementById('mobileMenu');
+
+      if (navToggle && mobileMenu) {
+        navToggle.addEventListener('click', () => {
+          const isOpen = mobileMenu.classList.toggle('open');
+          navToggle.setAttribute('aria-expanded', String(isOpen));
+        });
+
+        mobileMenu.querySelectorAll('a').forEach((link) => {
+          link.addEventListener('click', () => {
+            mobileMenu.classList.remove('open');
+            navToggle.setAttribute('aria-expanded', 'false');
+          });
+        });
+      }
 
       if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches && 'IntersectionObserver' in window) {
         const io = new IntersectionObserver((entries) => {
