@@ -2,1069 +2,3004 @@
 import Layout from "../layouts/Layout.astro";
 
 const site = {
-  brand: "Твій STEP",
-  title: "Твій крок. Твій шлях. Твій степ.",
-  social: {
-    telegram: "https://t.me/+S6yg2WuoqAI0ZmVi",
-    instagram: "https://www.instagram.com/tviy.step",
-    tiktok: "https://www.tiktok.com/@tviy.step?_r=1"
-  }
+	brand: 'Твій STEP',
+	tagline: 'Твій крок. Твій шлях. Твій степ.',
+	social: {
+		telegram: 'https://t.me/+S6yg2WuoqAI0ZmVi',
+		instagram: 'https://www.instagram.com/tviy.step',
+		tiktok: 'https://www.tiktok.com/@tviy.step?_r=1',
+	},
 };
 
-const heroLeadPrimary = "Кожне тренування, подія і мандрівка починається з першого кроку. Твій STEP об'єднує людей різного темпу навколо руху, підтримки й спільного горизонту.";
-
-const heroLeadExtended = [
-  "Шлях - це сума стежин, обʼєднаних спільним напрямком. Спільнота - це люди, що поєдналися довкола цінностей, які близькі серцю.",
-  "Степ - це простір, що загартовує дух, живить душу і зачаровує око. Твій степ - твоя площина для росту над собою."
+// Scrolltelling blocks for the homepage
+// Each block contains texts and images to be displayed in a storytelling manner on the homepage.
+// If there are a few texts in the block - they are just separate paragraphs.
+// If there are a few images in the block - the images should be automatically scrollable. There should be a manual way to scroll through them as well.
+const infoBlocks = [
+	{
+		num: '01',
+		texts: [
+			'«Твій STEP» — це вільна спортивна спільнота для тих, хто любить бігати, тренуватися, їздити на велосипеді, відкривати нові маршрути і зустрічати своїх людей.'
+		],
+		images: [
+			'/images/home/groupFlag1.webp',
+			'/images/home/groupFlag2.webp',
+			'/images/home/groupFlag5.webp'
+		]
+	},
+	{
+		num: '02',
+		texts: [
+			'Ми обʼєднуємо людей навколо бігу, велоспорту та функціональних тренувань на свіжому повітрі (калістеніка, бруси, перекладини). Ми працюємо без привʼязки до спортзалів та абонементів, перетворюючи міський та природний простір на майданчик для розвитку.'
+		],
+		images: [
+			'/images/home/team.webp',
+			'/images/home/team2.webp',
+		]
+	},
+	{
+		num: '03',
+		texts: [
+			'Назва спільноти має глибинний підтекст:<br>' +
+			'«Степ» — це символ української волі і свободи, витривалості та безмежного простору;<br>' +
+			'«STEP» — це щоденний крок вперед до кращої версії себе <br>' +
+			'«твій» - це про відчуття приналежності до єдиної «зграї», де панує підтримка, рівність і свобода.',
+			'«Твій STEP» - це більше ніж спортивний клуб. Це простір свободи, духу та руху, де кожен крок робиться разом.'
+		],
+		images: [
+			'/images/home/groupFlag3.webp',
+			'/images/home/groupFlag4.webp',
+		]
+	},
+	{
+		num: '04',
+		texts: [
+			'Неважливо, скільки кілометрів.<br>' +
+			'Неважливо, який темп.<br>' +
+			'Неважливо, ти біжиш, крутиш педалі чи просто робиш перший крок.<br>' +
+			'Важливо, що нам подобається одне й те саме — бути в русі і бути серед своїх.'
+		],
+		images: [
+			'/images/home/friends3.webp',
+			'/images/home/friends4.webp',
+			'/images/home/friends1.webp',
+			'/images/home/friends2.webp',
+			'/images/home/friends5.webp',
+		],
+	},
+	{
+		num: '05',
+		// there should be the join button here (join to Telegram channel)
+		texts: [
+			'Можна прийти одному.<br>' +
+			'Можна з другом.<br>' +
+			'Можна навіть просто познайомитися.',
+			'Твій Step починається з першого кроку.'
+		],
+		images: []
+	}
 ];
 
-const socialProof = [
-  { label: "Формат", value: "Відкрита спільнота" },
-  { label: "Участь", value: "Безкоштовно" },
-  { label: "Канали", value: "Telegram + Instagram" },
-  { label: "Географія", value: "Київ" }
-];
-
-const titleLines = ["Твій крок.", "Твій шлях.", "Твій степ."];
-
-const heroImageSrc = "/images/home/cycling-crew-banner.webp";
-
-const navLinks = [
-  { href: "#about", label: "Про спільноту" },
-  { href: "#meaning", label: "Що означає назва" },
-  { href: "#join", label: "Як долучитись" },
-  { href: "#team", label: "Команда" },
-  { href: "#faq", label: "FAQ" }
-];
-
-const manifesto = [
-  {
-    title: "Ми про людей",
-    text: "Ми різні за темпом і досвідом, але нас об'єднує бажання рухатися разом."
-  },
-  {
-    title: "Ми про ритм",
-    text: "Рух стає частиною життя, коли є підтримка, простір і зрозумілий перший крок."
-  },
-  {
-    title: "Ми про свободу руху",
-    text: "Рух - це простір для зустрічей, підтримки й нових знайомств без прив'язки до конкретного місця."
-  }
-];
-
-const meaning = [
-  {
-    label: "ТВІЙ",
-    text: "Про відчуття приналежності: твій темп, твоє місце, твої люди."
-  },
-  {
-    label: "STEP",
-    text: "Про щоденний крок вперед: невеликий, але чесний і регулярний."
-  },
-  {
-    label: "СТЕП",
-    text: "Про простір, свободу, горизонт і витривалість українського ландшафту."
-  }
-];
-
-const joinSteps = [
-  {
-    title: "Приєднайся до Telegram-каналу",
-    text: "Це головна точка входу в спільноту. Там живий діалог, анонси та знайомства."
-  },
-  {
-    title: "Запитай у чаті про найближчий вихід",
-    text: "Просто напиши, чи хтось планує рух найближчим часом. Це нормальний спосіб почати."
-  },
-  {
-    title: "Стеж за сповіщеннями від команди та учасників",
-    text: "Учасники самі створюють динаміку: хто, де і коли рухається."
-  }
+const howItWorks = [
+	{
+		num: '01',
+		title: 'Увійди в Telegram-спільноту',
+		text: 'Головний центр життя клубу. Тут публікуються анонси виходів, локації збору та живий чат.'
+	},
+	{
+		num: '02',
+		title: 'Обери рух або запропонуй свій',
+		text: 'Біг у парку, ранковий заїзд набережною чи воркаут — приєднуйся до запланованого або клич команду.'
+	},
+	{
+		num: '03',
+		title: 'Зроби перший крок',
+		text: 'Зручний одяг, пляшка води і гарний настрій. Усе інше — темп, дистанція, техніка — формується разом.'
+	}
 ];
 
 const faq = [
-  {
-    q: "Чи можна прийти, якщо я новачок?",
-    a: "Так. Спільнота відкрита для всіх рівнів. Тут підтримують перший крок, а не оцінюють темп."
-  },
-  {
-    q: "Чи є зараз фіксований графік?",
-    a: "Ні, зараз немає стабільного розкладу. Домовленості відбуваються в Telegram."
-  },
-  {
-    q: "Скільки коштує участь?",
-    a: "Участь у спільноті безкоштовна."
-  },
-  {
-    q: "Що важливо перед першим кроком?",
-    a: "Зручний одяг, вода і готовність знайомитися. Усе інше формується в процесі."
-  }
+	{
+		q: 'Чи підходить спільнота абсолютним новачкам?',
+		a: 'Так, абсолютно. «Твій STEP» побудований на підтримці, а не на змаганнях. Ніхто не біжить швидше за твій комфорт, а на спільних тренуваннях завжди є комфортний темп для кожного.'
+	},
+	{
+		q: 'Скільки коштує участь у тренуваннях?',
+		a: 'Участь безкоштовна. Ми вільна міська ініціатива без абонементів чи обовʼязкових внесків.'
+	},
+	{
+		q: 'Де зазвичай проходять зустрічі?',
+		a: 'Локації Київські: набережні Дніпра, Труханів острів, ВДНГ, Поділ, парки та міські пагорби. Точні координати виходу узгоджуються в Telegram.'
+	},
+	{
+		q: 'Чи потрібно мати спеціальне спорядження?',
+		a: 'Для бігу чи тренувань достатньо звичайних кросівок та зручного одягу. Для вело — будь-який справний велосипед та шолом.'
+	}
 ];
 
 const icons = {
-  telegram: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="currentColor" aria-hidden="true"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>`,
-  instagram: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="currentColor" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>`,
-  tiktok: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="currentColor" aria-hidden="true"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>`
+	telegram: `<svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>`,
+	instagram: `<svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>`,
+	tiktok: `<svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>`,
+	arrowRight: `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>`
 };
 
-const pageTitle = `${site.brand} - ${site.title}`;
-const pageDescription = "Твій STEP - відкрита спільнота руху. Рух у своєму темпі, атмосфера підтримки, люди та горизонт.";
+const pageTitle = `${site.brand} — ${site.tagline}`;
+const pageDescription = 'Вільна спортивна спільнота Києва. Біг, вело, вуличні тренування, відкритий простір та люди поруч. Твій темп. Твій шлях. Твій степ.';
 ---
 
 <Layout title={pageTitle} description={pageDescription} lang="uk">
-  <Fragment slot="head">
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
-  </Fragment>
-
-  <style>
-      :root {
-        --bg: #f3efe7;
-        --ink: #17181d;
-        --muted: rgba(23, 24, 29, 0.72);
-        --sand: #d0b57a;
-        --line: rgba(23, 24, 29, 0.14);
-        --panel: rgba(255, 255, 255, 0.52);
-        --panel-strong: rgba(255, 255, 255, 0.72);
-        --hero-ink: #111218;
-        --font-body: "Manrope", "Segoe UI", sans-serif;
-        --font-display: "Playfair Display", "Times New Roman", serif;
-        --space-section: clamp(38px, 4.2vw, 54px);
-        --space-section-tight: clamp(30px, 4vw, 46px);
-        --topbar-height: 74px;
-      }
-
-      * { box-sizing: border-box; }
-
-      html { scroll-behavior: smooth; }
-
-      body {
-        margin: 0;
-        color: var(--ink);
-        line-height: 1.6;
-        font-family: var(--font-body);
-        background:
-          radial-gradient(circle at 12% 10%, rgba(208, 181, 122, 0.24), transparent 34%),
-          radial-gradient(circle at 85% 7%, rgba(23, 24, 29, 0.11), transparent 31%),
-          linear-gradient(110deg, rgba(255, 255, 255, 0.24), rgba(255, 255, 255, 0) 34%),
-          var(--bg);
-        animation: page-fade 540ms ease-out;
-      }
-
-      a {
-        color: inherit;
-        text-decoration: none;
-      }
-
-      .container {
-        width: min(1140px, calc(100% - 32px));
-        margin: 0 auto;
-      }
-
-      section[id] {
-        scroll-margin-top: calc(var(--topbar-height) + 16px);
-      }
-
-      .topbar {
-        position: sticky;
-        top: 0;
-        z-index: 10;
-        background: rgba(243, 239, 231, 0.78);
-        backdrop-filter: blur(12px);
-        border-bottom: 1px solid var(--line);
-      }
-
-      .nav {
-        min-height: 74px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 16px;
-      }
-
-      .brand {
-        display: flex;
-        align-items: center;
-        gap: 0;
-      }
-
-      .brand-mark {
-        width: 64px;
-        height: 64px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-      }
-
-      .brand-mark img {
-        width: 64px;
-        height: 64px;
-        display: block;
-        object-fit: contain;
-      }
-
-      .nav-links,
-      .nav-actions {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-      }
-
-      .nav-toggle {
-        display: none;
-      }
-
-      .nav-links {
-        gap: 24px;
-        color: var(--muted);
-        font-size: 0.92rem;
-      }
-
-      .nav-links a {
-        position: relative;
-        padding-bottom: 3px;
-      }
-
-      .nav-links a::after {
-        content: "";
-        position: absolute;
-        left: 0;
-        bottom: 0;
-        width: 100%;
-        height: 1px;
-        background: rgba(23, 24, 29, 0.46);
-        transform: scaleX(0);
-        transform-origin: left center;
-        transition: transform 220ms ease;
-      }
-
-      .nav-links a:hover::after {
-        transform: scaleX(1);
-      }
-
-      .button {
-        min-height: 46px;
-        padding: 0 20px;
-        border-radius: 999px;
-        border: 1px solid var(--ink);
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        transition: 0.2s ease;
-        font-weight: 600;
-        letter-spacing: 0.01em;
-      }
-
-      .button:hover { transform: translateY(-1px); }
-
-      .button.primary {
-        color: #f8f4ea;
-        background: var(--hero-ink);
-        border-color: var(--hero-ink);
-      }
-
-      .button.secondary {
-        background: rgba(255, 255, 255, 0.5);
-      }
-
-      .button.icon-btn {
-        padding: 0;
-        width: 44px;
-        min-height: 44px;
-        border: none;
-        background: transparent !important;
-        color: var(--ink);
-      }
-
-      main section {
-        padding: var(--space-section) 0;
-      }
-
-      .hero {
-        padding-top: var(--space-section-tight);
-        padding-bottom: clamp(32px, 4.5vw, 56px);
-      }
-
-      .hero > .container > div:first-child {
-        animation: rise-in 760ms 80ms both cubic-bezier(0.2, 0.65, 0.2, 1);
-      }
-
-      .hero-grid {
-        display: grid;
-        grid-template-columns: 1.1fr 0.9fr;
-        gap: clamp(22px, 3vw, 34px);
-        align-items: start;
-      }
-
-      .eyebrow {
-        display: inline-block;
-        margin-bottom: 16px;
-        font-size: 0.76rem;
-        letter-spacing: 0.18em;
-        text-transform: uppercase;
-        color: rgba(23, 24, 29, 0.64);
-        font-weight: 700;
-        border-bottom: 1px solid rgba(23, 24, 29, 0.24);
-        padding-bottom: 3px;
-      }
-
-      h1 {
-        margin: 0 0 16px;
-        font-family: var(--font-display);
-        font-size: clamp(2.1rem, 5.8vw, 4.8rem);
-        line-height: 0.97;
-        letter-spacing: -0.015em;
-        color: var(--hero-ink);
-        text-wrap: balance;
-      }
-
-      .title-line {
-        display: block;
-      }
-
-      .lead-copy {
-        margin: 0 0 18px;
-        max-width: 60ch;
-      }
-
-      .lead {
-        margin: 0 0 10px;
-        color: var(--muted);
-        font-size: 1rem;
-        max-width: 56ch;
-      }
-
-      .lead:last-child {
-        margin-bottom: 0;
-      }
-
-      .hero-actions {
-        margin-bottom: 10px;
-      }
-
-      .hero-more {
-        margin-top: 8px;
-      }
-
-      .hero-more details {
-        border: 1px solid var(--line);
-        border-radius: 16px;
-        padding: 8px 12px;
-        background: rgba(255, 255, 255, 0.46);
-      }
-
-      .hero-more summary {
-        cursor: pointer;
-        font-weight: 600;
-        font-size: 0.94rem;
-      }
-
-      .hero-more p {
-        margin: 10px 0 0;
-      }
-
-      .proof-strip {
-        margin-top: 16px;
-        display: grid;
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-        gap: 10px;
-      }
-
-      .proof-chip {
-        border: 1px solid var(--line);
-        border-radius: 14px;
-        padding: 9px 11px;
-        background: rgba(255, 255, 255, 0.56);
-        display: grid;
-        gap: 2px;
-      }
-
-      .proof-chip .k {
-        font-size: 0.72rem;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        color: rgba(23, 24, 29, 0.62);
-      }
-
-      .proof-chip .v {
-        font-size: 0.94rem;
-        font-weight: 600;
-      }
-
-      .hero-visual {
-        border: 1px solid var(--line);
-        border-radius: 36px;
-        padding: 0;
-        background: transparent;
-        display: block;
-        min-height: 0;
-        box-shadow: 0 28px 52px rgba(23, 24, 29, 0.18);
-        overflow: hidden;
-        position: relative;
-        animation: rise-in 820ms 180ms both cubic-bezier(0.2, 0.65, 0.2, 1);
-      }
-
-      .hero-visual::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(170deg, rgba(255, 255, 255, 0) 35%, rgba(23, 24, 29, 0.24) 100%);
-        pointer-events: none;
-      }
-
-      .hero-visual img {
-        width: 100%;
-        height: auto;
-        min-height: 0;
-        display: block;
-        object-fit: contain;
-        border: 0;
-        border-radius: 0;
-      }
-
-      .hero-visual video {
-        width: 100%;
-        border-radius: 16px;
-        border: 1px solid rgba(255, 255, 255, 0.18);
-        aspect-ratio: 16 / 9;
-        object-fit: cover;
-      }
-
-
-
-      .photo-card {
-        display: grid;
-        gap: 10px;
-      }
-
-      .photo-card img {
-        width: 100%;
-        border-radius: 16px;
-        border: 1px solid var(--line);
-      }
-
-      .photo-caption {
-        color: var(--muted);
-        font-size: 0.9rem;
-        line-height: 1.55;
-      }
-
-      .section-head {
-        display: flex;
-        justify-content: space-between;
-        align-items: end;
-        gap: 20px;
-        margin-bottom: 16px;
-      }
-
-
-      .section-head h2 {
-        margin: 0;
-        font-family: var(--font-display);
-        font-size: clamp(1.9rem, 3.9vw, 3.1rem);
-        letter-spacing: -0.02em;
-        line-height: 1;
-        text-wrap: balance;
-      }
-
-      .section-head p {
-        margin: 0;
-        color: var(--muted);
-        max-width: 620px;
-      }
-
-      .grid-3 {
-        display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 14px;
-      }
-
-      .grid-2 {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 14px;
-      }
-
-      .card {
-        border: 1px solid var(--line);
-        background: var(--panel-strong);
-        border-radius: 22px;
-        padding: 22px 20px;
-        transition: transform 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease, background 0.35s ease;
-      }
-
-      .card:hover {
-        transform: translateY(-4px);
-        border-color: rgba(23, 24, 29, 0.3);
-        background: rgba(255, 255, 255, 0.86);
-        box-shadow: 0 16px 30px rgba(23, 24, 29, 0.09);
-      }
-
-      .card h3 {
-        margin: 0 0 8px;
-        font-size: 1.2rem;
-        letter-spacing: -0.02em;
-        font-family: var(--font-display);
-      }
-
-      .card p {
-        margin: 0;
-        color: var(--muted);
-      }
-
-      .label {
-        display: inline-block;
-        margin-bottom: 10px;
-        padding: 6px 10px;
-        border-radius: 999px;
-        border: 1px solid rgba(208, 181, 122, 0.7);
-        background: rgba(208, 181, 122, 0.2);
-        font-size: 0.75rem;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-      }
-
-      .band .container {
-        padding: clamp(14px, 2.2vw, 24px);
-        border-radius: 28px;
-        border: 1px solid var(--line);
-        background: linear-gradient(180deg, rgba(255, 255, 255, 0.64), rgba(255, 255, 255, 0.4));
-      }
-
-      .faq details {
-        border: 1px solid var(--line);
-        border-radius: 16px;
-        padding: 12px 14px;
-        background: var(--panel-strong);
-      }
-
-      .faq details + details {
-        margin-top: 10px;
-      }
-
-      .faq summary {
-        cursor: pointer;
-        font-weight: 600;
-      }
-
-      .faq p {
-        margin: 10px 0 0;
-      }
-
-      .team-note {
-        border: 1px dashed rgba(23, 24, 29, 0.26);
-        border-radius: 18px;
-        padding: 14px;
-        color: var(--muted);
-        font-size: 0.95rem;
-      }
-
-      .reveal {
-        opacity: 0;
-        transform: translateY(28px);
-        transition: opacity 640ms cubic-bezier(0.2, 0.65, 0.2, 1), transform 640ms cubic-bezier(0.2, 0.65, 0.2, 1);
-      }
-
-      .reveal.in-view {
-        opacity: 1;
-        transform: translateY(0);
-      }
-
-      .stagger > * {
-        transition-delay: 0ms;
-      }
-
-      .stagger.in-view > :nth-child(1) { transition-delay: 40ms; }
-      .stagger.in-view > :nth-child(2) { transition-delay: 140ms; }
-      .stagger.in-view > :nth-child(3) { transition-delay: 240ms; }
-      .stagger.in-view > :nth-child(4) { transition-delay: 340ms; }
-
-      @keyframes page-fade {
-        from { opacity: 0; }
-        to { opacity: 1; }
-      }
-
-      @keyframes rise-in {
-        from {
-          opacity: 0;
-          transform: translateY(26px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-
-      @keyframes drift {
-        from { transform: translate3d(-1.8%, 0, 0); }
-        to { transform: translate3d(2.2%, -2.2%, 0); }
-      }
-
-
-
-
-      @media (prefers-reduced-motion: reduce) {
-        *, *::before, *::after {
-          animation: none !important;
-          transition: none !important;
-          scroll-behavior: auto !important;
-        }
-
-        .reveal {
-          opacity: 1;
-          transform: none;
-        }
-      }
-
-      footer {
-        border-top: 1px solid var(--line);
-        padding: 22px 0 38px;
-      }
-
-      .join-band {
-        margin-top: 6px;
-      }
-
-      .join-band .container {
-        border: 1px solid rgba(23, 24, 29, 0.22);
-        border-radius: 24px;
-        background: linear-gradient(120deg, rgba(17, 18, 24, 0.95), rgba(36, 38, 49, 0.94));
-        color: #f8f4ea;
-        padding: 20px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 14px;
-        flex-wrap: wrap;
-      }
-
-      .join-band h3 {
-        margin: 0;
-        font-family: var(--font-display);
-        font-size: clamp(1.3rem, 2.6vw, 1.9rem);
-      }
-
-      .join-band p {
-        margin: 4px 0 0;
-        color: rgba(248, 244, 234, 0.85);
-      }
-
-      .join-band .button.primary {
-        background: #f8f4ea;
-        color: #17181d;
-        border-color: #f8f4ea;
-      }
-
-      .mobile-drawer {
-        display: none;
-      }
-
-      .footer-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 16px;
-        flex-wrap: wrap;
-      }
-
-      .footer-links {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 14px;
-        color: var(--muted);
-      }
-
-      .social-icon {
-        color: var(--ink);
-        transition: transform 0.2s ease;
-        display: flex;
-      }
-
-      .social-icon:hover {
-        transform: scale(1.1);
-      }
-
-      @media (max-width: 980px) {
-        .hero-grid,
-        .grid-3,
-        .grid-2 {
-          grid-template-columns: 1fr;
-        }
-
-        .hero-visual {
-          min-height: 0;
-          aspect-ratio: auto;
-        }
-
-        .hero-visual img {
-          min-height: 0;
-          height: auto;
-          object-fit: contain;
-          object-position: 54% 50%;
-        }
-
-        .eyebrow {
-          margin-bottom: 10px;
-          font-size: 0.7rem;
-        }
-
-        h1 {
-          margin-bottom: 12px;
-          font-size: clamp(2rem, 12vw, 3.1rem);
-          line-height: 1.02;
-        }
-
-        .lead {
-          font-size: 1rem;
-          margin-bottom: 16px;
-        }
-
-        .hero-actions {
-          margin-bottom: 8px;
-          gap: 10px;
-          flex-wrap: wrap;
-        }
-
-        .section-head {
-          display: block;
-        }
-
-        .section-head p {
-          margin-top: 10px;
-        }
-
-        .nav-links {
-          display: none;
-        }
-
-        .nav-toggle {
-          display: inline-flex;
-          min-height: 42px;
-          padding: 0 14px;
-          border: 1px solid var(--line);
-          border-radius: 999px;
-          background: rgba(255, 255, 255, 0.56);
-          font-weight: 600;
-          font-family: var(--font-body);
-        }
-
-        .nav-actions {
-          gap: 6px;
-        }
-
-        .proof-strip {
-          grid-template-columns: repeat(2, minmax(0, 1fr));
-          gap: 8px;
-        }
-
-        .mobile-drawer {
-          display: block;
-          max-height: 0;
-          overflow: hidden;
-          opacity: 0;
-          border-top: 1px solid transparent;
-          transition: max-height 260ms ease, opacity 220ms ease, border-color 220ms ease;
-        }
-
-        .mobile-drawer.open {
-          max-height: 360px;
-          opacity: 1;
-          border-color: var(--line);
-        }
-
-        .mobile-drawer .container {
-          display: grid;
-          gap: 8px;
-          padding: 12px 0 14px;
-        }
-
-        .mobile-drawer a {
-          padding: 10px 12px;
-          border-radius: 10px;
-          background: rgba(255, 255, 255, 0.48);
-        }
-
-        .join-band .container {
-          padding: 16px;
-        }
-
-        .band .container {
-          padding: 14px;
-        }
-      }
-    </style>
-
-    <header class="topbar">
-      <div class="container nav">
-        <a href="#top" class="brand" aria-label="Плавно прокрутити до початку сторінки">
-          <span class="brand-mark"><img src="/images/home/logo.svg" alt="Логотип Твій STEP" /></span>
-        </a>
-
-        <nav class="nav-links" aria-label="Головна навігація">
-          {navLinks.map((link) => (
-            <a href={link.href}>{link.label}</a>
-          ))}
-        </nav>
-
-        <div class="nav-actions">
-          <button class="nav-toggle" id="navToggle" type="button" aria-expanded="false" aria-controls="mobileMenu">Меню</button>
-          <a class="button secondary icon-btn social-icon" href={site.social.instagram} target="_blank" rel="noreferrer" aria-label="Instagram"><Fragment set:html={icons.instagram} /></a>
-          <a class="button secondary icon-btn social-icon" href={site.social.tiktok} target="_blank" rel="noreferrer" aria-label="TikTok"><Fragment set:html={icons.tiktok} /></a>
-          <a class="button primary icon-btn social-icon" href={site.social.telegram} target="_blank" rel="noreferrer" aria-label="Telegram"><Fragment set:html={icons.telegram} /></a>
-        </div>
-      </div>
-
-      <nav class="mobile-drawer" id="mobileMenu" aria-label="Мобільна навігація">
-        <div class="container">
-          {navLinks.map((link) => (
-            <a href={link.href}>{link.label}</a>
-          ))}
-        </div>
-      </nav>
-    </header>
-
-    <main id="top">
-      <section class="hero">
-        <div class="container hero-grid">
-          <div>
-              <span class="eyebrow">Твій ритм. Твої люди.</span>
-            <h1>
-              {titleLines.map((line) => (
-                <span class="title-line">{line}</span>
-              ))}
-            </h1>
-            <div class="lead-copy">
-              <p class="lead">{heroLeadPrimary}</p>
-              <div class="hero-more">
-                <details>
-                  <summary>Читати маніфест спільноти</summary>
-                  {heroLeadExtended.map((paragraph) => (
-                    <p class="lead">{paragraph}</p>
-                  ))}
-                </details>
-              </div>
-            </div>
-
-            <div class="nav-actions hero-actions">
-              <a class="button primary" href={site.social.telegram} target="_blank" rel="noreferrer">Приєднатися в Telegram</a>
-              <a class="button secondary" href="#join">Як це працює</a>
-            </div>
-
-            <div class="proof-strip" aria-label="Ключові факти про спільноту">
-              {socialProof.map((item) => (
-                <div class="proof-chip">
-                  <span class="k">{item.label}</span>
-                  <span class="v">{item.value}</span>
-                </div>
-              ))}
-            </div>
-
-          </div>
-
-          <aside class="hero-visual" aria-label="Обкладинка спільноти">
-            <img src={heroImageSrc} alt="Головне фото спільноти" />
-          </aside>
-        </div>
-      </section>
-
-      <section id="about" class="reveal band">
-        <div class="container">
-          <div class="section-head reveal">
-            <h2>Хто ми</h2>
-            <p>
-              Твій STEP - це більше, ніж спортивний клуб. Це простір свободи, руху і підтримки,
-              де кожен крок робиться разом.
-            </p>
-          </div>
-
-          <div class="grid-3 reveal stagger">
-            {manifesto.map((item) => (
-              <article class="card reveal">
-                <h3>{item.title}</h3>
-                <p>{item.text}</p>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section id="meaning" class="reveal">
-        <div class="container">
-          <div class="section-head reveal">
-            <h2>Що означає назва</h2>
-            <p>
-              У назві одночасно є особистий сенс, щоденна дія і культурний образ простору.
-            </p>
-          </div>
-
-          <div class="grid-3 reveal stagger">
-            {meaning.map((item) => (
-              <article class="card reveal">
-                <span class="label">{item.label}</span>
-                <p>{item.text}</p>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section class="reveal band">
-        <div class="container">
-          <div class="section-head reveal">
-            <h2>Люди та атмосфера</h2>
-            <p>
-              Тут важливе відчуття "я тут свій" - підтримка, довіра і жива атмосфера людей поруч.
-            </p>
-          </div>
-
-          <div class="grid-2 reveal stagger">
-            <article class="card reveal">
-              <div class="photo-card">
-                <img src="/images/home/community-flag-group.webp" alt="Учасники Твій STEP після спільного руху з прапором клубу" />
-                <div class="photo-caption">
-                  Після спільного кроку: команда, усмішки і прапор Твій STEP як знак спільної дороги.
-                </div>
-              </div>
-            </article>
-            <article class="card reveal">
-              <div class="photo-card">
-                <img src="/images/home/community-skyline-group.webp" alt="Учасники спільноти на оглядовому майданчику" />
-                <div class="photo-caption">
-                  Після руху: розмова, відновлення і відчуття, що ти серед своїх людей.
-                </div>
-              </div>
-            </article>
-          </div>
-        </div>
-      </section>
-
-      <section id="join" class="reveal">
-        <div class="container">
-          <div class="section-head reveal">
-            <h2>Як долучитися</h2>
-          </div>
-
-          <div class="grid-3 reveal stagger">
-            {joinSteps.map((step, index) => (
-              <article class="card reveal">
-                <h3>{index + 1}. {step.title}</h3>
-                <p>{step.text}</p>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section id="team" class="reveal band">
-        <div class="container">
-          <div class="section-head reveal">
-            <h2>Команда</h2>
-            <p>
-              Люди, які тримають ритм спільноти і підтримують атмосферу відкритості.
-            </p>
-          </div>
-
-          <div class="grid-3 reveal stagger" style="margin-bottom: 14px;">
-            <article class="card reveal">
-              <span class="label">Координація старту</span>
-              <p>Підтримують спільний темп і допомагають новим учасникам пройти перший маршрут без тиску.</p>
-            </article>
-            <article class="card reveal">
-              <span class="label">Координація маршрутів</span>
-              <p>Продумують безпечні міські траєкторії, щоб рухатися було комфортно в будь-якому досвіді.</p>
-            </article>
-            <article class="card reveal">
-              <span class="label">Координація спільноти</span>
-              <p>Тримають тепло спільноти: знайомства, підтримка, розмова після руху і відчуття приналежності.</p>
-            </article>
-          </div>
-
-          <div class="team-note photo-card reveal">
-            <img src="/images/home/community-view-selfie.webp" alt="Команда Твій STEP на фоні річки та міського горизонту" />
-            <div class="photo-caption">
-              Живий погляд зсередини спільноти: люди, горизонт і легкість бути разом у русі.
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section id="faq" class="faq reveal band">
-        <div class="container">
-          <div class="section-head reveal">
-            <h2>Питання та відповіді</h2>
-            <p>Коротко закриваємо головні запитання перед першим кроком.</p>
-          </div>
-
-          {faq.map((item) => (
-            <details class="reveal">
-              <summary>{item.q}</summary>
-              <p>{item.a}</p>
-            </details>
-          ))}
-        </div>
-      </section>
-    </main>
-
-    <section class="join-band reveal">
-      <div class="container">
-        <div>
-          <h3>Готовий зробити свій перший крок?</h3>
-          <p>Знайомся з людьми, рухайся у своєму темпі та будь частиною Твій STEP.</p>
-        </div>
-        <a class="button primary" href={site.social.telegram} target="_blank" rel="noreferrer">Увійти в Telegram</a>
-      </div>
-    </section>
-
-    <footer>
-      <div class="container footer-row">
-        <a href="#top" class="brand" aria-label="Плавно прокрутити до початку сторінки">
-          <span class="brand-mark"><img src="/images/home/logo.svg" alt="Логотип Твій STEP" /></span>
-        </a>
-
-        <div class="footer-links">
-          {navLinks.map((link) => (
-            <a href={link.href}>{link.label}</a>
-          ))}
-          <a class="social-icon" href={site.social.telegram} target="_blank" rel="noreferrer" aria-label="Telegram"><Fragment set:html={icons.telegram} /></a>
-          <a class="social-icon" href={site.social.instagram} target="_blank" rel="noreferrer" aria-label="Instagram"><Fragment set:html={icons.instagram} /></a>
-          <a class="social-icon" href={site.social.tiktok} target="_blank" rel="noreferrer" aria-label="TikTok"><Fragment set:html={icons.tiktok} /></a>
-        </div>
-      </div>
-    </footer>
-
-    <script>
-      const items = Array.from(document.querySelectorAll('.reveal'));
-      const navToggle = document.getElementById('navToggle');
-      const mobileMenu = document.getElementById('mobileMenu');
-
-      if (navToggle && mobileMenu) {
-        navToggle.addEventListener('click', () => {
-          const isOpen = mobileMenu.classList.toggle('open');
-          navToggle.setAttribute('aria-expanded', String(isOpen));
-        });
-
-        mobileMenu.querySelectorAll('a').forEach((link) => {
-          link.addEventListener('click', () => {
-            mobileMenu.classList.remove('open');
-            navToggle.setAttribute('aria-expanded', 'false');
-          });
-        });
-      }
-
-      if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches && 'IntersectionObserver' in window) {
-        const io = new IntersectionObserver((entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              entry.target.classList.add('in-view');
-              io.unobserve(entry.target);
-            }
-          });
-        }, { threshold: 0.14, rootMargin: '0px 0px -8% 0px' });
-
-        items.forEach((item) => io.observe(item));
-      } else {
-        items.forEach((item) => item.classList.add('in-view'));
-      }
-    </script>
- </Layout>
+	<Fragment slot="head">
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400;1,600&display=swap"
+			rel="stylesheet"
+		/>
+	</Fragment>
+
+	<style>
+		:root {
+			--graphite: #18191d;
+			--graphite-card: #202228;
+			--graphite-deep: #111215;
+			--ivory: #f4f0e8;
+			--sand: #d8c28a;
+			--sand-glow: rgba(216, 194, 138, 0.28);
+			--sand-subtle: rgba(216, 194, 138, 0.12);
+			--muted-ivory: rgba(244, 240, 232, 0.68);
+			--line-graphite: rgba(244, 240, 232, 0.12);
+			--line-gold: rgba(216, 194, 138, 0.35);
+			--font-body: "Manrope", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+			--font-display: "Playfair Display", Georgia, serif;
+			--topbar-height: 72px;
+		}
+
+		* {
+			box-sizing: border-box;
+		}
+
+		html {
+			background-color: var(--graphite-deep);
+		}
+
+		body {
+			margin: 0;
+			color: var(--ivory);
+			background-color: var(--graphite-deep);
+			font-family: var(--font-body);
+			line-height: 1.6;
+			overflow-x: clip;
+			position: relative;
+			-webkit-font-smoothing: antialiased;
+		}
+
+		/* Fixed Cosmic Particle Canvas & Sunrise Atmosphere */
+		.sky-backdrop-fixed {
+			position: fixed;
+			inset: 0;
+			width: 100vw;
+			height: 100vh;
+			pointer-events: none;
+			z-index: 0;
+			overflow: hidden;
+		}
+
+		#starCanvas {
+			position: absolute;
+			inset: 0;
+			width: 100%;
+			height: 100%;
+			display: block;
+			z-index: 1;
+		}
+
+		/* Sunrise Sky Gradient Overlay: starts dark at top, scrolls into warm Kyiv dawn */
+		.dawn-overlay {
+			position: absolute;
+			inset: 0;
+			width: 100%;
+			height: 100%;
+			z-index: 2;
+			opacity: 0;
+			pointer-events: none;
+			will-change: opacity;
+			transform: translateZ(0);
+			background:
+				radial-gradient(ellipse 120% 75% at 50% 100%, rgba(216, 194, 138, 0.52) 0%, rgba(216, 170, 110, 0.3) 35%, rgba(160, 110, 70, 0.12) 65%, transparent 85%),
+				linear-gradient(180deg, rgba(24, 25, 29, 0) 0%, rgba(32, 29, 36, 0.25) 40%, rgba(55, 45, 42, 0.5) 70%, rgba(100, 75, 50, 0.4) 100%);
+		}
+
+		.dawn-sun-disc {
+			position: absolute;
+			bottom: -80px;
+			left: 50%;
+			transform: translateX(-50%) translateY(85px) scale(0.85) translateZ(0);
+			width: min(850px, 92vw);
+			height: 400px;
+			border-radius: 50% 50% 0 0;
+			background: radial-gradient(circle at 50% 85%, rgba(255, 248, 235, 0.75) 0%, rgba(244, 240, 232, 0.55) 20%, rgba(216, 194, 138, 0.35) 45%, rgba(200, 140, 90, 0.12) 65%, rgba(17, 18, 21, 0) 80%);
+			opacity: 0;
+			pointer-events: none;
+			will-change: opacity, transform;
+		}
+
+		a {
+			color: inherit;
+			text-decoration: none;
+		}
+
+		.container {
+			width: min(1200px, calc(100% - 40px));
+			margin: 0 auto;
+			position: relative;
+			z-index: 2;
+		}
+
+		/* ========================================================
+		   SVG BACKGROUND SCROLL RIBBON
+		   ======================================================== */
+		.scroll-ribbon-container {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			pointer-events: none;
+			z-index: 1;
+			overflow: hidden;
+		}
+
+		.scroll-ribbon-svg {
+			width: 100%;
+			height: 100%;
+			overflow: visible;
+		}
+
+		.ribbon-spine {
+			fill: none;
+			stroke: url(#ribbonGradient);
+			stroke-width: 2.2;
+			stroke-linecap: round;
+			stroke-dasharray: 6000;
+			stroke-dashoffset: 6000;
+			transition: stroke-dashoffset 80ms linear;
+			transform: translateZ(0);
+		}
+
+		.ribbon-accent {
+			fill: none;
+			stroke: rgba(244, 240, 232, 0.08);
+			stroke-width: 1;
+			stroke-linecap: round;
+			stroke-dasharray: 12 8;
+		}
+
+		/* ========================================================
+		   NAVBAR
+		   ======================================================== */
+		.topbar {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			z-index: 100;
+			background: rgba(24, 25, 29, 0.76);
+			backdrop-filter: blur(16px);
+			-webkit-backdrop-filter: blur(16px);
+			border-bottom: 1px solid var(--line-graphite);
+			transition: background 0.3s ease, border-color 0.3s ease;
+		}
+
+		.nav-wrapper {
+			min-height: var(--topbar-height);
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			gap: 16px;
+		}
+
+		.brand {
+			display: inline-flex;
+			align-items: center;
+			gap: 12px;
+		}
+
+		.brand-mark {
+			width: 44px;
+			height: 44px;
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			border-radius: 50%;
+			background: rgba(244, 240, 232, 0.04);
+			border: 1px solid rgba(216, 194, 138, 0.25);
+			padding: 6px;
+			transition: transform 0.3s ease, border-color 0.3s ease;
+		}
+
+		.brand:hover .brand-mark {
+			transform: scale(1.05);
+			border-color: var(--sand);
+		}
+
+		.brand-mark img {
+			width: 100%;
+			height: 100%;
+			object-fit: contain;
+		}
+
+		.brand-text {
+			font-family: var(--font-display);
+			font-size: 1.25rem;
+			font-weight: 700;
+			letter-spacing: 0.04em;
+			color: var(--ivory);
+		}
+
+		.brand-text span {
+			color: var(--sand);
+		}
+
+		.nav-menu {
+			display: flex;
+			align-items: center;
+			gap: 32px;
+		}
+
+		.nav-link {
+			font-size: 0.88rem;
+			font-weight: 500;
+			letter-spacing: 0.05em;
+			text-transform: uppercase;
+			color: var(--muted-ivory);
+			position: relative;
+			padding: 4px 0;
+			transition: color 0.2s ease;
+		}
+
+		.nav-link::after {
+			content: "";
+			position: absolute;
+			left: 0;
+			bottom: 0;
+			width: 100%;
+			height: 1px;
+			background: var(--sand);
+			transform: scaleX(0);
+			transform-origin: left center;
+			transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+		}
+
+		.nav-link:hover {
+			color: var(--ivory);
+		}
+
+		.nav-link:hover::after {
+			transform: scaleX(1);
+		}
+
+		.nav-actions {
+			display: flex;
+			align-items: center;
+			gap: 12px;
+		}
+
+		.social-link {
+			width: 40px;
+			height: 40px;
+			border-radius: 50%;
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			border: 1px solid var(--line-graphite);
+			background: rgba(255, 255, 255, 0.03);
+			color: var(--ivory);
+			transition: 0.25s ease;
+		}
+
+		.social-link:hover {
+			border-color: var(--sand);
+			color: var(--sand);
+			transform: translateY(-2px);
+			background: var(--sand-subtle);
+		}
+
+		.btn-cta-nav {
+			padding: 0 18px;
+			height: 40px;
+			border-radius: 999px;
+			background: var(--sand);
+			color: var(--graphite-deep);
+			font-weight: 600;
+			font-size: 0.85rem;
+			letter-spacing: 0.02em;
+			display: inline-flex;
+			align-items: center;
+			gap: 8px;
+			transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+		}
+
+		.btn-cta-nav:hover {
+			transform: translateY(-1px);
+			background: #e2ce9a;
+			box-shadow: 0 4px 18px rgba(216, 194, 138, 0.3);
+		}
+
+		/* ========================================================
+		   HERO SECTION (Dusk / Night-to-Dawn Duality)
+		   ======================================================== */
+		.hero-section {
+			height: 100vh;
+			height: 100dvh;
+			min-height: 100vh;
+			min-height: 100dvh;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			position: relative;
+			padding: calc(var(--topbar-height) + 16px) 0 40px;
+			background: transparent;
+			border-bottom: 1px solid var(--line-graphite);
+			overflow: hidden;
+			scroll-snap-align: start;
+			scroll-snap-stop: always;
+			box-sizing: border-box;
+		}
+
+		.hero-glow-line {
+			position: absolute;
+			bottom: 0;
+			left: 0;
+			width: 100%;
+			height: 1px;
+			background: linear-gradient(90deg, transparent 0%, var(--sand) 50%, transparent 100%);
+			opacity: 0.6;
+		}
+
+		.hero-grid {
+			display: grid;
+			grid-template-columns: 1.15fr 0.85fr;
+			gap: clamp(32px, 5vw, 64px);
+			align-items: center;
+		}
+
+		.hero-badge {
+			display: inline-flex;
+			align-items: center;
+			gap: 8px;
+			padding: 6px 14px;
+			border-radius: 999px;
+			background: var(--sand-subtle);
+			border: 1px solid var(--line-gold);
+			color: var(--sand);
+			font-size: 0.78rem;
+			font-weight: 600;
+			letter-spacing: 0.14em;
+			text-transform: uppercase;
+			margin-bottom: 24px;
+		}
+
+		.hero-badge-pulse {
+			width: 6px;
+			height: 6px;
+			border-radius: 50%;
+			background: var(--sand);
+			box-shadow: 0 0 8px var(--sand);
+			animation: pulseDot 2s infinite;
+		}
+
+		@keyframes pulseDot {
+			0%, 100% { opacity: 0.4; transform: scale(0.9); }
+			50% { opacity: 1; transform: scale(1.3); }
+		}
+
+		.hero-title {
+			font-family: var(--font-display);
+			font-size: clamp(2.4rem, 5.2vw, 4.2rem);
+			font-weight: 700;
+			line-height: 1.05;
+			letter-spacing: -0.02em;
+			margin: 0 0 16px;
+			color: var(--ivory);
+			text-wrap: balance;
+		}
+
+		.hero-title em {
+			font-style: italic;
+			color: var(--sand);
+			font-weight: 500;
+		}
+
+		.hero-logo-slot {
+			width: min(100%, 460px);
+			aspect-ratio: 2199 / 1431;
+			margin: 0 0 20px;
+			pointer-events: none;
+		}
+
+		.hero-subtitle {
+			font-size: clamp(1.05rem, 1.8vw, 1.25rem);
+			line-height: 1.65;
+			color: var(--muted-ivory);
+			max-width: 560px;
+			margin: 0 0 36px;
+			font-weight: 400;
+		}
+
+		.hero-actions {
+			display: flex;
+			align-items: center;
+			gap: 16px;
+			flex-wrap: wrap;
+		}
+
+		.btn-primary {
+			height: 52px;
+			padding: 0 28px;
+			border-radius: 999px;
+			background: var(--sand);
+			color: var(--graphite-deep);
+			font-weight: 700;
+			font-size: 0.96rem;
+			letter-spacing: 0.02em;
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			gap: 10px;
+			transition: all 0.25s ease;
+			box-shadow: 0 6px 24px rgba(216, 194, 138, 0.25);
+		}
+
+		.btn-primary:hover {
+			transform: translateY(-2px);
+			background: #e4d1a0;
+			box-shadow: 0 10px 32px rgba(216, 194, 138, 0.4);
+		}
+
+		.btn-secondary {
+			height: 52px;
+			padding: 0 24px;
+			border-radius: 999px;
+			border: 1px solid var(--line-graphite);
+			background: rgba(255, 255, 255, 0.03);
+			color: var(--ivory);
+			font-weight: 600;
+			font-size: 0.94rem;
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			gap: 8px;
+			transition: all 0.25s ease;
+		}
+
+		.btn-secondary:hover {
+			border-color: var(--line-gold);
+			color: var(--sand);
+			background: var(--sand-subtle);
+			transform: translateY(-2px);
+		}
+
+		.hero-visual-card {
+			position: relative;
+			border-radius: 32px;
+			padding: 8px;
+			background: linear-gradient(145deg, rgba(216, 194, 138, 0.22), rgba(24, 25, 29, 0.6));
+			box-shadow: 0 32px 80px rgba(0, 0, 0, 0.5);
+			animation: floatCard 6s ease-in-out infinite;
+		}
+
+		@keyframes floatCard {
+			0%, 100% { transform: translateY(0); }
+			50% { transform: translateY(-8px); }
+		}
+
+		.hero-img-inner {
+			position: relative;
+			border-radius: 26px;
+			overflow: hidden;
+			aspect-ratio: 4 / 5;
+		}
+
+		.hero-img-inner img {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+			display: block;
+			transition: transform 0.6s ease;
+		}
+
+		.hero-visual-card:hover .hero-img-inner img {
+			transform: scale(1.03);
+		}
+
+		.hero-img-overlay {
+			position: absolute;
+			inset: 0;
+			background: linear-gradient(to top, rgba(17, 18, 21, 0.85) 0%, transparent 60%);
+			pointer-events: none;
+		}
+
+		.hero-card-caption {
+			position: absolute;
+			bottom: 24px;
+			left: 24px;
+			right: 24px;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			gap: 12px;
+		}
+
+		.hero-caption-pill {
+			font-size: 0.82rem;
+			font-weight: 600;
+			letter-spacing: 0.04em;
+			color: var(--ivory);
+			background: rgba(17, 18, 21, 0.72);
+			backdrop-filter: blur(8px);
+			padding: 6px 14px;
+			border-radius: 999px;
+			border: 1px solid rgba(255, 255, 255, 0.12);
+		}
+
+		.hero-scroll-cue {
+			position: absolute;
+			bottom: 20px;
+			left: 50%;
+			transform: translateX(-50%);
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			gap: 8px;
+			color: var(--muted-ivory);
+			font-size: 0.74rem;
+			letter-spacing: 0.16em;
+			text-transform: uppercase;
+			opacity: 0.7;
+			transition: opacity 0.3s ease;
+		}
+
+		.hero-scroll-cue:hover {
+			opacity: 1;
+		}
+
+		.scroll-arrow-anim {
+			width: 18px;
+			height: 28px;
+			border: 1px solid var(--line-gold);
+			border-radius: 12px;
+			display: flex;
+			justify-content: center;
+			padding-top: 4px;
+		}
+
+		.scroll-arrow-anim::before {
+			content: "";
+			width: 3px;
+			height: 6px;
+			background: var(--sand);
+			border-radius: 2px;
+			animation: scrollBob 1.6s ease-in-out infinite;
+		}
+
+		@keyframes scrollBob {
+			0% { transform: translateY(0); opacity: 0.8; }
+			50% { transform: translateY(8px); opacity: 1; }
+			100% { transform: translateY(0); opacity: 0.8; }
+		}
+
+		/* ========================================================
+		   SCROLLTELLING CHAPTERS (Cinematic Option B)
+		   ======================================================== */
+		.storytelling-wrapper {
+			position: relative;
+			padding: 0;
+		}
+
+		.chapter-block {
+			height: 100vh;
+			height: 100dvh;
+			min-height: 100vh;
+			min-height: 100dvh;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			position: relative;
+			padding: calc(var(--topbar-height) + 16px) 0 32px;
+			border-bottom: 1px solid rgba(244, 240, 232, 0.06);
+			scroll-snap-align: start;
+			scroll-snap-stop: always;
+			box-sizing: border-box;
+		}
+
+		.chapter-block:last-child {
+			border-bottom: none;
+		}
+
+		.chapter-layout {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			gap: clamp(40px, 6vw, 80px);
+			align-items: center;
+		}
+
+		.chapter-layout.reverse {
+			grid-template-columns: 1fr 1fr;
+		}
+
+		.chapter-layout.reverse .chapter-text-col {
+			order: 2;
+		}
+
+		.chapter-layout.reverse .chapter-media-col {
+			order: 1;
+		}
+
+		.chapter-num-tag {
+			display: inline-flex;
+			align-items: center;
+			gap: 12px;
+			margin-bottom: 18px;
+		}
+
+		.chapter-index {
+			font-family: var(--font-display);
+			font-size: 1.1rem;
+			font-weight: 700;
+			color: var(--sand);
+			letter-spacing: 0.05em;
+		}
+
+		.chapter-badge {
+			font-size: 0.74rem;
+			font-weight: 700;
+			letter-spacing: 0.16em;
+			text-transform: uppercase;
+			color: var(--muted-ivory);
+			padding: 4px 10px;
+			border-radius: 999px;
+			background: rgba(255, 255, 255, 0.04);
+			border: 1px solid var(--line-graphite);
+		}
+
+		.chapter-title {
+			font-family: var(--font-display);
+			font-size: clamp(2.2rem, 3.8vw, 3.4rem);
+			line-height: 1.14;
+			font-weight: 600;
+			letter-spacing: -0.015em;
+			margin: 0 0 24px;
+			color: var(--ivory);
+			text-wrap: balance;
+		}
+
+		.chapter-desc {
+			font-size: clamp(1.05rem, 1.5vw, 1.25rem);
+			line-height: 1.7;
+			color: var(--muted-ivory);
+			margin: 0 0 20px;
+		}
+
+		.chapter-desc:last-child {
+			margin-bottom: 0;
+		}
+
+		/* Decorative ribbon flourish under titles */
+		.ribbon-flourish {
+			width: 140px;
+			height: 14px;
+			margin-bottom: 24px;
+		}
+
+		.ribbon-flourish path {
+			stroke: var(--sand);
+			stroke-width: 2;
+			fill: none;
+			stroke-dasharray: 200;
+			stroke-dashoffset: 200;
+			transition: stroke-dashoffset 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+		}
+
+		.in-view .ribbon-flourish path {
+			stroke-dashoffset: 0;
+		}
+
+		/* CHAPTER 03 PILLARS */
+		.pillars-grid {
+			display: grid;
+			gap: 16px;
+			margin-top: 28px;
+		}
+
+		.pillar-card {
+			padding: 18px 22px;
+			border-radius: 18px;
+			background: rgba(32, 34, 40, 0.65);
+			border: 1px solid var(--line-graphite);
+			backdrop-filter: blur(8px);
+			transition: all 0.3s ease;
+		}
+
+		.pillar-card:hover {
+			border-color: var(--line-gold);
+			transform: translateX(4px);
+			background: rgba(32, 34, 40, 0.95);
+		}
+
+		.pillar-head {
+			display: flex;
+			align-items: baseline;
+			gap: 10px;
+			margin-bottom: 6px;
+		}
+
+		.pillar-word {
+			font-family: var(--font-display);
+			font-size: 1.35rem;
+			font-weight: 700;
+			color: var(--sand);
+			letter-spacing: 0.04em;
+		}
+
+		.pillar-desc {
+			margin: 0;
+			font-size: 0.92rem;
+			line-height: 1.55;
+			color: var(--muted-ivory);
+		}
+
+		/* CHAPTER 04 POETIC CADENCE */
+		.poetic-box {
+			display: grid;
+			gap: 14px;
+			border-left: 2px solid var(--sand);
+			padding-left: 22px;
+			margin: 28px 0;
+		}
+
+		.poetic-line {
+			font-size: clamp(1.08rem, 1.6vw, 1.35rem);
+			line-height: 1.5;
+			color: var(--ivory);
+			font-weight: 500;
+		}
+
+		.poetic-line.highlight {
+			font-family: var(--font-display);
+			font-style: italic;
+			color: var(--sand);
+			font-size: clamp(1.2rem, 1.8vw, 1.5rem);
+			margin-top: 8px;
+		}
+
+		/* CHAPTER MEDIA: CAROUSEL WITH AUTO/MANUAL CONTROLS */
+		.media-slider-container {
+			position: relative;
+			border-radius: 28px;
+			overflow: hidden;
+			background: var(--graphite-card);
+			border: 1px solid var(--line-graphite);
+			box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+			max-height: min(480px, calc(100vh - var(--topbar-height) - 80px));
+		}
+
+		.slider-track {
+			display: flex;
+			overflow-x: auto;
+			scroll-snap-type: x mandatory;
+			scrollbar-width: none;
+			-webkit-overflow-scrolling: touch;
+		}
+
+		.slider-track::-webkit-scrollbar {
+			display: none;
+		}
+
+		.slider-slide {
+			flex: 0 0 100%;
+			scroll-snap-align: center;
+			position: relative;
+			aspect-ratio: 4 / 3.4;
+			overflow: hidden;
+			margin: 0;
+		}
+
+		.slider-slide img {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+			display: block;
+			transition: transform 0.6s ease;
+		}
+
+		.media-slider-container:hover .slider-slide img {
+			transform: scale(1.02);
+		}
+
+		.slider-overlay-gradient {
+			position: absolute;
+			inset: 0;
+			background: linear-gradient(180deg, transparent 65%, rgba(17, 18, 21, 0.75) 100%);
+			pointer-events: none;
+		}
+
+		.slider-controls-bar {
+			position: absolute;
+			bottom: 16px;
+			left: 16px;
+			right: 16px;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			pointer-events: auto;
+		}
+
+		.slider-dots {
+			display: flex;
+			gap: 6px;
+			background: rgba(17, 18, 21, 0.6);
+			backdrop-filter: blur(8px);
+			padding: 6px 10px;
+			border-radius: 999px;
+			border: 1px solid rgba(255, 255, 255, 0.1);
+		}
+
+		.slider-dot {
+			width: 8px;
+			height: 8px;
+			border-radius: 50%;
+			background: rgba(255, 255, 255, 0.35);
+			border: none;
+			padding: 0;
+			cursor: pointer;
+			transition: all 0.25s ease;
+		}
+
+		.slider-dot.active {
+			background: var(--sand);
+			width: 22px;
+			border-radius: 4px;
+		}
+
+		.slider-buttons {
+			display: flex;
+			gap: 6px;
+		}
+
+		.slider-btn {
+			width: 36px;
+			height: 36px;
+			border-radius: 50%;
+			border: 1px solid rgba(255, 255, 255, 0.15);
+			background: rgba(17, 18, 21, 0.72);
+			backdrop-filter: blur(8px);
+			color: var(--ivory);
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			font-size: 1rem;
+			cursor: pointer;
+			transition: all 0.2s ease;
+		}
+
+		.slider-btn:hover {
+			border-color: var(--sand);
+			color: var(--sand);
+			transform: scale(1.08);
+		}
+
+		/* CHAPTER 05 (FINAL CTA BLOCK) */
+		.chapter-cta-block {
+			height: 100vh;
+			height: 100dvh;
+			min-height: 100vh;
+			min-height: 100dvh;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			text-align: center;
+			padding: calc(var(--topbar-height) + 16px) 0 32px;
+			position: relative;
+			scroll-snap-align: start;
+			scroll-snap-stop: always;
+			box-sizing: border-box;
+		}
+
+		.cta-box {
+			max-width: 760px;
+			margin: 0 auto;
+			padding: clamp(28px, 4.5vw, 48px);
+			border-radius: 36px;
+			background:
+				radial-gradient(ellipse at 50% 0%, rgba(216, 194, 138, 0.22), transparent 70%),
+				linear-gradient(180deg, rgba(32, 34, 40, 0.8) 0%, rgba(17, 18, 21, 0.95) 100%);
+			border: 1px solid var(--line-gold);
+			box-shadow: 0 40px 100px rgba(0, 0, 0, 0.65);
+			position: relative;
+			overflow: hidden;
+		}
+
+		.cta-box::before {
+			content: "";
+			position: absolute;
+			top: 0;
+			left: 20%;
+			right: 20%;
+			height: 1px;
+			background: linear-gradient(90deg, transparent, var(--sand), transparent);
+		}
+
+		.cta-title {
+			font-family: var(--font-display);
+			font-size: clamp(2.4rem, 4.6vw, 4rem);
+			font-weight: 700;
+			line-height: 1.1;
+			margin: 0 0 20px;
+			color: var(--ivory);
+		}
+
+		.cta-title em {
+			font-style: italic;
+			color: var(--sand);
+		}
+
+		.cta-lead {
+			font-size: clamp(1.1rem, 1.8vw, 1.35rem);
+			line-height: 1.65;
+			color: var(--muted-ivory);
+			margin: 0 0 36px;
+		}
+
+		.cta-actions {
+			display: flex;
+			justify-content: center;
+			gap: 16px;
+			flex-wrap: wrap;
+			margin-bottom: 30px;
+		}
+
+		.cta-proof-strip {
+			display: flex;
+			justify-content: center;
+			gap: clamp(18px, 4vw, 36px);
+			padding-top: 24px;
+			border-top: 1px solid var(--line-graphite);
+			flex-wrap: wrap;
+		}
+
+		.cta-proof-item {
+			font-size: 0.82rem;
+			letter-spacing: 0.08em;
+			text-transform: uppercase;
+			color: var(--muted-ivory);
+			display: flex;
+			align-items: center;
+			gap: 8px;
+		}
+
+		.cta-proof-item span {
+			color: var(--sand);
+		}
+
+		/* ========================================================
+		   HOW TO JOIN SECTION
+		   ======================================================== */
+		.section-how {
+			height: 100vh;
+			height: 100dvh;
+			min-height: 100vh;
+			min-height: 100dvh;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			padding: calc(var(--topbar-height) + 16px) 0 32px;
+			border-top: 1px solid var(--line-graphite);
+			background: rgba(17, 18, 21, 0.4);
+			scroll-snap-align: start;
+			scroll-snap-stop: always;
+			box-sizing: border-box;
+		}
+
+		.section-head {
+			text-align: center;
+			max-width: 680px;
+			margin: 0 auto clamp(40px, 6vw, 60px);
+		}
+
+		.section-tag {
+			font-size: 0.76rem;
+			font-weight: 700;
+			letter-spacing: 0.18em;
+			text-transform: uppercase;
+			color: var(--sand);
+			display: inline-block;
+			margin-bottom: 12px;
+		}
+
+		.section-title {
+			font-family: var(--font-display);
+			font-size: clamp(2rem, 3.5vw, 3rem);
+			font-weight: 600;
+			line-height: 1.15;
+			margin: 0 0 16px;
+			color: var(--ivory);
+		}
+
+		.section-desc {
+			font-size: 1.05rem;
+			color: var(--muted-ivory);
+			margin: 0;
+		}
+
+		.steps-grid {
+			display: grid;
+			grid-template-columns: repeat(3, 1fr);
+			gap: 20px;
+		}
+
+		.step-card {
+			background: var(--graphite-card);
+			border: 1px solid var(--line-graphite);
+			border-radius: 24px;
+			padding: 32px 28px;
+			display: flex;
+			flex-direction: column;
+			gap: 14px;
+			transition: all 0.3s ease;
+			position: relative;
+		}
+
+		.step-card:hover {
+			border-color: var(--line-gold);
+			transform: translateY(-4px);
+			box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
+		}
+
+		.step-number {
+			font-family: var(--font-display);
+			font-size: 2rem;
+			font-weight: 700;
+			color: var(--sand);
+			line-height: 1;
+		}
+
+		.step-title {
+			font-family: var(--font-display);
+			font-size: 1.25rem;
+			font-weight: 600;
+			margin: 0;
+			color: var(--ivory);
+		}
+
+		.step-text {
+			font-size: 0.94rem;
+			line-height: 1.6;
+			color: var(--muted-ivory);
+			margin: 0;
+		}
+
+		/* ========================================================
+		   FAQ SECTION
+		   ======================================================== */
+		.section-faq {
+			min-height: 100vh;
+			min-height: 100dvh;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			padding: calc(var(--topbar-height) + 16px) 0 32px;
+			border-top: 1px solid var(--line-graphite);
+			scroll-snap-align: start;
+			scroll-snap-stop: always;
+			box-sizing: border-box;
+		}
+
+		.faq-list {
+			max-width: 780px;
+			margin: 0 auto;
+			display: grid;
+			gap: 12px;
+		}
+
+		.faq-item {
+			background: var(--graphite-card);
+			border: 1px solid var(--line-graphite);
+			border-radius: 18px;
+			padding: 20px 24px;
+			transition: border-color 0.25s ease;
+		}
+
+		.faq-item[open] {
+			border-color: var(--line-gold);
+		}
+
+		.faq-summary {
+			cursor: pointer;
+			font-weight: 600;
+			font-size: 1.05rem;
+			color: var(--ivory);
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			list-style: none;
+			user-select: none;
+		}
+
+		.faq-summary::-webkit-details-marker {
+			display: none;
+		}
+
+		.faq-summary::after {
+			content: "+";
+			font-size: 1.4rem;
+			color: var(--sand);
+			line-height: 1;
+			transition: transform 0.25s ease;
+		}
+
+		.faq-item[open] .faq-summary::after {
+			content: "−";
+			transform: rotate(180deg);
+		}
+
+		.faq-content {
+			margin-top: 14px;
+			font-size: 0.96rem;
+			line-height: 1.65;
+			color: var(--muted-ivory);
+		}
+
+		/* ========================================================
+		   FOOTER
+		   ======================================================== */
+		footer {
+			border-top: 1px solid var(--line-graphite);
+			background: rgba(24, 25, 29, 0.75);
+			backdrop-filter: blur(12px);
+			-webkit-backdrop-filter: blur(12px);
+			padding: 48px 0 60px;
+			position: relative;
+			z-index: 2;
+			scroll-snap-align: end;
+			scroll-snap-stop: normal;
+		}
+
+		.footer-inner {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			flex-wrap: wrap;
+			gap: 24px;
+		}
+
+		.footer-brand-col {
+			display: flex;
+			flex-direction: column;
+			gap: 8px;
+		}
+
+		.footer-tagline {
+			font-size: 0.88rem;
+			color: var(--muted-ivory);
+		}
+
+		.footer-socials {
+			display: flex;
+			gap: 10px;
+		}
+
+		.footer-copy {
+			width: 100%;
+			margin-top: 24px;
+			padding-top: 24px;
+			border-top: 1px solid rgba(255, 255, 255, 0.05);
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			font-size: 0.82rem;
+			color: rgba(244, 240, 232, 0.4);
+			flex-wrap: wrap;
+			gap: 12px;
+		}
+
+		/* ========================================================
+		   REVEAL & SCROLL ANIMATIONS
+		   ======================================================== */
+		.reveal {
+			opacity: 0;
+			transform: translateY(32px);
+			transition: opacity 700ms cubic-bezier(0.16, 1, 0.3, 1), transform 700ms cubic-bezier(0.16, 1, 0.3, 1);
+		}
+
+		.reveal.in-view {
+			opacity: 1;
+			transform: translateY(0);
+		}
+
+		/* Mobile menu drawer */
+		.nav-toggle {
+			display: none;
+			width: 40px;
+			height: 40px;
+			border-radius: 50%;
+			border: 1px solid var(--line-graphite);
+			background: transparent;
+			color: var(--ivory);
+			align-items: center;
+			justify-content: center;
+			cursor: pointer;
+		}
+
+		.mobile-menu-drawer {
+			display: none;
+		}
+
+		/* ========================================================
+		   DESKTOP FLOATING SLIDE INDICATOR
+		   ======================================================== */
+		.slide-indicator {
+			position: fixed;
+			right: 24px;
+			top: 50%;
+			transform: translateY(-50%);
+			z-index: 95;
+			display: flex;
+			flex-direction: column;
+			gap: 12px;
+			padding: 10px 8px;
+			background: rgba(24, 25, 29, 0.45);
+			backdrop-filter: blur(12px);
+			-webkit-backdrop-filter: blur(12px);
+			border: 1px solid rgba(244, 240, 232, 0.08);
+			border-radius: 24px;
+		}
+
+		:global(.slide-dot) {
+			width: 8px;
+			height: 8px;
+			border-radius: 50%;
+			border: none;
+			background: rgba(244, 240, 232, 0.28);
+			padding: 0;
+			cursor: pointer;
+			position: relative;
+			transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+			outline: none;
+		}
+
+		:global(.slide-dot:hover),
+		:global(.slide-dot:focus-visible) {
+			background: var(--sand);
+			transform: scale(1.35);
+		}
+
+		:global(.slide-dot.active) {
+			height: 22px;
+			border-radius: 10px;
+			background: var(--sand);
+			box-shadow: 0 0 12px rgba(216, 194, 138, 0.65);
+		}
+
+		:global(.slide-dot-tooltip) {
+			position: absolute;
+			right: 22px;
+			top: 50%;
+			transform: translateY(-50%) translateX(6px);
+			background: rgba(24, 25, 29, 0.92);
+			border: 1px solid var(--line-gold);
+			color: var(--ivory);
+			font-size: 0.74rem;
+			font-weight: 500;
+			white-space: nowrap;
+			padding: 4px 10px;
+			border-radius: 8px;
+			opacity: 0;
+			pointer-events: none;
+			transition: opacity 0.2s ease, transform 0.2s ease;
+		}
+
+		:global(.slide-dot:hover .slide-dot-tooltip) {
+			opacity: 1;
+			transform: translateY(-50%) translateX(0);
+		}
+
+		/* ========================================================
+		   RESPONSIVE DESIGN
+		   ======================================================== */
+		@media (max-width: 960px) {
+			html {
+				scroll-snap-type: y proximity;
+			}
+
+			.slide-indicator {
+				display: none;
+			}
+
+			.hero-section,
+			.chapter-block,
+			.chapter-cta-block,
+			.section-how,
+			.section-faq {
+				height: auto;
+				min-height: 100vh;
+				min-height: 100dvh;
+				padding: calc(var(--topbar-height) + 24px) 0 48px;
+				scroll-snap-align: start;
+				scroll-snap-stop: normal;
+			}
+
+			.nav-menu {
+				display: none;
+			}
+
+			.nav-toggle {
+				display: inline-flex;
+			}
+
+			.hero-grid {
+				grid-template-columns: 1fr;
+				text-align: left;
+			}
+
+			.hero-visual-card {
+				max-width: 440px;
+				margin: 0 auto;
+			}
+
+			.chapter-layout,
+			.chapter-layout.reverse {
+				grid-template-columns: 1fr;
+				gap: 36px;
+			}
+
+			.chapter-layout.reverse .chapter-text-col,
+			.chapter-layout.reverse .chapter-media-col {
+				order: initial;
+			}
+
+			.steps-grid {
+				grid-template-columns: 1fr;
+			}
+
+			.mobile-menu-drawer {
+				display: block;
+				max-height: 0;
+				overflow: hidden;
+				transition: max-height 0.35s ease;
+				background: var(--graphite-deep);
+				border-bottom: 1px solid var(--line-graphite);
+			}
+
+			.mobile-menu-drawer.open {
+				max-height: 300px;
+			}
+
+			.mobile-menu-drawer .container {
+				display: flex;
+				flex-direction: column;
+				gap: 16px;
+				padding: 24px 0;
+			}
+		}
+
+		@media (prefers-reduced-motion: reduce) {
+			*, *::before, *::after {
+				animation: none !important;
+				transition: none !important;
+			}
+
+			.reveal {
+				opacity: 1;
+				transform: none;
+			}
+
+			.ribbon-spine {
+				stroke-dashoffset: 0 !important;
+			}
+		}
+	</style>
+
+	<!-- SVG RIBBON GRADIENT DEFINITIONS -->
+	<svg width="0" height="0" style="position: absolute;">
+		<defs>
+			<linearGradient id="ribbonGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+				<stop offset="0%" stop-color="#D8C28A" stop-opacity="0.2" />
+				<stop offset="25%" stop-color="#D8C28A" stop-opacity="0.9" />
+				<stop offset="55%" stop-color="#F4F0E8" stop-opacity="0.8" />
+				<stop offset="85%" stop-color="#D8C28A" stop-opacity="0.9" />
+				<stop offset="100%" stop-color="#D8C28A" stop-opacity="0.3" />
+			</linearGradient>
+		</defs>
+	</svg>
+
+	<!-- FIXED COSMIC STAR PARTICLES & SUNRISE BACKDROP -->
+	<div class="sky-backdrop-fixed" aria-hidden="true">
+		<canvas id="starCanvas"></canvas>
+		<div class="dawn-overlay" id="dawnOverlay"></div>
+		<div class="dawn-sun-disc" id="dawnSunDisc"></div>
+	</div>
+
+	<!-- BACKGROUND SELF-DRAWING RIBBON / GPS RUN-TRACK VECTOR -->
+	<div class="scroll-ribbon-container" aria-hidden="true">
+		<svg class="scroll-ribbon-svg" preserveAspectRatio="none" viewBox="0 0 1000 6500">
+			<!-- Organic flowing ribbon path running through the entire length of page -->
+			<path
+				id="spineRibbon"
+				class="ribbon-spine"
+				d="M 500,80
+				   C 800,450 880,750 720,1100
+				   C 560,1450 180,1650 240,2100
+				   C 300,2550 820,2750 780,3200
+				   C 740,3650 200,3900 280,4400
+				   C 360,4900 840,5150 700,5650
+				   C 560,6150 500,6350 500,6500"
+			/>
+			<path
+				class="ribbon-accent"
+				d="M 520,100
+				   C 820,470 900,770 740,1120
+				   C 580,1470 200,1670 260,2120
+				   C 320,2570 840,2770 800,3220
+				   C 760,3670 220,3920 300,4420
+				   C 380,4920 860,5170 720,5670
+				   C 580,6170 520,6370 520,6500"
+			/>
+		</svg>
+	</div>
+
+	<!-- TOPBAR -->
+	<header class="topbar">
+		<div class="container nav-wrapper">
+			<a href="#top" class="brand" aria-label="Твій STEP на головну">
+				<span class="brand-mark">
+					<img src="/images/home/logo.svg" alt="Логотип Твій STEP" />
+				</span>
+				<span class="brand-text">Твій <span>STEP</span></span>
+			</a>
+
+			<nav class="nav-menu" aria-label="Головна навігація">
+				<a href="#story" class="nav-link">Історія</a>
+				<a href="#philosophy" class="nav-link">Сенс</a>
+				<a href="#how" class="nav-link">Як почати</a>
+				<a href="#faq" class="nav-link">Питання</a>
+			</nav>
+
+			<div class="nav-actions">
+				<a
+					class="social-link"
+					href={site.social.instagram}
+					target="_blank"
+					rel="noreferrer"
+					aria-label="Instagram"
+				>
+					<Fragment set:html={icons.instagram} />
+				</a>
+				<a
+					class="social-link"
+					href={site.social.tiktok}
+					target="_blank"
+					rel="noreferrer"
+					aria-label="TikTok"
+				>
+					<Fragment set:html={icons.tiktok} />
+				</a>
+				<a
+					class="btn-cta-nav"
+					href={site.social.telegram}
+					target="_blank"
+					rel="noreferrer"
+				>
+					<Fragment set:html={icons.telegram} />
+					<span>Чат клубу</span>
+				</a>
+
+				<button class="nav-toggle" id="navToggle" type="button" aria-label="Відкрити меню">
+					☰
+				</button>
+			</div>
+		</div>
+
+		<div class="mobile-menu-drawer" id="mobileDrawer">
+			<div class="container">
+				<a href="#story" class="nav-link">Історія спільноти</a>
+				<a href="#philosophy" class="nav-link">Глибинний зміст</a>
+				<a href="#how" class="nav-link">Як приєднатися</a>
+				<a href="#faq" class="nav-link">Часті питання</a>
+				<a
+					class="btn-primary"
+					href={site.social.telegram}
+					target="_blank"
+					rel="noreferrer"
+					style="margin-top: 10px;"
+				>
+					Долучитись у Telegram
+				</a>
+			</div>
+		</div>
+	</header>
+
+	<!-- FIXED SLIDE INDICATOR (DESKTOP) - Dynamically generated by JS to match active sections -->
+	<nav class="slide-indicator" aria-label="Навігація по слайдах" id="slideIndicator"></nav>
+
+	<main id="top">
+		<!-- HERO SECTION -->
+		<section id="hero" class="hero-section" data-slide-title="Головна">
+			<div class="container hero-grid">
+				<div>
+					<h1 class="hero-title reveal">
+						Твій крок. <br />
+						Твій шлях.
+					</h1>
+
+					<div id="heroLogoSlot" class="hero-logo-slot" aria-hidden="true"></div>
+
+					<p class="hero-subtitle reveal">
+						Відкрита спільнота для тих, хто любить бігати, тренуватися, крутити педалі й відкривати нові маршрути серед своїх людей. Без абонементів і без оцінок темпу.
+					</p>
+
+					<div class="hero-actions reveal">
+						<a
+							class="btn-primary"
+							href={site.social.telegram}
+							target="_blank"
+							rel="noreferrer"
+						>
+							<Fragment set:html={icons.telegram} />
+							<span>Приєднатися</span>
+						</a>
+						<a class="btn-secondary" href="#story">
+							<span>Дізнатися більше</span>
+							<Fragment set:html={icons.arrowRight} />
+						</a>
+					</div>
+				</div>
+
+				<div class="reveal">
+					<div class="hero-visual-card">
+						<div class="hero-img-inner">
+							<img
+								src="/images/home/groupFlag1.webp"
+								alt="Спільнота Твій STEP на старті"
+							/>
+							<div class="hero-img-overlay"></div>
+							<div class="hero-card-caption">
+								<span class="hero-caption-pill">Київські горизонти</span>
+								<span class="hero-caption-pill">#TviyStep</span>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<a href="#story" class="hero-scroll-cue" aria-label="Гортати вниз до історії">
+				<span>Гортати вниз</span>
+				<div class="scroll-arrow-anim"></div>
+			</a>
+			<div class="hero-glow-line"></div>
+		</section>
+
+		<!-- CINEMATIC SCROLLTELLING CHAPTERS -->
+		<div id="story" class="storytelling-wrapper">
+			{
+				infoBlocks.map((ch, idx) => {
+					const isEven = idx % 2 === 1;
+					const isLast = ch.images.length === 0;
+
+					return isLast ? (
+						/* FINAL CLIMAX CTA CHAPTER */
+						<section id="join" class="chapter-cta-block reveal" data-slide-title={`Крок ${ch.num}: Зграя`}>
+							<div class="container">
+								<div class="cta-box">
+									<div class="chapter-num-tag" style="justify-content: center;">
+										<span class="chapter-index">КРОК {ch.num}</span>
+									</div>
+
+									{ch.texts.map((p, pIdx) => (
+										pIdx === ch.texts.length - 1 ? (
+											<h2 class="cta-title" set:html={p} />
+										) : (
+											<p class="cta-lead" set:html={p} />
+										)
+									))}
+
+									<div class="cta-actions">
+										<a
+											class="btn-primary"
+											href={site.social.telegram}
+											target="_blank"
+											rel="noreferrer"
+											style="padding: 0 36px; height: 56px; font-size: 1.05rem;"
+										>
+											<Fragment set:html={icons.telegram} />
+											<span>Увійти в Telegram-канал</span>
+										</a>
+										<a
+											class="btn-secondary"
+											href={site.social.instagram}
+											target="_blank"
+											rel="noreferrer"
+											style="height: 56px;"
+										>
+											<Fragment set:html={icons.instagram} />
+											<span>Instagram спільноти</span>
+										</a>
+									</div>
+
+									<div class="cta-proof-strip">
+										<div class="cta-proof-item">
+											<span>✓</span> Вільна участь
+										</div>
+										<div class="cta-proof-item">
+											<span>✓</span> Будь-який рівень підготовки
+										</div>
+										<div class="cta-proof-item">
+											<span>✓</span> Локації по всьому Києву
+										</div>
+									</div>
+								</div>
+							</div>
+						</section>
+					) : (
+						/* STANDARD EDITORIAL CHAPTER */
+						<section
+							id={`chapter-${ch.num}`}
+							class="chapter-block reveal"
+							data-slide-title={`Крок ${ch.num}`}
+						>
+							<div class="container">
+								<div class={`chapter-layout ${isEven ? "reverse" : ""}`}>
+									<!-- TEXT COLUMN -->
+									<div class="chapter-text-col">
+										<div class="chapter-num-tag">
+											<span class="chapter-index">КРОК {ch.num}</span>
+										</div>
+
+										<!-- Organic Ribbon SVG Flourish -->
+										<svg class="ribbon-flourish" viewBox="0 0 140 14" aria-hidden="true">
+											<path d="M 0,7 Q 35,0 70,7 T 140,7" />
+										</svg>
+
+										{ch.texts.map((p) => (
+											<p class="chapter-desc" set:html={p} />
+										))}
+									</div>
+
+									<!-- MEDIA COLUMN (AUTO/MANUAL CAROUSEL) -->
+									<div class="chapter-media-col">
+										{ch.images.length > 0 && (
+											<div class="media-slider-container" data-slider>
+												<div class="slider-track" data-track>
+													{ch.images.map((imgSrc, slideIdx) => (
+														<figure class="slider-slide">
+															<img
+																src={imgSrc}
+																alt={`Кадр спільноти Твій STEP ${slideIdx + 1}`}
+																loading="lazy"
+															/>
+															<div class="slider-overlay-gradient" />
+														</figure>
+													))}
+												</div>
+
+												{ch.images.length > 1 && (
+													<div class="slider-controls-bar">
+														<div class="slider-dots" data-dots>
+															{ch.images.map((_, dotIdx) => (
+																<button
+																	type="button"
+																	class={`slider-dot ${dotIdx === 0 ? "active" : ""}`}
+																	data-slide-index={dotIdx}
+																	aria-label={`Перейти до слайду ${dotIdx + 1}`}
+																/>
+															))}
+														</div>
+														<div class="slider-buttons">
+															<button
+																type="button"
+																class="slider-btn"
+																data-action="prev"
+																aria-label="Попереднє фото"
+															>
+																←
+															</button>
+															<button
+																type="button"
+																class="slider-btn"
+																data-action="next"
+																aria-label="Наступне фото"
+															>
+																→
+															</button>
+														</div>
+													</div>
+												)}
+											</div>
+										)}
+									</div>
+								</div>
+							</div>
+						</section>
+					);
+				})
+			}
+		</div>
+	</main>
+
+	<!-- FOOTER -->
+	<footer>
+		<div class="container">
+			<div class="footer-inner">
+				<div class="footer-brand-col">
+					<a href="#top" class="brand">
+						<span class="brand-mark">
+							<img src="/images/home/logo.svg" alt="Логотип Твій STEP" />
+						</span>
+						<span class="brand-text">Твій <span>STEP</span></span>
+					</a>
+					<span class="footer-tagline">Твій крок. Твій шлях. Твій степ.</span>
+				</div>
+
+				<div class="footer-socials">
+					<a
+						class="social-link"
+						href={site.social.telegram}
+						target="_blank"
+						rel="noreferrer"
+						aria-label="Telegram"
+					>
+						<Fragment set:html={icons.telegram} />
+					</a>
+					<a
+						class="social-link"
+						href={site.social.instagram}
+						target="_blank"
+						rel="noreferrer"
+						aria-label="Instagram"
+					>
+						<Fragment set:html={icons.instagram} />
+					</a>
+					<a
+						class="social-link"
+						href={site.social.tiktok}
+						target="_blank"
+						rel="noreferrer"
+						aria-label="TikTok"
+					>
+						<Fragment set:html={icons.tiktok} />
+					</a>
+				</div>
+			</div>
+
+			<div class="footer-copy">
+				<span>© {new Date().getFullYear()} Твій STEP. Київ, Україна. Всі права захищено.</span>
+				<span>Вільний рух • Без абонементів • Місто як майданчик</span>
+			</div>
+		</div>
+	</footer>
+
+	<!-- INTERACTIVE SCRIPT: SCROLL RIBBON, SLIDERS, OBSERVERS -->
+	<script>
+		// 1. Mobile Menu Toggle
+		const navToggle = document.getElementById("navToggle");
+		const mobileDrawer = document.getElementById("mobileDrawer");
+		if (navToggle && mobileDrawer) {
+			navToggle.addEventListener("click", () => {
+				mobileDrawer.classList.toggle("open");
+			});
+			mobileDrawer.querySelectorAll("a").forEach((l) => {
+				l.addEventListener("click", () => mobileDrawer.classList.remove("open"));
+			});
+		}
+
+		// 2. Self-Drawing Scroll Ribbon (Spine vector tied to scroll progress)
+		const ribbon = document.getElementById("spineRibbon") as SVGGeometryElement | null;
+		if (ribbon && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+			try {
+				const length = ribbon.getTotalLength();
+				ribbon.style.strokeDasharray = `${length} ${length}`;
+				ribbon.style.strokeDashoffset = `${length}`;
+
+				let cachedMaxScroll = 0;
+				const measureMaxScroll = () => {
+					cachedMaxScroll = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
+				};
+				measureMaxScroll();
+				window.addEventListener("resize", measureMaxScroll, { passive: true });
+
+				let ticking = false;
+				const updateRibbon = () => {
+					const scrollY = window.scrollY;
+					if (cachedMaxScroll > 0) {
+						const progress = Math.min(Math.max(scrollY / cachedMaxScroll, 0), 1);
+						// Draw ribbon slightly ahead of viewport for dramatic anticipation
+						const drawLength = length * Math.min(progress * 1.08, 1);
+						ribbon.style.strokeDashoffset = `${length - drawLength}`;
+					}
+					ticking = false;
+				};
+
+				window.addEventListener("scroll", () => {
+					if (!ticking) {
+						window.requestAnimationFrame(updateRibbon);
+						ticking = true;
+					}
+				}, { passive: true });
+
+				updateRibbon();
+			} catch (e) {
+				console.debug("Ribbon calculation init", e);
+			}
+		}
+
+		// 3. Chapter Carousels with Auto-scroll and Manual controls
+		const sliders = document.querySelectorAll<HTMLElement>("[data-slider]");
+		sliders.forEach((slider) => {
+			const track = slider.querySelector<HTMLElement>("[data-track]");
+			const dots = Array.from(slider.querySelectorAll<HTMLButtonElement>(".slider-dot"));
+			const prevBtn = slider.querySelector<HTMLButtonElement>('[data-action="prev"]');
+			const nextBtn = slider.querySelector<HTMLButtonElement>('[data-action="next"]');
+			if (!track) return;
+
+			let currentIndex = 0;
+			const slidesCount = track.children.length;
+			let timer: ReturnType<typeof setInterval> | null = null;
+
+			const updateDots = (idx: number) => {
+				dots.forEach((dot, dIdx) => {
+					dot.classList.toggle("active", dIdx === idx);
+				});
+			};
+
+			const goToSlide = (idx: number) => {
+				if (idx < 0) idx = slidesCount - 1;
+				if (idx >= slidesCount) idx = 0;
+				currentIndex = idx;
+				track.scrollTo({
+					left: track.clientWidth * idx,
+					behavior: "smooth"
+				});
+				updateDots(idx);
+			};
+
+			// Prev / Next actions
+			if (prevBtn) {
+				prevBtn.addEventListener("click", () => {
+					stopAuto();
+					goToSlide(currentIndex - 1);
+					startAuto();
+				});
+			}
+			if (nextBtn) {
+				nextBtn.addEventListener("click", () => {
+					stopAuto();
+					goToSlide(currentIndex + 1);
+					startAuto();
+				});
+			}
+
+			// Dot click
+			dots.forEach((dot) => {
+				dot.addEventListener("click", () => {
+					stopAuto();
+					const targetIndex = Number(dot.dataset.slideIndex || 0);
+					goToSlide(targetIndex);
+					startAuto();
+				});
+			});
+
+			// Auto rotation
+			const startAuto = () => {
+				if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+				if (slidesCount <= 1) return;
+				if (timer) clearInterval(timer);
+				timer = setInterval(() => {
+					goToSlide(currentIndex + 1);
+				}, 4200);
+			};
+
+			const stopAuto = () => {
+				if (timer) clearInterval(timer);
+				timer = null;
+			};
+
+			slider.addEventListener("mouseenter", stopAuto);
+			slider.addEventListener("mouseleave", startAuto);
+			startAuto();
+
+			// Sync dot on native touch swipe
+			track.addEventListener("scroll", () => {
+				const activeSlide = Math.round(track.scrollLeft / track.clientWidth);
+				if (activeSlide !== currentIndex && activeSlide >= 0 && activeSlide < slidesCount) {
+					currentIndex = activeSlide;
+					updateDots(currentIndex);
+				}
+			}, { passive: true });
+		});
+
+		// 4. Reveal on Scroll (Intersection Observer)
+		const reveals = document.querySelectorAll(".reveal");
+		if (
+			!window.matchMedia("(prefers-reduced-motion: reduce)").matches &&
+			"IntersectionObserver" in window
+		) {
+			const observer = new IntersectionObserver(
+				(entries) => {
+					entries.forEach((entry) => {
+						if (entry.isIntersecting) {
+							entry.target.classList.add("in-view");
+						}
+					});
+				},
+				{ threshold: 0.12, rootMargin: "0px 0px -40px 0px" }
+			);
+
+			reveals.forEach((el) => observer.observe(el));
+		} else {
+			reveals.forEach((el) => el.classList.add("in-view"));
+		}
+
+		// 5. Desktop Floating Slide Indicator & Snapping Navigation
+		const slideIndicator = document.getElementById("slideIndicator");
+
+		// =========================================================================
+		// TUNING PARAMETERS FOR SLIDE TRANSITIONS & WHEEL SNAPPING SPEED
+		// =========================================================================
+		const SLIDE_TRANSITION_CONFIG = {
+			// Duration of animated transition between slides in milliseconds
+			// 400ms = snappy / quick
+			// 750ms = balanced cinematic
+			// 1000ms - 2500ms = slow, calm & immersive
+			durationMs: 1000,
+
+			// Easing function for smooth slide transition:
+			// 'easeInOutCubic', 'easeOutExpo', 'easeInOutQuad', or 'linear'
+			easing: "easeInOutQuad" as "easeInOutCubic" | "easeOutExpo" | "easeInOutQuad" | "linear",
+
+			// Enable smooth wheel hijacking between full-height slides
+			// When true, scrolling the mouse wheel triggers an animated slide jump with durationMs
+			enableWheelSnap: true,
+		};
+
+		// Easing calculators
+		const easeFunctions = {
+			easeInOutCubic: (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2),
+			easeOutExpo: (t: number) => (t === 1 ? 1 : 1 - Math.pow(2, -10 * t)),
+			easeInOutQuad: (t: number) => (t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2),
+			linear: (t: number) => t,
+		};
+
+		let isSlideTransitioning = false;
+		let slideAnimationId: number | null = null;
+		let wheelCooldownTimer: ReturnType<typeof setTimeout> | null = null;
+		let wheelBlocked = false;
+
+		const smoothScrollToTarget = (targetY: number, onComplete?: () => void) => {
+			if (slideAnimationId !== null) {
+				cancelAnimationFrame(slideAnimationId);
+				slideAnimationId = null;
+			}
+			if (wheelCooldownTimer) {
+				clearTimeout(wheelCooldownTimer);
+				wheelCooldownTimer = null;
+			}
+
+			// Ensure native browser CSS scroll-behavior and scroll-snap do not interfere with frame-by-frame updates
+			document.documentElement.style.scrollBehavior = "auto";
+			document.documentElement.style.scrollSnapType = "none";
+
+			const maxScrollY = Math.max(document.documentElement.scrollHeight - window.innerHeight, 0);
+			const clampedTargetY = Math.min(Math.max(0, Math.round(targetY)), maxScrollY);
+
+			const startY = window.scrollY;
+			const distance = clampedTargetY - startY;
+			if (Math.abs(distance) < 2) {
+				isSlideTransitioning = false;
+				wheelBlocked = false;
+				if (onComplete) onComplete();
+				return;
+			}
+
+			isSlideTransitioning = true;
+			wheelBlocked = true;
+			const startTime = performance.now();
+			const duration = SLIDE_TRANSITION_CONFIG.durationMs;
+			const ease = easeFunctions[SLIDE_TRANSITION_CONFIG.easing] || easeFunctions.easeInOutCubic;
+
+			const step = (now: number) => {
+				const elapsed = now - startTime;
+				const progress = Math.min(elapsed / duration, 1);
+				const eased = ease(progress);
+
+				window.scrollTo(0, startY + distance * eased);
+
+				if (progress < 1) {
+					slideAnimationId = requestAnimationFrame(step);
+				} else {
+					window.scrollTo(0, clampedTargetY);
+					isSlideTransitioning = false;
+					slideAnimationId = null;
+
+					if (wheelCooldownTimer) clearTimeout(wheelCooldownTimer);
+					wheelCooldownTimer = setTimeout(() => {
+						wheelBlocked = false;
+					}, 200);
+
+					if (onComplete) onComplete();
+				}
+			};
+
+			slideAnimationId = requestAnimationFrame(step);
+		};
+
+		if (slideIndicator) {
+			// Automatically discover all slide sections on the page with an ID
+			const slideSections = Array.from(
+				document.querySelectorAll<HTMLElement>("main > section[id], .storytelling-wrapper > section[id]")
+			);
+
+			// Dynamically populate indicator dots
+			slideIndicator.innerHTML = "";
+			const slideTargets: { dot: HTMLButtonElement; id: string; el: HTMLElement }[] = [];
+
+			slideSections.forEach((sec, idx) => {
+				const id = sec.id;
+				const title = sec.dataset.slideTitle || sec.querySelector("h1, h2, .chapter-index")?.textContent?.trim() || `Слайд ${idx + 1}`;
+				const dot = document.createElement("button");
+				dot.type = "button";
+				dot.className = `slide-dot ${idx === 0 ? "active" : ""}`;
+				dot.dataset.slideTarget = id;
+				dot.setAttribute("aria-label", `${title}`);
+
+				const tooltip = document.createElement("span");
+				tooltip.className = "slide-dot-tooltip";
+				tooltip.textContent = title;
+				dot.appendChild(tooltip);
+
+				slideIndicator.appendChild(dot);
+				slideTargets.push({ dot, id, el: sec });
+			});
+
+			const slideDots = slideTargets.map((item) => item.dot);
+
+			let activeIndex = 0;
+			let cachedOffsets: { id: string; top: number }[] = [];
+			let cachedDocHeight = 0;
+
+			const updateCachedOffsets = () => {
+				const scrollY = window.scrollY;
+				cachedDocHeight = document.documentElement.scrollHeight;
+				const maxScrollY = Math.max(cachedDocHeight - window.innerHeight, 0);
+
+				const raw = slideTargets.map(({ id, el }) => {
+					const rect = el.getBoundingClientRect();
+					return { id, top: Math.min(Math.max(0, Math.round(rect.top + scrollY)), maxScrollY) };
+				});
+
+				if (raw.length > 0 && maxScrollY > raw[raw.length - 1].top + 20) {
+					raw.push({ id: "footer", top: maxScrollY });
+				}
+
+				// Deduplicate and ensure strictly increasing offsets (at least 15px apart)
+				const clean: typeof raw = [];
+				for (let i = 0; i < raw.length; i++) {
+					if (i === 0 || raw[i].top > clean[clean.length - 1].top + 15) {
+						clean.push(raw[i]);
+					}
+				}
+				cachedOffsets = clean;
+			};
+
+			updateCachedOffsets();
+			window.addEventListener("resize", updateCachedOffsets, { passive: true });
+
+			const getSlideOffsets = () => {
+				if (cachedOffsets.length === 0) updateCachedOffsets();
+				return cachedOffsets;
+			};
+
+			slideTargets.forEach(({ dot }, idx) => {
+				dot.addEventListener("click", () => {
+					activeIndex = idx;
+					const offsets = getSlideOffsets();
+					const targetY = offsets[idx]?.top ?? 0;
+					smoothScrollToTarget(targetY);
+				});
+			});
+
+			// Smooth transitions for in-page anchor links (e.g. hero CTA, navbar links)
+			document.querySelectorAll<HTMLAnchorElement>('a[href^="#"]').forEach((link) => {
+				link.addEventListener("click", (e) => {
+					const href = link.getAttribute("href");
+					if (!href || href === "#") return;
+					const targetId = href.slice(1);
+					const targetEl = targetId === "top" ? document.body : document.getElementById(targetId);
+					if (targetEl) {
+						e.preventDefault();
+						const targetY = targetEl.getBoundingClientRect().top + window.scrollY;
+						smoothScrollToTarget(targetY);
+					}
+				});
+			});
+
+			// Intercept wheel on desktop for configurable transition speed between slides
+			if (
+				SLIDE_TRANSITION_CONFIG.enableWheelSnap &&
+				window.innerWidth > 960 &&
+				!window.matchMedia("(prefers-reduced-motion: reduce)").matches
+			) {
+				window.addEventListener(
+					"wheel",
+					(e) => {
+						// Don't intercept if modifier keys pressed
+						if (e.ctrlKey || e.metaKey || e.altKey) return;
+
+						// Block wheel while transition is active or during trackpad momentum cooldown
+						if (isSlideTransitioning || wheelBlocked) {
+							e.preventDefault();
+							return;
+						}
+
+						const delta = e.deltaY;
+						if (Math.abs(delta) < 25) return; // ignore micro-jitter
+
+						const offsets = getSlideOffsets();
+						const currentScroll = Math.round(window.scrollY);
+
+						let targetTop: number | null = null;
+
+						if (delta > 0) {
+							// Scrolling DOWN -> find next slide target below current scroll
+							for (let i = 0; i < offsets.length; i++) {
+								if (offsets[i].top > currentScroll + 15) {
+									targetTop = offsets[i].top;
+									break;
+								}
+							}
+						} else if (delta < 0) {
+							// Scrolling UP -> find previous slide target above current scroll
+							for (let i = offsets.length - 1; i >= 0; i--) {
+								if (offsets[i].top < currentScroll - 15) {
+									targetTop = offsets[i].top;
+									break;
+								}
+							}
+						}
+
+						if (targetTop !== null) {
+							e.preventDefault();
+							smoothScrollToTarget(targetTop);
+						}
+					},
+					{ passive: false }
+				);
+			}
+
+			let activeSlideTicking = false;
+			const updateActiveSlide = () => {
+				const scrollY = window.scrollY;
+				const winH = window.innerHeight;
+				const docH = cachedDocHeight || document.documentElement.scrollHeight;
+				const isAtBottom = scrollY + winH >= docH - 30;
+
+				let currentTargetId = slideTargets[0]?.id;
+				if (isAtBottom && slideTargets.length > 0) {
+					currentTargetId = slideTargets[slideTargets.length - 1].id;
+				} else {
+					const offsets = getSlideOffsets();
+					const middle = scrollY + winH * 0.45;
+					let closestDist = Infinity;
+
+					for (let i = 0; i < offsets.length; i++) {
+						const dist = Math.abs(offsets[i].top - middle);
+						if (dist < closestDist) {
+							closestDist = dist;
+							currentTargetId = offsets[i].id;
+						}
+					}
+				}
+
+				slideDots.forEach((dot, idx) => {
+					const isActive = dot.dataset.slideTarget === currentTargetId;
+					dot.classList.toggle("active", isActive);
+					if (isActive) activeIndex = idx;
+				});
+				activeSlideTicking = false;
+			};
+
+			window.addEventListener("scroll", () => {
+				if (!activeSlideTicking) {
+					window.requestAnimationFrame(updateActiveSlide);
+					activeSlideTicking = true;
+				}
+			}, { passive: true });
+			updateActiveSlide();
+		}
+
+		// 6. Cosmic Star Particles Form Logo & Disperse on Scroll + Sunrise Sky
+		// Uses the exact WebGL shader math & diffraction spikes from OpenAI Astra
+		const initCosmicField = () => {
+			const canvas = document.getElementById("starCanvas") as HTMLCanvasElement | null;
+			const dawnOverlay = document.getElementById("dawnOverlay");
+			const dawnSunDisc = document.getElementById("dawnSunDisc");
+
+			if (!canvas || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+			// =========================================================================
+			// TUNING PARAMETERS FOR LOGO WORDS & AMBIENT STARS
+			// =========================================================================
+			const STAR_CONFIG = {
+				// Word "твій"
+				tviy: {
+					gap: 2, // sampling step (px)
+					alphaThreshold: 20, // 0-255: lower captures thinner letter parts
+					sizeMin: 2.0, // base star size min (px)
+					sizeMax: 4.2, // base star size max (px)
+					brightnessMin: 1.0,
+					brightnessMax: 1.6,
+					rayStrengthMin: 0.25,
+					rayStrengthMax: 0.60,
+					featuredRatio: 0.16, // fraction of stars that become cross-spikes
+					featuredSizeMin: 2.5,
+					featuredSizeMax: 4.0,
+					featuredRayMin: 0.80,
+					featuredRayMax: 1.10,
+					featuredBrightnessMin: 1.6,
+					featuredBrightnessMax: 2.2,
+					color: { r: 0.88, g: 0.78, b: 0.56 },
+				},
+				// Word "STEP" (with prominent cross-spike stars)
+				step: {
+					gapDivider: 115, // offWidth / gapDivider gives sampling step (~3-4px)
+					alphaThreshold: 60,
+					sizeMin: 2.0,
+					sizeMax: 4.2,
+					brightnessMin: 1.1,
+					brightnessMax: 1.6,
+					rayStrengthMin: 0.25,
+					rayStrengthMax: 0.60,
+					featuredRatio: 0.16, // 16% prominent cross-spikes
+					featuredSizeMin: 2.0,
+					featuredSizeMax: 9.5,
+					featuredRayMin: 0.80,
+					featuredRayMax: 1.10,
+					featuredBrightnessMin: 1.8,
+					featuredBrightnessMax: 2.5,
+					colorIvory: { r: 0.96, g: 0.94, b: 0.92 },
+					colorGold: { r: 0.88, g: 0.78, b: 0.56 },
+				},
+				// Ambient sky stars
+				ambient: {
+					densityDivider: 2600, // screen area (w*h) / divider gives count
+					sizeMin: 1.5,
+					sizeMax: 3.3,
+					brightnessMin: 0.8,
+					brightnessMax: 1.2,
+					rayStrengthMin: 0.10,
+					rayStrengthMax: 0.30,
+					featuredRatio: 0.08,
+					featuredSizeMin: 5.0,
+					featuredSizeMax: 9.0,
+					featuredRayMin: 0.65,
+					featuredRayMax: 0.90,
+				},
+			};
+
+			// =========================================================================
+			// TUNING PARAMETERS FOR SUNRISE PROGRESSION
+			// =========================================================================
+			const SUNRISE_CONFIG = {
+				// Exponent factor for sunrise curve:
+				// 1.0       = strictly linear progression from top (0%) to bottom (100%)
+				// 2.0       = quadratic curve (gentle sunrise acceleration)
+				// 3.0 - 3.5 = natural dawn (dark night on slide 2, soft morning glow mid-page, full dawn at bottom)
+				// 4.0 - 6.0 = steep exponential (stays night until the final climax/footer)
+				exponent: 3,
+
+				// Curve algorithm:
+				// 'power'       -> p^exponent (standard power law: strictly linear when exponent = 1.0)
+				// 'exponential' -> (e^(exponent * p) - 1) / (e^exponent - 1)
+				curve: "power" as "power" | "exponential",
+
+				// Maximum opacity of the warm Kyiv sunrise sky gradient reached at page bottom (0.0 - 1.0)
+				maxOverlayOpacity: 0.98,
+
+				// Starlight dimming as sunrise brightens:
+				// skyFade = max(1.0 - dawnAlpha * starDimmingFactor, minStarOpacity)
+				starDimmingFactor: 0.74,
+				minStarOpacity: 0.16,
+
+				// Rising sun disc properties
+				sunDisc: {
+					exponent: 1.25, // secondary exponent for disc emergence
+					translateYStart: 85, // starting px offset below horizon
+					scaleMin: 0.85,
+					scaleMax: 1.2,
+				},
+			};
+
+			// Helper: evaluate dawn progress from linear (1.0) to exponential (n)
+			const calculateDawnAlpha = (p: number, exp: number, curveType: "power" | "exponential" = "power"): number => {
+				const clamped = Math.min(Math.max(p, 0), 1);
+				if (exp <= 1) return clamped;
+				if (curveType === "exponential") {
+					return (Math.exp(exp * clamped) - 1) / (Math.exp(exp) - 1);
+				}
+				return Math.pow(clamped, exp);
+			};
+
+			const gl = canvas.getContext("webgl", { alpha: true, antialias: true, premultipliedAlpha: true });
+			if (!gl) return;
+				const vsSource = `
+					attribute vec2 aOrigin;
+					attribute vec2 aSpread;
+					attribute float aSize;
+					attribute vec3 aColor;
+					attribute float aBrightness;
+					attribute float aTwinklePhase;
+					attribute float aRayStrength;
+					attribute float aIsLogo;
+
+					uniform vec2 uResolution;
+					uniform float uTime;
+					uniform float uDispersion;
+					uniform float uLogoFade;
+					uniform float uSkyFade;
+					uniform float uPixelRatio;
+
+					varying float vBrightness;
+					varying vec3 vColor;
+					varying float vOpacity;
+					varying float vRayStrength;
+					varying float vParticleDiameter;
+
+					void main() {
+						float driftX = sin(uTime * 1.4 + aTwinklePhase) * 2.0;
+						float driftY = cos(uTime * 1.1 + aTwinklePhase) * 2.0;
+						// Only logo stars disperse and spread outwards; ambient background stars stay in their natural cosmic positions
+						vec2 pos = aOrigin + aSpread * (uDispersion * aIsLogo) + vec2(driftX, driftY);
+
+						vec2 zeroToOne = pos / uResolution;
+						vec2 clipSpace = (zeroToOne * 2.0 - 1.0) * vec2(1.0, -1.0);
+						gl_Position = vec4(clipSpace, 0.0, 1.0);
+
+						float twinkle = 0.72 + 0.28 * sin(uTime * 3.2 + aTwinklePhase);
+						// Logo stars smoothly fade out as they disperse (uLogoFade); ambient stars gently react to the sunrise (uSkyFade)
+						float starFade = mix(uSkyFade, uLogoFade, aIsLogo);
+						vOpacity = twinkle * starFade;
+						vBrightness = aBrightness * (0.8 + 0.3 * twinkle);
+						vColor = aColor;
+						vRayStrength = aRayStrength;
+
+						float diam = aSize * uPixelRatio * (1.0 + uDispersion * 0.15 * aIsLogo);
+						gl_PointSize = max(diam, 1.5);
+						vParticleDiameter = gl_PointSize;
+					}
+				`;
+
+				const fsSource = `
+					precision mediump float;
+
+					varying float vBrightness;
+					varying vec3 vColor;
+					varying float vOpacity;
+					varying float vRayStrength;
+					varying float vParticleDiameter;
+
+					float astraCubicCoverage(float coordinate) {
+						float x = abs(coordinate);
+						if (x < 1.0) return (4.0 - 6.0 * x * x + 3.0 * x * x * x) / 6.0;
+						float tail = max(2.0 - x, 0.0);
+						return tail * tail * tail / 6.0;
+					}
+
+					float astraFilteredCore(vec2 pixel, float area) {
+						return astraCubicCoverage(pixel.x) * astraCubicCoverage(pixel.y)
+							* area * vParticleDiameter * vParticleDiameter;
+					}
+
+					void main() {
+						vec2 pixel = (gl_PointCoord - vec2(0.5)) * max(vParticleDiameter, 4.0);
+						vec2 point = pixel * 2.0 / max(vParticleDiameter, 0.0001);
+						float distanceToCenter = length(point);
+						float disc = 1.0 - smoothstep(0.06, 1.0, distanceToCenter);
+						float core = pow(disc, 2.2);
+
+						// Exact OpenAI Astra 4-pointed cross needle diffraction rays:
+						float horizontalRay = exp(-abs(point.y) * 28.0) * (1.0 - smoothstep(0.15, 1.0, abs(point.x)));
+						float verticalRay = exp(-abs(point.x) * 28.0) * (1.0 - smoothstep(0.15, 1.0, abs(point.y)));
+						float rays = max(horizontalRay, verticalRay) * 0.95 * vRayStrength;
+
+						float resolved = smoothstep(2.0, 4.0, vParticleDiameter);
+						float alpha = mix(astraFilteredCore(pixel, 0.150904), max(core, rays), resolved) * vOpacity;
+
+						if (alpha <= 0.01) {
+							discard;
+						}
+
+						float whiteCore = mix(0.59228, core, resolved) * smoothstep(0.7, 2.2, vBrightness) * 0.85;
+						float colorEnergy = 1.0 - min(vColor.r, min(vColor.g, vColor.b));
+						vec3 emission = mix(vColor, vec3(1.0), whiteCore) * vBrightness * (1.0 + colorEnergy * 0.42);
+
+						gl_FragColor = vec4(emission * alpha, alpha);
+					}
+				`;
+
+				const createShader = (type: number, src: string) => {
+					const shader = gl.createShader(type);
+					if (!shader) return null;
+					gl.shaderSource(shader, src);
+					gl.compileShader(shader);
+					if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+						console.error("Shader compile error:", gl.getShaderInfoLog(shader));
+						gl.deleteShader(shader);
+						return null;
+					}
+					return shader;
+				};
+
+				const vs = createShader(gl.VERTEX_SHADER, vsSource);
+				const fs = createShader(gl.FRAGMENT_SHADER, fsSource);
+				const program = gl.createProgram();
+				if (!vs || !fs || !program) return;
+
+				gl.attachShader(program, vs);
+				gl.attachShader(program, fs);
+				gl.linkProgram(program);
+
+				if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+					console.error("Program link error:", gl.getProgramInfoLog(program));
+					return;
+				}
+
+				gl.useProgram(program);
+
+				// Uniform locations
+				const uResolutionLoc = gl.getUniformLocation(program, "uResolution");
+				const uTimeLoc = gl.getUniformLocation(program, "uTime");
+				const uDispersionLoc = gl.getUniformLocation(program, "uDispersion");
+				const uLogoFadeLoc = gl.getUniformLocation(program, "uLogoFade");
+				const uSkyFadeLoc = gl.getUniformLocation(program, "uSkyFade");
+				const uPixelRatioLoc = gl.getUniformLocation(program, "uPixelRatio");
+
+				// Attribute locations
+				const aOriginLoc = gl.getAttribLocation(program, "aOrigin");
+				const aSpreadLoc = gl.getAttribLocation(program, "aSpread");
+				const aSizeLoc = gl.getAttribLocation(program, "aSize");
+				const aColorLoc = gl.getAttribLocation(program, "aColor");
+				const aBrightnessLoc = gl.getAttribLocation(program, "aBrightness");
+				const aTwinklePhaseLoc = gl.getAttribLocation(program, "aTwinklePhase");
+				const aRayStrengthLoc = gl.getAttribLocation(program, "aRayStrength");
+				const aIsLogoLoc = gl.getAttribLocation(program, "aIsLogo");
+
+				let width = window.innerWidth;
+				let height = window.innerHeight;
+				let dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+				let particleCount = 0;
+				const vbo = gl.createBuffer();
+
+				// Sample authentic logo graphic (drawing full SVG aspect ratio 2199:1431)
+				const buildTargetsFromImage = (img: HTMLImageElement | null): { x: number; y: number; isGold: boolean; isFeatured: boolean; isTviy: boolean }[] => {
+					const off = document.createElement("canvas");
+					const octx = off.getContext("2d", { willReadFrequently: true });
+					if (!octx) return [];
+
+					const slot = document.getElementById("heroLogoSlot");
+					let startX: number;
+					let startY: number;
+					let offWidth: number;
+					let offHeight: number;
+
+					if (slot) {
+						const rect = slot.getBoundingClientRect();
+						offWidth = Math.floor(rect.width) || 440;
+						offHeight = Math.floor(rect.height) || Math.floor(offWidth * (1431 / 2199));
+						startX = rect.left;
+						startY = rect.top + window.scrollY;
+					} else {
+						const maxWidth = Math.min(width * 0.88, 480);
+						const ratio = 1431 / 2199;
+						offWidth = Math.floor(maxWidth);
+						offHeight = Math.floor(maxWidth * ratio);
+						startX = (width - offWidth) / 2;
+						startY = Math.max(60, (height - offHeight) * 0.38);
+					}
+
+					off.width = offWidth;
+					off.height = offHeight;
+
+					if (img && (img.naturalWidth > 0 || img.complete)) {
+						// Render full authentic SVG logo vector
+						octx.drawImage(img, 0, 0, offWidth, offHeight);
+						const imgData = octx.getImageData(0, 0, offWidth, offHeight).data;
+						const coords: { x: number; y: number; isGold: boolean; isFeatured: boolean; isTviy: boolean }[] = [];
+
+						// Sampling gaps from STAR_CONFIG:
+						const stepGap = Math.max(3, Math.floor(offWidth / STAR_CONFIG.step.gapDivider));
+						const tviyGap = STAR_CONFIG.tviy.gap;
+
+						// 1. Sample TVIY region with high density:
+						// In logo: TVIY is in rows py < offHeight * 0.165, and ends before T at px < offWidth * 0.27
+						const tviyMaxY = Math.floor(offHeight * 0.165);
+						const tviyMaxX = Math.floor(offWidth * 0.27);
+
+						for (let py = 0; py < tviyMaxY; py += tviyGap) {
+							for (let px = 0; px < tviyMaxX; px += tviyGap) {
+								const idx = (py * offWidth + px) * 4;
+								if (imgData[idx + 3] > STAR_CONFIG.tviy.alphaThreshold) {
+									coords.push({
+										x: startX + px,
+										y: startY + py,
+										isGold: false,
+										isFeatured: Math.random() < STAR_CONFIG.tviy.featuredRatio,
+										isTviy: true,
+									});
+								}
+							}
+						}
+
+						// 2. Sample STEP region with standard gap:
+						for (let py = 0; py < offHeight; py += stepGap) {
+							for (let px = 0; px < offWidth; px += stepGap) {
+								const isInsideTviy = py < tviyMaxY && px < tviyMaxX;
+								if (!isInsideTviy) {
+									const idx = (py * offWidth + px) * 4;
+									if (imgData[idx + 3] > STAR_CONFIG.step.alphaThreshold) {
+										coords.push({
+											x: startX + px,
+											y: startY + py,
+											isGold: py > offHeight * 0.20,
+											isFeatured: Math.random() < STAR_CONFIG.step.featuredRatio,
+											isTviy: false,
+										});
+									}
+								}
+							}
+						}
+
+						if (coords.length > 200) return coords;
+					}
+
+					// Geometric fallback precisely matching the logo layout:
+					// "твій" sits on top left, fitted under & before the crossbar of T,
+					// "STEP" has custom wide T and long descender on P
+					octx.fillStyle = "#ffffff";
+					octx.textAlign = "left";
+					octx.textBaseline = "middle";
+
+					const sSize = offHeight * 0.52;
+					octx.font = `800 ${sSize}px "Manrope", sans-serif`;
+
+					// S, T, E, P positions
+					const sY = offHeight * 0.55;
+					octx.fillText("S", offWidth * 0.05, sY);
+					octx.fillText("T", offWidth * 0.30, sY);
+					octx.fillText("E", offWidth * 0.52, sY);
+					octx.fillText("P", offWidth * 0.76, sY);
+
+					// Long descender tail for letter P
+					const pStemX = offWidth * 0.76;
+					const pStemW = sSize * 0.14;
+					octx.fillRect(pStemX, sY, pStemW, offHeight * 0.42);
+
+					// "твій" small, fitted above S and left of T stem
+					const tviySize = sSize * 0.26;
+					octx.font = `700 ${tviySize}px "Manrope", sans-serif`;
+					octx.fillText("твій", offWidth * 0.05, offHeight * 0.14);
+
+					const imgData = octx.getImageData(0, 0, offWidth, offHeight).data;
+					const coords: { x: number; y: number; isGold: boolean; isFeatured: boolean; isTviy: boolean }[] = [];
+					const stepGap = Math.max(3, Math.floor(offWidth / STAR_CONFIG.step.gapDivider));
+					const tviyGap = STAR_CONFIG.tviy.gap;
+					const tviyMaxY = Math.floor(offHeight * 0.165);
+					const tviyMaxX = Math.floor(offWidth * 0.27);
+
+					// Sample TVIY in fallback
+					for (let py = 0; py < tviyMaxY; py += tviyGap) {
+						for (let px = 0; px < tviyMaxX; px += tviyGap) {
+							const idx = (py * offWidth + px) * 4;
+							if (imgData[idx + 3] > STAR_CONFIG.tviy.alphaThreshold) {
+								coords.push({
+									x: startX + px,
+									y: startY + py,
+									isGold: false,
+									isFeatured: Math.random() < STAR_CONFIG.tviy.featuredRatio,
+									isTviy: true,
+								});
+							}
+						}
+					}
+
+					// Sample STEP in fallback
+					for (let py = 0; py < offHeight; py += stepGap) {
+						for (let px = 0; px < offWidth; px += stepGap) {
+							const isInsideTviy = py < tviyMaxY && px < tviyMaxX;
+							if (!isInsideTviy) {
+								const idx = (py * offWidth + px) * 4;
+								if (imgData[idx + 3] > STAR_CONFIG.step.alphaThreshold) {
+									coords.push({
+										x: startX + px,
+										y: startY + py,
+										isGold: py > offHeight * 0.20,
+										isFeatured: Math.random() < STAR_CONFIG.step.featuredRatio,
+										isTviy: false,
+									});
+								}
+							}
+						}
+					}
+					return coords;
+				};
+
+				const updateParticleBuffer = (targets: { x: number; y: number; isGold: boolean; isFeatured: boolean; isTviy: boolean }[]) => {
+					// Layout per vertex (12 floats):
+					// aOrigin: x, y (2)
+					// aSpread: sx, sy (2)
+					// aSize: size (1)
+					// aColor: r, g, b (3)
+					// aBrightness: brightness (1)
+					// aTwinklePhase: phase (1)
+					// aRayStrength: rayStrength (1)
+					// aIsLogo: 1.0 (logo) vs 0.0 (ambient) (1)
+					// Total = 12 floats per star
+
+					const ambientCount = Math.floor((width * height) / STAR_CONFIG.ambient.densityDivider);
+					const totalStars = targets.length + ambientCount;
+					particleCount = totalStars;
+					const data = new Float32Array(totalStars * 12);
+
+					let offset = 0;
+
+					// 1. Constellation Logo Stars
+					targets.forEach((pt) => {
+						const angle = Math.random() * Math.PI * 2;
+						const dist = Math.random() * Math.max(width, height) * 0.85 + 150;
+						const spreadX = Math.cos(angle) * dist;
+						const spreadY = Math.sin(angle) * dist - Math.random() * 200;
+
+						let size: number;
+						let rayStrength: number;
+						let brightness: number;
+						let r: number, g: number, b: number;
+
+						if (pt.isTviy) {
+							const cfg = STAR_CONFIG.tviy;
+							if (pt.isFeatured) {
+								size = Math.random() * (cfg.featuredSizeMax - cfg.featuredSizeMin) + cfg.featuredSizeMin;
+								rayStrength = Math.random() * (cfg.featuredRayMax - cfg.featuredRayMin) + cfg.featuredRayMin;
+								brightness = Math.random() * (cfg.featuredBrightnessMax - cfg.featuredBrightnessMin) + cfg.featuredBrightnessMin;
+							} else {
+								size = Math.random() * (cfg.sizeMax - cfg.sizeMin) + cfg.sizeMin;
+								rayStrength = Math.random() * (cfg.rayStrengthMax - cfg.rayStrengthMin) + cfg.rayStrengthMin;
+								brightness = Math.random() * (cfg.brightnessMax - cfg.brightnessMin) + cfg.brightnessMin;
+							}
+							r = cfg.color.r;
+							g = cfg.color.g;
+							b = cfg.color.b;
+						} else {
+							// STEP
+							const cfg = STAR_CONFIG.step;
+							if (pt.isFeatured) {
+								size = Math.random() * (cfg.featuredSizeMax - cfg.featuredSizeMin) + cfg.featuredSizeMin;
+								rayStrength = Math.random() * (cfg.featuredRayMax - cfg.featuredRayMin) + cfg.featuredRayMin;
+								brightness = Math.random() * (cfg.featuredBrightnessMax - cfg.featuredBrightnessMin) + cfg.featuredBrightnessMin;
+							} else {
+								size = Math.random() * (cfg.sizeMax - cfg.sizeMin) + cfg.sizeMin;
+								rayStrength = Math.random() * (cfg.rayStrengthMax - cfg.rayStrengthMin) + cfg.rayStrengthMin;
+								brightness = Math.random() * (cfg.brightnessMax - cfg.brightnessMin) + cfg.brightnessMin;
+							}
+							const col = pt.isGold ? cfg.colorGold : cfg.colorIvory;
+							r = col.r;
+							g = col.g;
+							b = col.b;
+						}
+
+						// aOrigin
+						data[offset++] = pt.x;
+						data[offset++] = pt.y;
+						// aSpread
+						data[offset++] = spreadX;
+						data[offset++] = spreadY;
+						// aSize
+						data[offset++] = size;
+						// aColor
+						data[offset++] = r;
+						data[offset++] = g;
+						data[offset++] = b;
+						// aBrightness
+						data[offset++] = brightness;
+						// aTwinklePhase
+						data[offset++] = Math.random() * Math.PI * 2;
+						// aRayStrength
+						data[offset++] = rayStrength;
+						// aIsLogo: 1.0 indicates logo star (will disperse & smoothly vanish)
+						data[offset++] = 1.0;
+					});
+
+					// 2. Ambient Deep-Sky Cosmic Stars (stay fixed in place across the night sky)
+					for (let i = 0; i < ambientCount; i++) {
+						const rx = Math.random() * width;
+						const ry = Math.random() * height;
+						const isGold = Math.random() > 0.6;
+						const amb = STAR_CONFIG.ambient;
+						const isFeatured = Math.random() < amb.featuredRatio;
+
+						let size: number;
+						let rayStrength: number;
+						if (isFeatured) {
+							size = Math.random() * (amb.featuredSizeMax - amb.featuredSizeMin) + amb.featuredSizeMin;
+							rayStrength = Math.random() * (amb.featuredRayMax - amb.featuredRayMin) + amb.featuredRayMin;
+						} else {
+							size = Math.random() * (amb.sizeMax - amb.sizeMin) + amb.sizeMin;
+							rayStrength = Math.random() * (amb.rayStrengthMax - amb.rayStrengthMin) + amb.rayStrengthMin;
+						}
+						const brightness = Math.random() * (amb.brightnessMax - amb.brightnessMin) + amb.brightnessMin;
+
+						const r = isGold ? 0.86 : 0.95;
+						const g = isGold ? 0.77 : 0.94;
+						const b = isGold ? 0.55 : 0.92;
+
+						data[offset++] = rx;
+						data[offset++] = ry;
+						// aSpread = 0 for ambient stars so dispersion never moves them
+						data[offset++] = 0;
+						data[offset++] = 0;
+						data[offset++] = size;
+						data[offset++] = r;
+						data[offset++] = g;
+						data[offset++] = b;
+						data[offset++] = brightness;
+						data[offset++] = Math.random() * Math.PI * 2;
+						data[offset++] = rayStrength;
+						// aIsLogo: 0.0 indicates ambient star (immune to explosion & logo fade)
+						data[offset++] = 0.0;
+					}
+
+					gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
+					gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
+
+					// Setup vertex attribute pointers
+					const stride = 12 * 4; // 12 floats * 4 bytes
+
+					gl.enableVertexAttribArray(aOriginLoc);
+					gl.vertexAttribPointer(aOriginLoc, 2, gl.FLOAT, false, stride, 0);
+
+					gl.enableVertexAttribArray(aSpreadLoc);
+					gl.vertexAttribPointer(aSpreadLoc, 2, gl.FLOAT, false, stride, 2 * 4);
+
+					gl.enableVertexAttribArray(aSizeLoc);
+					gl.vertexAttribPointer(aSizeLoc, 1, gl.FLOAT, false, stride, 4 * 4);
+
+					gl.enableVertexAttribArray(aColorLoc);
+					gl.vertexAttribPointer(aColorLoc, 3, gl.FLOAT, false, stride, 5 * 4);
+
+					gl.enableVertexAttribArray(aBrightnessLoc);
+					gl.vertexAttribPointer(aBrightnessLoc, 1, gl.FLOAT, false, stride, 8 * 4);
+
+					gl.enableVertexAttribArray(aTwinklePhaseLoc);
+					gl.vertexAttribPointer(aTwinklePhaseLoc, 1, gl.FLOAT, false, stride, 9 * 4);
+
+					gl.enableVertexAttribArray(aRayStrengthLoc);
+					gl.vertexAttribPointer(aRayStrengthLoc, 1, gl.FLOAT, false, stride, 10 * 4);
+
+					gl.enableVertexAttribArray(aIsLogoLoc);
+					gl.vertexAttribPointer(aIsLogoLoc, 1, gl.FLOAT, false, stride, 11 * 4);
+				};
+
+				const resize = () => {
+					width = window.innerWidth;
+					height = window.innerHeight;
+					dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+					canvas.width = width * dpr;
+					canvas.height = height * dpr;
+					gl.viewport(0, 0, canvas.width, canvas.height);
+
+					gl.useProgram(program);
+					gl.uniform2f(uResolutionLoc, width, height);
+					gl.uniform1f(uPixelRatioLoc, dpr);
+
+					updateParticleBuffer(buildTargetsFromImage(logoImage));
+				};
+
+				// Initial buffer with typographic fallback
+				let logoImage: HTMLImageElement | null = null;
+				resize();
+
+				// Load SVG logo
+				const loadedLogo = new Image();
+				loadedLogo.src = "/images/home/logo.svg";
+				loadedLogo.onload = () => {
+					logoImage = loadedLogo;
+					const exactTargets = buildTargetsFromImage(loadedLogo);
+					if (exactTargets.length > 200) {
+						updateParticleBuffer(exactTargets);
+					}
+				};
+
+				window.addEventListener("resize", resize, { passive: true });
+
+				// Scroll states: hero exit controls logo dispersion, while sunrise is exponential across the full page
+				let logoProgress = 0;
+				let dawnAlpha = 0;
+				let cachedSkyMaxScroll = 1;
+
+				const updateSkyMaxScroll = () => {
+					cachedSkyMaxScroll = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
+				};
+				updateSkyMaxScroll();
+				window.addEventListener("resize", updateSkyMaxScroll, { passive: true });
+
+				const updateSkyOnScroll = () => {
+					const scrollY = window.scrollY;
+
+					// 1. Logo dispersion: logo typography stars disperse as user scrolls away from the hero section
+					const heroRange = Math.max(window.innerHeight * 0.95, 600);
+					logoProgress = Math.min(Math.max(scrollY / heroRange, 0), 1);
+
+					// 2. Sunrise progression: spans the entire page using SUNRISE_CONFIG (1 = linear, n = exponential)
+					const pageProgress = Math.min(Math.max(scrollY / cachedSkyMaxScroll, 0), 1);
+
+					dawnAlpha = calculateDawnAlpha(pageProgress, SUNRISE_CONFIG.exponent, SUNRISE_CONFIG.curve);
+
+					if (dawnOverlay) {
+						dawnOverlay.style.opacity = `${dawnAlpha * SUNRISE_CONFIG.maxOverlayOpacity}`;
+					}
+					if (dawnSunDisc) {
+						const discOpacity = Math.pow(dawnAlpha, SUNRISE_CONFIG.sunDisc.exponent);
+						const discTranslateY = (1 - dawnAlpha) * SUNRISE_CONFIG.sunDisc.translateYStart;
+						const discScale =
+							SUNRISE_CONFIG.sunDisc.scaleMin +
+							dawnAlpha * (SUNRISE_CONFIG.sunDisc.scaleMax - SUNRISE_CONFIG.sunDisc.scaleMin);
+						dawnSunDisc.style.opacity = `${discOpacity}`;
+						dawnSunDisc.style.transform = `translateX(-50%) translateY(${discTranslateY}px) scale(${discScale}) translateZ(0)`;
+					}
+				};
+
+				updateSkyOnScroll();
+
+				// WebGL Blend Mode for additive starlight
+				gl.enable(gl.BLEND);
+				gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+
+				let time = 0;
+				const render = () => {
+					time += 0.022;
+
+					// Synchronize sky atmosphere smoothly with each render frame (0 forced layout reflows)
+					updateSkyOnScroll();
+
+					// Cubic hermite dispersion for logo stars
+					const p = logoProgress;
+					const dispersion = p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2;
+
+					// Logo stars smoothly disappear as they spread away from the hero (complete fade by p = 1.0)
+					const logoFade = Math.pow(Math.max(1.0 - p, 0.0), 1.5);
+
+					// Starlight softly dims as the golden sunrise reaches its peak at the bottom
+					const skyFade = Math.max(
+						1.0 - dawnAlpha * SUNRISE_CONFIG.starDimmingFactor,
+						SUNRISE_CONFIG.minStarOpacity
+					);
+
+					gl.clearColor(0, 0, 0, 0);
+					gl.clear(gl.COLOR_BUFFER_BIT);
+
+					gl.useProgram(program);
+					gl.uniform1f(uTimeLoc, time);
+					gl.uniform1f(uDispersionLoc, dispersion);
+					gl.uniform1f(uLogoFadeLoc, logoFade);
+					gl.uniform1f(uSkyFadeLoc, skyFade);
+
+					gl.drawArrays(gl.POINTS, 0, particleCount);
+
+					requestAnimationFrame(render);
+				};
+
+				render();
+		};
+
+		initCosmicField();
+	</script>
+</Layout>
