@@ -2398,7 +2398,8 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 				if (isAtBottom && slideTargets.length > 0) {
 					currentTargetId = slideTargets[slideTargets.length - 1].id;
 				} else {
-					const offsets = getSlideOffsets();
+					const dotIds = new Set(slideTargets.map((item) => item.id));
+					const offsets = getSlideOffsets().filter((o) => dotIds.has(o.id));
 					const middle = scrollY + winH * 0.45;
 					let closestDist = Infinity;
 
