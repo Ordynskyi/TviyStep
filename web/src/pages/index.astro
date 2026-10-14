@@ -2555,7 +2555,8 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 
 					void main() {
 						float sp = clamp(uSlideProgress, 0.0, 4.0);
-						float slideIdx = floor(sp);
+						// Last slide (sp = 4) must resolve to the final segment with t = 1, not t = 0 of segment 4
+						float slideIdx = min(floor(sp), 3.0);
 						float t = sp - slideIdx;
 
 						// Smooth cubic hermite curve for transition between shapes & styles
@@ -2630,13 +2631,15 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 						gl_Position = vec4(clipSpace, 0.0, 1.0);
 
 						float twinkle = 0.72 + 0.28 * sin(uTime * 3.2 + twinklePhase);
-						vOpacity = twinkle * uSkyFade;
+						// Fades stars that shrink below the 1.5px minimum point size
+						float visibility = clamp(targetSize / 1.5, 0.0, 1.0);
+						vOpacity = twinkle * uSkyFade * visibility;
 						vBrightness = targetBright * (0.8 + 0.3 * twinkle);
 						vColor = aColorTwinkle.rgb;
 						vRayStrength = targetRay;
 
 						float diam = targetSize * uPixelRatio * (1.0 + dispersion * 0.25 * isLogo);
-						gl_PointSize = max(diam, 1.5);
+						gl_PointSize = targetSize > 0.0 ? max(diam, 1.5) : 0.0;
 						vParticleDiameter = gl_PointSize;
 					}
 				`;
@@ -3061,7 +3064,7 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 				const getStarStyleForSlide = (
 					k: number,
 					isFeatured: boolean,
-					configs?: ConstellationConfig[]
+					configs?: (ConstellationConfig | null)[]
 				) => {
 					const s = configs?.[k]?.settings;
 					const def = DEFAULT_CONSTELLATION;
@@ -3117,11 +3120,11 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 				// Update particle buffer with all 5 silhouette shapes
 				const updateParticleBuffer = (
 					t0: { x: number; y: number; isGold: boolean; isFeatured: boolean; isTviy: boolean }[],
-					t1: { x: number; y: number; isFeatured?: boolean }[],
-					t2: { x: number; y: number; isFeatured?: boolean }[],
-					t3: { x: number; y: number; isFeatured?: boolean }[],
-					t4: { x: number; y: number; isFeatured?: boolean }[],
-					configs?: ConstellationConfig[]
+					t1: { x: number; y: number; isFeatured?: boolean }[] | null,
+					t2: { x: number; y: number; isFeatured?: boolean }[] | null,
+					t3: { x: number; y: number; isFeatured?: boolean }[] | null,
+					t4: { x: number; y: number; isFeatured?: boolean }[] | null,
+					configs?: (ConstellationConfig | null)[]
 				) => {
 					// Layout per vertex (32 floats * 4 bytes = 128 bytes):
 					// aPos01: pos0.xy, pos1.xy (4)
@@ -3143,12 +3146,13 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 					let offset = 0;
 
 					// 1. Morphing Constellation Stars (Logo -> Calisthenics -> Cyclist -> Runner -> Compass)
+					const hiddenStyle = { size: 0, ray: 0, bright: 0 };
 					for (let i = 0; i < constellationCount; i++) {
 						const pt0 = t0[i];
-						const pt1 = t1[i] || pt0;
-						const pt2 = t2[i] || pt0;
-						const pt3 = t3[i] || pt0;
-						const pt4 = t4[i] || pt0;
+						const pt1 = t1?.[i] ?? pt0;
+						const pt2 = t2?.[i] ?? pt1;
+						const pt3 = t3?.[i] ?? pt2;
+						const pt4 = t4?.[i] ?? pt3;
 
 						const angle = Math.random() * Math.PI * 2;
 						const dist = Math.random() * Math.max(width, height) * 0.75 + 180;
@@ -3156,10 +3160,10 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 						const spreadY = Math.sin(angle) * dist - Math.random() * 150;
 
 						const st0 = getStarStyleForSlide(0, pt0.isFeatured, configs);
-						const st1 = getStarStyleForSlide(1, !!pt1.isFeatured, configs);
-						const st2 = getStarStyleForSlide(2, !!pt2.isFeatured, configs);
-						const st3 = getStarStyleForSlide(3, !!pt3.isFeatured, configs);
-						const st4 = getStarStyleForSlide(4, !!pt4.isFeatured, configs);
+						const st1 = t1 ? getStarStyleForSlide(1, !!pt1.isFeatured, configs) : hiddenStyle;
+						const st2 = t2 ? getStarStyleForSlide(2, !!pt2.isFeatured, configs) : hiddenStyle;
+						const st3 = t3 ? getStarStyleForSlide(3, !!pt3.isFeatured, configs) : hiddenStyle;
+						const st4 = t4 ? getStarStyleForSlide(4, !!pt4.isFeatured, configs) : hiddenStyle;
 
 						const customCol = configs?.[0]?.settings?.color;
 						const col = customCol ?? (pt0.isGold ? DEFAULT_CONSTELLATION.colorGold : DEFAULT_CONSTELLATION.colorIvory);
@@ -3320,9 +3324,9 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 				// Loaded SVG images for each slide constellation
 				let loadedImages: (HTMLImageElement | null)[] = [];
 
-				const getConstellationConfigs = (): ConstellationConfig[] => {
+				const getConstellationConfigs = (): (ConstellationConfig | null)[] => {
 					const sections = Array.from(document.querySelectorAll<HTMLElement>("main > section[id]"));
-					const found = sections.map((sec) => {
+					const found = sections.map((sec): ConstellationConfig | null => {
 						if (sec.dataset.constellation) {
 							try {
 								return JSON.parse(sec.dataset.constellation) as ConstellationConfig;
@@ -3330,7 +3334,7 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 								console.error("Failed to parse constellation data", e);
 							}
 						}
-						return { svg: sec.dataset.constellationSvg || "/images/home/logo.svg" };
+						return sec.dataset.constellationSvg ? { svg: sec.dataset.constellationSvg } : null;
 					});
 					if (found.length > 0) return found;
 					return [
@@ -3347,59 +3351,41 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 					const t0 = buildTargetsFromLogo(loadedImages[0] || null, configs[0]?.settings);
 					const count = t0.length;
 
-					const t1 = sampleShapePoints(
-						loadedImages[1] || null,
-						document.getElementById("constellationSlot-1"),
-						count,
-						Math.round(width * 0.58),
-						Math.round(height * 0.24),
-						configs[1]?.settings?.size ?? 160,
-						configs[1]?.settings
-					);
+					// Slides without a constellation config yield null and their stars shrink in place
+					const sampleSlide = (k: number, defaultX: number, defaultY: number, defaultSize: number) => {
+						const cfg = configs[k];
+						if (!cfg) return null;
+						return sampleShapePoints(
+							loadedImages[k] || null,
+							document.getElementById(`constellationSlot-${k}`),
+							count,
+							defaultX,
+							defaultY,
+							cfg.settings?.size ?? defaultSize,
+							cfg.settings
+						);
+					};
 
-					const t2 = sampleShapePoints(
-						loadedImages[2] || null,
-						document.getElementById("constellationSlot-2"),
-						count,
-						Math.round(width * 0.12),
-						Math.round(height * 0.24),
-						configs[2]?.settings?.size ?? 190,
-						configs[2]?.settings
-					);
-
-					const t3 = sampleShapePoints(
-						loadedImages[3] || null,
-						document.getElementById("constellationSlot-3"),
-						count,
-						Math.round(width * 0.58),
-						Math.round(height * 0.24),
-						configs[3]?.settings?.size ?? 160,
-						configs[3]?.settings
-					);
-
-					const t4 = sampleShapePoints(
-						loadedImages[4] || null,
-						document.getElementById("constellationSlot-4"),
-						count,
-						Math.round(width * 0.44),
-						Math.round(height * 0.20),
-						configs[4]?.settings?.size ?? 140,
-						configs[4]?.settings
-					);
+					const t1 = sampleSlide(1, Math.round(width * 0.58), Math.round(height * 0.24), 160);
+					const t2 = sampleSlide(2, Math.round(width * 0.12), Math.round(height * 0.24), 190);
+					const t3 = sampleSlide(3, Math.round(width * 0.58), Math.round(height * 0.24), 160);
+					const t4 = sampleSlide(4, Math.round(width * 0.44), Math.round(height * 0.20), 140);
 
 					updateParticleBuffer(t0, t1, t2, t3, t4, configs);
 				};
 
 				const loadAllShapes = () => {
 					const configs = getConstellationConfigs();
-					const urls = configs.map((c) => c.svg);
+					const urls = configs.map((c) => c?.svg ?? null);
+					const pendingCount = urls.filter((url) => url !== null).length;
 					let loadedTotal = 0;
 					const imgs = urls.map((url) => {
+						if (url === null) return null;
 						const im = new Image();
 						im.src = url;
 						const onDone = () => {
 							loadedTotal++;
-							if (loadedTotal === urls.length) {
+							if (loadedTotal === pendingCount) {
 								loadedImages = imgs;
 								refreshBuffers();
 							}
