@@ -11,13 +11,62 @@ const site = {
 	},
 };
 
+// Global starlight particle system configuration
+// - ambient: Fixed background stars (twinkling cosmic sky)
+// - defaultConstellation: Baseline starlight characteristics inherited by all slide silhouettes
+const STAR_CONFIG = {
+	ambient: {
+		densityDivider: 2600, // screen area (w*h) / divider gives count
+		sizeMin: 1.5,
+		sizeMax: 3.3,
+		brightnessMin: 0.8,
+		brightnessMax: 1.2,
+		rayStrengthMin: 0.10,
+		rayStrengthMax: 0.30,
+		featuredRatio: 0.08,
+		featuredSizeMin: 5.0,
+		featuredSizeMax: 9.0,
+		featuredRayMin: 0.65,
+		featuredRayMax: 0.90,
+	},
+	defaultConstellation: {
+		alphaThreshold: 35, // 0-255 opacity threshold to sample star positions from SVG
+		gap: 3, // sampling resolution step (px)
+		featuredRatio: 0.16, // fraction of stars that become cross-spikes
+		sizeMin: 2.0,
+		sizeMax: 4.2,
+		brightnessMin: 1.1,
+		brightnessMax: 1.6,
+		rayStrengthMin: 0.25,
+		rayStrengthMax: 0.60,
+		featuredSizeMin: 2.5,
+		featuredSizeMax: 8.5,
+		featuredRayMin: 0.80,
+		featuredRayMax: 1.10,
+		featuredBrightnessMin: 1.8,
+		featuredBrightnessMax: 2.5,
+		colorIvory: { r: 0.96, g: 0.94, b: 0.92 },
+		colorGold: { r: 0.88, g: 0.78, b: 0.56 },
+	},
+};
+
 // Scrolltelling blocks for the homepage
 // Each block contains texts and images to be displayed in a storytelling manner on the homepage.
 // If there are a few texts in the block - they are just separate paragraphs.
 // If there are a few images in the block - the images should be automatically scrollable. There should be a manual way to scroll through them as well.
+// constellationEffect: SVG silhouette and per-slide starlight settings (inherits defaults from STAR_CONFIG.defaultConstellation).
 const infoBlocks = [
 	{
 		num: '01',
+		constellationEffect: {
+			svg: '/images/home/logo.svg',
+			settings: {
+				size: 440,
+				featuredRatio: 0.15,
+				alphaThreshold: 200,
+				pivot: 'left',
+			},
+		},
 		texts: [
 			'«Твій STEP» — це вільна спортивна спільнота для тих, хто любить бігати, тренуватися, їздити на велосипеді, відкривати нові маршрути і зустрічати своїх людей.'
 		],
@@ -29,6 +78,13 @@ const infoBlocks = [
 	},
 	{
 		num: '02',
+		constellationEffect: {
+			svg: '/images/home/calisthenics.svg',
+			settings: {
+				size: 350,
+				pivot: 'center',
+			},
+		},
 		texts: [
 			'Ми обʼєднуємо людей навколо бігу, велоспорту та функціональних тренувань на свіжому повітрі (калістеніка, бруси, перекладини). Ми працюємо без привʼязки до спортзалів та абонементів, перетворюючи міський та природний простір на майданчик для розвитку.'
 		],
@@ -39,6 +95,14 @@ const infoBlocks = [
 	},
 	{
 		num: '03',
+		constellationEffect: {
+			svg: '/images/home/cyclist.svg',
+			settings: {
+				size: 300,
+				alphaThreshold: 20,
+				pivot: 'center',
+			},
+		},
 		texts: [
 			'Назва спільноти має глибинний підтекст:<br>' +
 			'«Степ» — це символ української волі і свободи, витривалості та безмежного простору;<br>' +
@@ -53,6 +117,13 @@ const infoBlocks = [
 	},
 	{
 		num: '04',
+		constellationEffect: {
+			svg: '/images/home/runner.svg',
+			settings: {
+				size: 350,
+				pivot: 'center',
+			},
+		},
 		texts: [
 			'Неважливо, скільки кілометрів.<br>' +
 			'Неважливо, який темп.<br>' +
@@ -69,6 +140,7 @@ const infoBlocks = [
 	},
 	{
 		num: '05',
+
 		// there should be the join button here (join to Telegram channel)
 		texts: [
 			'Можна прийти одному.<br>' +
@@ -77,43 +149,6 @@ const infoBlocks = [
 			'Твій Step починається з першого кроку.'
 		],
 		images: []
-	}
-];
-
-const howItWorks = [
-	{
-		num: '01',
-		title: 'Увійди в Telegram-спільноту',
-		text: 'Головний центр життя клубу. Тут публікуються анонси виходів, локації збору та живий чат.'
-	},
-	{
-		num: '02',
-		title: 'Обери рух або запропонуй свій',
-		text: 'Біг у парку, ранковий заїзд набережною чи воркаут — приєднуйся до запланованого або клич команду.'
-	},
-	{
-		num: '03',
-		title: 'Зроби перший крок',
-		text: 'Зручний одяг, пляшка води і гарний настрій. Усе інше — темп, дистанція, техніка — формується разом.'
-	}
-];
-
-const faq = [
-	{
-		q: 'Чи підходить спільнота абсолютним новачкам?',
-		a: 'Так, абсолютно. «Твій STEP» побудований на підтримці, а не на змаганнях. Ніхто не біжить швидше за твій комфорт, а на спільних тренуваннях завжди є комфортний темп для кожного.'
-	},
-	{
-		q: 'Скільки коштує участь у тренуваннях?',
-		a: 'Участь безкоштовна. Ми вільна міська ініціатива без абонементів чи обовʼязкових внесків.'
-	},
-	{
-		q: 'Де зазвичай проходять зустрічі?',
-		a: 'Локації Київські: набережні Дніпра, Труханів острів, ВДНГ, Поділ, парки та міські пагорби. Точні координати виходу узгоджуються в Telegram.'
-	},
-	{
-		q: 'Чи потрібно мати спеціальне спорядження?',
-		a: 'Для бігу чи тренувань достатньо звичайних кросівок та зручного одягу. Для вело — будь-який справний велосипед та шолом.'
 	}
 ];
 
@@ -695,6 +730,29 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 		.storytelling-wrapper {
 			position: relative;
 			padding: 0;
+		}
+
+		.slide-constellation-slot {
+			width: min(180px, 36vw);
+			aspect-ratio: 1 / 1;
+			margin-bottom: 24px;
+			pointer-events: none;
+		}
+
+		.cta-constellation-slot {
+			width: min(150px, 30vw);
+			margin: 0 auto 20px;
+		}
+
+		.hero-visual-slider {
+			border-radius: 28px;
+			box-shadow: 0 32px 80px rgba(0, 0, 0, 0.5);
+			aspect-ratio: 4 / 3.4;
+			max-height: min(480px, calc(100vh - var(--topbar-height) - 80px));
+		}
+
+		.hero-slide {
+			aspect-ratio: 4 / 3.4;
 		}
 
 		.chapter-block {
@@ -1514,7 +1572,7 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 	</svg>
 
 	<!-- FIXED COSMIC STAR PARTICLES & SUNRISE BACKDROP -->
-	<div class="sky-backdrop-fixed" aria-hidden="true">
+	<div class="sky-backdrop-fixed" aria-hidden="true" data-star-config={JSON.stringify(STAR_CONFIG)}>
 		<canvas id="starCanvas"></canvas>
 		<div class="dawn-overlay" id="dawnOverlay"></div>
 		<div class="dawn-sun-disc" id="dawnSunDisc"></div>
@@ -1559,10 +1617,11 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 			</a>
 
 			<nav class="nav-menu" aria-label="Головна навігація">
-				<a href="#story" class="nav-link">Історія</a>
-				<a href="#philosophy" class="nav-link">Сенс</a>
-				<a href="#how" class="nav-link">Як почати</a>
-				<a href="#faq" class="nav-link">Питання</a>
+				<a href="#hero" class="nav-link">Головна</a>
+				<a href="#chapter-02" class="nav-link">Тренування</a>
+				<a href="#chapter-03" class="nav-link">Сенс</a>
+				<a href="#chapter-04" class="nav-link">Спільнота</a>
+				<a href="#join" class="nav-link">Приєднатися</a>
 			</nav>
 
 			<div class="nav-actions">
@@ -1602,10 +1661,11 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 
 		<div class="mobile-menu-drawer" id="mobileDrawer">
 			<div class="container">
-				<a href="#story" class="nav-link">Історія спільноти</a>
-				<a href="#philosophy" class="nav-link">Глибинний зміст</a>
-				<a href="#how" class="nav-link">Як приєднатися</a>
-				<a href="#faq" class="nav-link">Часті питання</a>
+				<a href="#hero" class="nav-link">Головна</a>
+				<a href="#chapter-02" class="nav-link">Тренування</a>
+				<a href="#chapter-03" class="nav-link">Сенс</a>
+				<a href="#chapter-04" class="nav-link">Спільнота</a>
+				<a href="#join" class="nav-link">Приєднатися</a>
 				<a
 					class="btn-primary"
 					href={site.social.telegram}
@@ -1623,74 +1683,120 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 	<nav class="slide-indicator" aria-label="Навігація по слайдах" id="slideIndicator"></nav>
 
 	<main id="top">
-		<!-- HERO SECTION -->
-		<section id="hero" class="hero-section" data-slide-title="Головна">
-			<div class="container hero-grid">
-				<div>
-					<h1 class="hero-title reveal">
-						Твій крок. <br />
-						Твій шлях.
-					</h1>
+		{
+			infoBlocks.map((ch, idx) => {
+				const isEven = idx % 2 === 1;
+				const isHero = idx === 0;
+				const isLast = ch.images.length === 0;
 
-					<div id="heroLogoSlot" class="hero-logo-slot" aria-hidden="true"></div>
+				if (isHero) {
+					return (
+						/* HERO SECTION - Powered by first infoBlock (Logo Constellation) */
+						<section id="hero" class="hero-section" data-slide-title="Головна" data-constellation={JSON.stringify(ch.constellationEffect)}>
+							<div class="container hero-grid">
+								<div>
+									<div id="heroLogoSlot" class="hero-logo-slot" aria-hidden="true"></div>
 
-					<p class="hero-subtitle reveal">
-						Відкрита спільнота для тих, хто любить бігати, тренуватися, крутити педалі й відкривати нові маршрути серед своїх людей. Без абонементів і без оцінок темпу.
-					</p>
+									{ch.texts.map((p) => (
+										<p class="hero-subtitle reveal" set:html={p} />
+									))}
 
-					<div class="hero-actions reveal">
-						<a
-							class="btn-primary"
-							href={site.social.telegram}
-							target="_blank"
-							rel="noreferrer"
-						>
-							<Fragment set:html={icons.telegram} />
-							<span>Приєднатися</span>
-						</a>
-						<a class="btn-secondary" href="#story">
-							<span>Дізнатися більше</span>
-							<Fragment set:html={icons.arrowRight} />
-						</a>
-					</div>
-				</div>
+									<div class="hero-actions reveal">
+										<a
+											class="btn-primary"
+											href={site.social.telegram}
+											target="_blank"
+											rel="noreferrer"
+										>
+											<Fragment set:html={icons.telegram} />
+											<span>Приєднатися</span>
+										</a>
+										<a class="btn-secondary" href="#chapter-02">
+											<span>Дізнатися більше</span>
+											<Fragment set:html={icons.arrowRight} />
+										</a>
+									</div>
+								</div>
 
-				<div class="reveal">
-					<div class="hero-visual-card">
-						<div class="hero-img-inner">
-							<img
-								src="/images/home/groupFlag1.webp"
-								alt="Спільнота Твій STEP на старті"
-							/>
-							<div class="hero-img-overlay"></div>
-							<div class="hero-card-caption">
-								<span class="hero-caption-pill">Київські горизонти</span>
-								<span class="hero-caption-pill">#TviyStep</span>
+								<div class="reveal">
+									{ch.images.length > 0 && (
+										<div class="media-slider-container hero-visual-slider" data-slider>
+											<div class="slider-track" data-track>
+												{ch.images.map((imgSrc, slideIdx) => (
+													<figure class="slider-slide hero-slide">
+														<img
+															src={imgSrc}
+															alt={`Спільнота Твій STEP ${slideIdx + 1}`}
+															loading="eager"
+														/>
+														<div class="slider-overlay-gradient" />
+														<div class="hero-card-caption">
+															<span class="hero-caption-pill">Київські горизонти</span>
+															<span class="hero-caption-pill">#TviyStep</span>
+														</div>
+													</figure>
+												))}
+											</div>
+
+											{ch.images.length > 1 && (
+												<div class="slider-controls-bar">
+													<div class="slider-dots" data-dots>
+														{ch.images.map((_, dotIdx) => (
+															<button
+																type="button"
+																class={`slider-dot ${dotIdx === 0 ? "active" : ""}`}
+																data-slide-index={dotIdx}
+																aria-label={`Перейти до слайду ${dotIdx + 1}`}
+															/>
+														))}
+													</div>
+													<div class="slider-buttons">
+														<button
+															type="button"
+															class="slider-btn"
+															data-action="prev"
+															aria-label="Попереднє фото"
+														>
+															←
+														</button>
+														<button
+															type="button"
+															class="slider-btn"
+															data-action="next"
+															aria-label="Наступне фото"
+														>
+															→
+														</button>
+													</div>
+												</div>
+											)}
+										</div>
+									)}
+								</div>
 							</div>
-						</div>
-					</div>
-				</div>
-			</div>
 
-			<a href="#story" class="hero-scroll-cue" aria-label="Гортати вниз до історії">
-				<span>Гортати вниз</span>
-				<div class="scroll-arrow-anim"></div>
-			</a>
-			<div class="hero-glow-line"></div>
-		</section>
+							<a href="#chapter-02" class="hero-scroll-cue" aria-label="Гортати вниз">
+								<span>Гортати вниз</span>
+								<div class="scroll-arrow-anim"></div>
+							</a>
+							<div class="hero-glow-line"></div>
+						</section>
+					);
+				}
 
-		<!-- CINEMATIC SCROLLTELLING CHAPTERS -->
-		<div id="story" class="storytelling-wrapper">
-			{
-				infoBlocks.map((ch, idx) => {
-					const isEven = idx % 2 === 1;
-					const isLast = ch.images.length === 0;
-
-					return isLast ? (
+				if (isLast) {
+					return (
 						/* FINAL CLIMAX CTA CHAPTER */
-						<section id="join" class="chapter-cta-block reveal" data-slide-title={`Крок ${ch.num}: Зграя`}>
+						<section id="join" class="chapter-cta-block reveal" data-slide-title="Приєднатися" data-constellation={JSON.stringify(ch.constellationEffect)}>
 							<div class="container">
 								<div class="cta-box">
+									<!-- Final Compass / Sunrise Starlight Constellation Slot -->
+									<div
+										id={`constellationSlot-${idx}`}
+										class="slide-constellation-slot cta-constellation-slot"
+										aria-hidden="true"
+									></div>
+
 									<div class="chapter-num-tag" style="justify-content: center;">
 										<span class="chapter-index">КРОК {ch.num}</span>
 									</div>
@@ -1740,90 +1846,95 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 								</div>
 							</div>
 						</section>
-					) : (
-						/* STANDARD EDITORIAL CHAPTER */
-						<section
-							id={`chapter-${ch.num}`}
-							class="chapter-block reveal"
-							data-slide-title={`Крок ${ch.num}`}
-						>
-							<div class="container">
-								<div class={`chapter-layout ${isEven ? "reverse" : ""}`}>
-									<!-- TEXT COLUMN -->
-									<div class="chapter-text-col">
-										<div class="chapter-num-tag">
-											<span class="chapter-index">КРОК {ch.num}</span>
-										</div>
+					);
+				}
 
-										<!-- Organic Ribbon SVG Flourish -->
-										<svg class="ribbon-flourish" viewBox="0 0 140 14" aria-hidden="true">
-											<path d="M 0,7 Q 35,0 70,7 T 140,7" />
-										</svg>
-
-										{ch.texts.map((p) => (
-											<p class="chapter-desc" set:html={p} />
-										))}
+				return (
+					/* STANDARD EDITORIAL CHAPTER */
+					<section
+						id={`chapter-${ch.num}`}
+						class="chapter-block reveal"
+						data-slide-title={`Крок ${ch.num}`}
+						data-constellation={JSON.stringify(ch.constellationEffect)}
+					>
+						<div class="container">
+							<div class={`chapter-layout ${isEven ? "reverse" : ""}`}>
+								<!-- TEXT COLUMN -->
+								<div class="chapter-text-col">
+									<div class="chapter-num-tag">
+										<span class="chapter-index">КРОК {ch.num}</span>
 									</div>
 
-									<!-- MEDIA COLUMN (AUTO/MANUAL CAROUSEL) -->
-									<div class="chapter-media-col">
-										{ch.images.length > 0 && (
-											<div class="media-slider-container" data-slider>
-												<div class="slider-track" data-track>
-													{ch.images.map((imgSrc, slideIdx) => (
-														<figure class="slider-slide">
-															<img
-																src={imgSrc}
-																alt={`Кадр спільноти Твій STEP ${slideIdx + 1}`}
-																loading="lazy"
-															/>
-															<div class="slider-overlay-gradient" />
-														</figure>
-													))}
-												</div>
+									<!-- Sport Constellation Slot (Calisthenics, Cyclist, Runner) -->
+									<div
+										id={`constellationSlot-${idx}`}
+										class="slide-constellation-slot"
+										aria-hidden="true"
+									></div>
 
-												{ch.images.length > 1 && (
-													<div class="slider-controls-bar">
-														<div class="slider-dots" data-dots>
-															{ch.images.map((_, dotIdx) => (
-																<button
-																	type="button"
-																	class={`slider-dot ${dotIdx === 0 ? "active" : ""}`}
-																	data-slide-index={dotIdx}
-																	aria-label={`Перейти до слайду ${dotIdx + 1}`}
-																/>
-															))}
-														</div>
-														<div class="slider-buttons">
-															<button
-																type="button"
-																class="slider-btn"
-																data-action="prev"
-																aria-label="Попереднє фото"
-															>
-																←
-															</button>
-															<button
-																type="button"
-																class="slider-btn"
-																data-action="next"
-																aria-label="Наступне фото"
-															>
-																→
-															</button>
-														</div>
-													</div>
-												)}
+									{ch.texts.map((p) => (
+										<p class="chapter-desc" set:html={p} />
+									))}
+								</div>
+
+								<!-- MEDIA COLUMN (AUTO/MANUAL CAROUSEL) -->
+								<div class="chapter-media-col">
+									{ch.images.length > 0 && (
+										<div class="media-slider-container" data-slider>
+											<div class="slider-track" data-track>
+												{ch.images.map((imgSrc, slideIdx) => (
+													<figure class="slider-slide">
+														<img
+															src={imgSrc}
+															alt={`Кадр спільноти Твій STEP ${slideIdx + 1}`}
+															loading="lazy"
+														/>
+														<div class="slider-overlay-gradient" />
+													</figure>
+												))}
 											</div>
-										)}
-									</div>
+
+											{ch.images.length > 1 && (
+												<div class="slider-controls-bar">
+													<div class="slider-dots" data-dots>
+														{ch.images.map((_, dotIdx) => (
+															<button
+																type="button"
+																class={`slider-dot ${dotIdx === 0 ? "active" : ""}`}
+																data-slide-index={dotIdx}
+																aria-label={`Перейти до слайду ${dotIdx + 1}`}
+															/>
+														))}
+													</div>
+													<div class="slider-buttons">
+														<button
+															type="button"
+															class="slider-btn"
+															data-action="prev"
+															aria-label="Попереднє фото"
+														>
+															←
+														</button>
+														<button
+															type="button"
+															class="slider-btn"
+															data-action="next"
+															aria-label="Наступне фото"
+														>
+															→
+														</button>
+													</div>
+												</div>
+											)}
+										</div>
+									)}
 								</div>
 							</div>
-						</section>
-					);
-				})
-			}
-		</div>
+						</div>
+					</section>
+				);
+			})
+		}
 	</main>
 
 	<!-- FOOTER -->
@@ -2074,6 +2185,42 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 		let wheelCooldownTimer: ReturnType<typeof setTimeout> | null = null;
 		let wheelBlocked = false;
 
+		// Global Slide Offsets for Snap Navigation & Starlight Interpolation
+		let cachedSlideOffsets: { id: string; top: number }[] = [];
+		let cachedDocHeight = 0;
+
+		const getSlideOffsets = () => {
+			if (cachedSlideOffsets.length > 0) return cachedSlideOffsets;
+			const sections = Array.from(document.querySelectorAll<HTMLElement>("main > section[id]"));
+			const scrollY = window.scrollY;
+			cachedDocHeight = document.documentElement.scrollHeight;
+			const maxScrollY = Math.max(cachedDocHeight - window.innerHeight, 0);
+
+			const raw = sections.map((el) => {
+				const rect = el.getBoundingClientRect();
+				return { id: el.id, top: Math.min(Math.max(0, Math.round(rect.top + scrollY)), maxScrollY) };
+			});
+
+			if (raw.length > 0 && maxScrollY > raw[raw.length - 1].top + 20) {
+				raw.push({ id: "footer", top: maxScrollY });
+			}
+
+			const clean: typeof raw = [];
+			for (let i = 0; i < raw.length; i++) {
+				if (i === 0 || raw[i].top > clean[clean.length - 1].top + 15) {
+					clean.push(raw[i]);
+				}
+			}
+			cachedSlideOffsets = clean;
+			return cachedSlideOffsets;
+		};
+
+		const refreshSlideOffsets = () => {
+			cachedSlideOffsets = [];
+			getSlideOffsets();
+		};
+		window.addEventListener("resize", refreshSlideOffsets, { passive: true });
+
 		const smoothScrollToTarget = (targetY: number, onComplete?: () => void) => {
 			if (slideAnimationId !== null) {
 				cancelAnimationFrame(slideAnimationId);
@@ -2135,7 +2282,7 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 		if (slideIndicator) {
 			// Automatically discover all slide sections on the page with an ID
 			const slideSections = Array.from(
-				document.querySelectorAll<HTMLElement>("main > section[id], .storytelling-wrapper > section[id]")
+				document.querySelectorAll<HTMLElement>("main > section[id]")
 			);
 
 			// Dynamically populate indicator dots
@@ -2161,42 +2308,7 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 			});
 
 			const slideDots = slideTargets.map((item) => item.dot);
-
 			let activeIndex = 0;
-			let cachedOffsets: { id: string; top: number }[] = [];
-			let cachedDocHeight = 0;
-
-			const updateCachedOffsets = () => {
-				const scrollY = window.scrollY;
-				cachedDocHeight = document.documentElement.scrollHeight;
-				const maxScrollY = Math.max(cachedDocHeight - window.innerHeight, 0);
-
-				const raw = slideTargets.map(({ id, el }) => {
-					const rect = el.getBoundingClientRect();
-					return { id, top: Math.min(Math.max(0, Math.round(rect.top + scrollY)), maxScrollY) };
-				});
-
-				if (raw.length > 0 && maxScrollY > raw[raw.length - 1].top + 20) {
-					raw.push({ id: "footer", top: maxScrollY });
-				}
-
-				// Deduplicate and ensure strictly increasing offsets (at least 15px apart)
-				const clean: typeof raw = [];
-				for (let i = 0; i < raw.length; i++) {
-					if (i === 0 || raw[i].top > clean[clean.length - 1].top + 15) {
-						clean.push(raw[i]);
-					}
-				}
-				cachedOffsets = clean;
-			};
-
-			updateCachedOffsets();
-			window.addEventListener("resize", updateCachedOffsets, { passive: true });
-
-			const getSlideOffsets = () => {
-				if (cachedOffsets.length === 0) updateCachedOffsets();
-				return cachedOffsets;
-			};
 
 			slideTargets.forEach(({ dot }, idx) => {
 				dot.addEventListener("click", () => {
@@ -2326,63 +2438,52 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 			if (!canvas || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
 			// =========================================================================
-			// TUNING PARAMETERS FOR LOGO WORDS & AMBIENT STARS
+			// GLOBAL STARLIGHT & SUNRISE SETTINGS
+			// Defaults inherited from top-level STAR_CONFIG (with fallback defaults)
 			// =========================================================================
-			const STAR_CONFIG = {
-				// Word "твій"
-				tviy: {
-					gap: 2, // sampling step (px)
-					alphaThreshold: 20, // 0-255: lower captures thinner letter parts
-					sizeMin: 2.0, // base star size min (px)
-					sizeMax: 4.2, // base star size max (px)
-					brightnessMin: 1.0,
-					brightnessMax: 1.6,
-					rayStrengthMin: 0.25,
-					rayStrengthMax: 0.60,
-					featuredRatio: 0.16, // fraction of stars that become cross-spikes
-					featuredSizeMin: 2.5,
-					featuredSizeMax: 4.0,
-					featuredRayMin: 0.80,
-					featuredRayMax: 1.10,
-					featuredBrightnessMin: 1.6,
-					featuredBrightnessMax: 2.2,
-					color: { r: 0.88, g: 0.78, b: 0.56 },
-				},
-				// Word "STEP" (with prominent cross-spike stars)
-				step: {
-					gapDivider: 115, // offWidth / gapDivider gives sampling step (~3-4px)
-					alphaThreshold: 60,
-					sizeMin: 2.0,
-					sizeMax: 4.2,
-					brightnessMin: 1.1,
-					brightnessMax: 1.6,
-					rayStrengthMin: 0.25,
-					rayStrengthMax: 0.60,
-					featuredRatio: 0.16, // 16% prominent cross-spikes
-					featuredSizeMin: 2.0,
-					featuredSizeMax: 9.5,
-					featuredRayMin: 0.80,
-					featuredRayMax: 1.10,
-					featuredBrightnessMin: 1.8,
-					featuredBrightnessMax: 2.5,
-					colorIvory: { r: 0.96, g: 0.94, b: 0.92 },
-					colorGold: { r: 0.88, g: 0.78, b: 0.56 },
-				},
-				// Ambient sky stars
-				ambient: {
-					densityDivider: 2600, // screen area (w*h) / divider gives count
-					sizeMin: 1.5,
-					sizeMax: 3.3,
-					brightnessMin: 0.8,
-					brightnessMax: 1.2,
-					rayStrengthMin: 0.10,
-					rayStrengthMax: 0.30,
-					featuredRatio: 0.08,
-					featuredSizeMin: 5.0,
-					featuredSizeMax: 9.0,
-					featuredRayMin: 0.65,
-					featuredRayMax: 0.90,
-				},
+			const backdropEl = document.querySelector<HTMLElement>(".sky-backdrop-fixed");
+			let parsedGlobalStarConfig: any = null;
+			if (backdropEl?.dataset.starConfig) {
+				try {
+					parsedGlobalStarConfig = JSON.parse(backdropEl.dataset.starConfig);
+				} catch (e) {
+					console.error("Failed to parse star config", e);
+				}
+			}
+
+			const AMBIENT_CONFIG = parsedGlobalStarConfig?.ambient ?? {
+				densityDivider: 2600,
+				sizeMin: 1.5,
+				sizeMax: 3.3,
+				brightnessMin: 0.8,
+				brightnessMax: 1.2,
+				rayStrengthMin: 0.10,
+				rayStrengthMax: 0.30,
+				featuredRatio: 0.08,
+				featuredSizeMin: 5.0,
+				featuredSizeMax: 9.0,
+				featuredRayMin: 0.65,
+				featuredRayMax: 0.90,
+			};
+
+			const DEFAULT_CONSTELLATION = parsedGlobalStarConfig?.defaultConstellation ?? {
+				alphaThreshold: 35,
+				gap: 3,
+				featuredRatio: 0.16,
+				sizeMin: 2.0,
+				sizeMax: 4.2,
+				brightnessMin: 1.1,
+				brightnessMax: 1.6,
+				rayStrengthMin: 0.25,
+				rayStrengthMax: 0.60,
+				featuredSizeMin: 2.5,
+				featuredSizeMax: 8.5,
+				featuredRayMin: 0.80,
+				featuredRayMax: 1.10,
+				featuredBrightnessMin: 1.8,
+				featuredBrightnessMax: 2.5,
+				colorIvory: { r: 0.96, g: 0.94, b: 0.92 },
+				colorGold: { r: 0.88, g: 0.78, b: 0.56 },
 			};
 
 			// =========================================================================
@@ -2431,19 +2532,18 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 			const gl = canvas.getContext("webgl", { alpha: true, antialias: true, premultipliedAlpha: true });
 			if (!gl) return;
 				const vsSource = `
-					attribute vec2 aOrigin;
-					attribute vec2 aSpread;
-					attribute float aSize;
-					attribute vec3 aColor;
-					attribute float aBrightness;
-					attribute float aTwinklePhase;
-					attribute float aRayStrength;
-					attribute float aIsLogo;
+					attribute vec4 aPos01;
+					attribute vec4 aPos23;
+					attribute vec4 aPos4Spread;
+					attribute vec4 aSize0123;
+					attribute vec4 aRay0123;
+					attribute vec4 aBright0123;
+					attribute vec4 aStyle4Misc;
+					attribute vec4 aColorTwinkle;
 
 					uniform vec2 uResolution;
 					uniform float uTime;
-					uniform float uDispersion;
-					uniform float uLogoFade;
+					uniform float uSlideProgress;
 					uniform float uSkyFade;
 					uniform float uPixelRatio;
 
@@ -2454,24 +2554,88 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 					varying float vParticleDiameter;
 
 					void main() {
-						float driftX = sin(uTime * 1.4 + aTwinklePhase) * 2.0;
-						float driftY = cos(uTime * 1.1 + aTwinklePhase) * 2.0;
-						// Only logo stars disperse and spread outwards; ambient background stars stay in their natural cosmic positions
-						vec2 pos = aOrigin + aSpread * (uDispersion * aIsLogo) + vec2(driftX, driftY);
+						float sp = clamp(uSlideProgress, 0.0, 4.0);
+						float slideIdx = floor(sp);
+						float t = sp - slideIdx;
+
+						// Smooth cubic hermite curve for transition between shapes & styles
+						float morphT = smoothstep(0.0, 1.0, t);
+
+						// Cosmic explosion curve: dispersion peaks midway between slides (t = 0.5)
+						float dispersion = sin(t * 3.14159265);
+
+						vec2 pos0 = aPos01.xy;
+						vec2 pos1 = aPos01.zw;
+						vec2 pos2 = aPos23.xy;
+						vec2 pos3 = aPos23.zw;
+						vec2 pos4 = aPos4Spread.xy;
+						vec2 spread = aPos4Spread.zw;
+
+						float size0 = aSize0123.x;
+						float size1 = aSize0123.y;
+						float size2 = aSize0123.z;
+						float size3 = aSize0123.w;
+						float size4 = aStyle4Misc.x;
+
+						float ray0 = aRay0123.x;
+						float ray1 = aRay0123.y;
+						float ray2 = aRay0123.z;
+						float ray3 = aRay0123.w;
+						float ray4 = aStyle4Misc.y;
+
+						float bright0 = aBright0123.x;
+						float bright1 = aBright0123.y;
+						float bright2 = aBright0123.z;
+						float bright3 = aBright0123.w;
+						float bright4 = aStyle4Misc.z;
+
+						float isLogo = aStyle4Misc.w;
+
+						vec2 targetPos;
+						float targetSize;
+						float targetRay;
+						float targetBright;
+
+						if (slideIdx < 0.5) {
+							targetPos = mix(pos0, pos1, morphT);
+							targetSize = mix(size0, size1, morphT);
+							targetRay = mix(ray0, ray1, morphT);
+							targetBright = mix(bright0, bright1, morphT);
+						} else if (slideIdx < 1.5) {
+							targetPos = mix(pos1, pos2, morphT);
+							targetSize = mix(size1, size2, morphT);
+							targetRay = mix(ray1, ray2, morphT);
+							targetBright = mix(bright1, bright2, morphT);
+						} else if (slideIdx < 2.5) {
+							targetPos = mix(pos2, pos3, morphT);
+							targetSize = mix(size2, size3, morphT);
+							targetRay = mix(ray2, ray3, morphT);
+							targetBright = mix(bright2, bright3, morphT);
+						} else {
+							targetPos = mix(pos3, pos4, morphT);
+							targetSize = mix(size3, size4, morphT);
+							targetRay = mix(ray3, ray4, morphT);
+							targetBright = mix(bright3, bright4, morphT);
+						}
+
+						float twinklePhase = aColorTwinkle.w;
+						float driftX = sin(uTime * 1.4 + twinklePhase) * 2.0;
+						float driftY = cos(uTime * 1.1 + twinklePhase) * 2.0;
+
+						// Stardust burst only applies to constellation stars during transition
+						vec2 pos = targetPos + spread * (dispersion * isLogo) + vec2(driftX, driftY);
 
 						vec2 zeroToOne = pos / uResolution;
 						vec2 clipSpace = (zeroToOne * 2.0 - 1.0) * vec2(1.0, -1.0);
 						gl_Position = vec4(clipSpace, 0.0, 1.0);
 
-						float twinkle = 0.72 + 0.28 * sin(uTime * 3.2 + aTwinklePhase);
-						// Logo stars smoothly fade out as they disperse (uLogoFade); ambient stars gently react to the sunrise (uSkyFade)
-						float starFade = mix(uSkyFade, uLogoFade, aIsLogo);
-						vOpacity = twinkle * starFade;
-						vBrightness = aBrightness * (0.8 + 0.3 * twinkle);
-						vColor = aColor;
-						vRayStrength = aRayStrength;
+						float twinkle = 0.72 + 0.28 * sin(uTime * 3.2 + twinklePhase);
+						vOpacity = twinkle * uSkyFade;
+						vBrightness = targetBright * (0.8 + 0.3 * twinkle);
+						vColor = aColorTwinkle.rgb;
+						vRayStrength = targetRay;
 
-						float diam = aSize * uPixelRatio * (1.0 + uDispersion * 0.15 * aIsLogo);
+						float diam = targetSize * uPixelRatio * (1.0 + dispersion * 0.25 * isLogo);
 						gl_PointSize = max(diam, 1.5);
 						vParticleDiameter = gl_PointSize;
 					}
@@ -2557,20 +2721,19 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 				// Uniform locations
 				const uResolutionLoc = gl.getUniformLocation(program, "uResolution");
 				const uTimeLoc = gl.getUniformLocation(program, "uTime");
-				const uDispersionLoc = gl.getUniformLocation(program, "uDispersion");
-				const uLogoFadeLoc = gl.getUniformLocation(program, "uLogoFade");
+				const uSlideProgressLoc = gl.getUniformLocation(program, "uSlideProgress");
 				const uSkyFadeLoc = gl.getUniformLocation(program, "uSkyFade");
 				const uPixelRatioLoc = gl.getUniformLocation(program, "uPixelRatio");
 
-				// Attribute locations
-				const aOriginLoc = gl.getAttribLocation(program, "aOrigin");
-				const aSpreadLoc = gl.getAttribLocation(program, "aSpread");
-				const aSizeLoc = gl.getAttribLocation(program, "aSize");
-				const aColorLoc = gl.getAttribLocation(program, "aColor");
-				const aBrightnessLoc = gl.getAttribLocation(program, "aBrightness");
-				const aTwinklePhaseLoc = gl.getAttribLocation(program, "aTwinklePhase");
-				const aRayStrengthLoc = gl.getAttribLocation(program, "aRayStrength");
-				const aIsLogoLoc = gl.getAttribLocation(program, "aIsLogo");
+				// Attribute locations (8 packed attributes = 32 floats per vertex)
+				const aPos01Loc = gl.getAttribLocation(program, "aPos01");
+				const aPos23Loc = gl.getAttribLocation(program, "aPos23");
+				const aPos4SpreadLoc = gl.getAttribLocation(program, "aPos4Spread");
+				const aSize0123Loc = gl.getAttribLocation(program, "aSize0123");
+				const aRay0123Loc = gl.getAttribLocation(program, "aRay0123");
+				const aBright0123Loc = gl.getAttribLocation(program, "aBright0123");
+				const aStyle4MiscLoc = gl.getAttribLocation(program, "aStyle4Misc");
+				const aColorTwinkleLoc = gl.getAttribLocation(program, "aColorTwinkle");
 
 				let width = window.innerWidth;
 				let height = window.innerHeight;
@@ -2579,78 +2742,135 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 				let particleCount = 0;
 				const vbo = gl.createBuffer();
 
-				// Sample authentic logo graphic (drawing full SVG aspect ratio 2199:1431)
-				const buildTargetsFromImage = (img: HTMLImageElement | null): { x: number; y: number; isGold: boolean; isFeatured: boolean; isTviy: boolean }[] => {
+				interface ConstellationSettings {
+					size?: number;
+					alphaThreshold?: number;
+					gap?: number;
+					featuredRatio?: number;
+					sizeMin?: number;
+					sizeMax?: number;
+					featuredSizeMin?: number;
+					featuredSizeMax?: number;
+					brightnessMin?: number;
+					brightnessMax?: number;
+					featuredBrightnessMin?: number;
+					featuredBrightnessMax?: number;
+					rayStrengthMin?: number;
+					rayStrengthMax?: number;
+					featuredRayMin?: number;
+					featuredRayMax?: number;
+					color?: { r: number; g: number; b: number };
+					pivot?: "left" | "center" | "right";
+				}
+
+				interface ConstellationConfig {
+					svg: string;
+					settings?: ConstellationSettings;
+				}
+
+				// Sample authentic logo graphic (Slide 0)
+				const buildTargetsFromLogo = (
+					img: HTMLImageElement | null,
+					settings?: ConstellationSettings
+				): { x: number; y: number; isGold: boolean; isFeatured: boolean; isTviy: boolean }[] => {
 					const off = document.createElement("canvas");
 					const octx = off.getContext("2d", { willReadFrequently: true });
 					if (!octx) return [];
 
 					const slot = document.getElementById("heroLogoSlot");
-					let startX: number;
-					let startY: number;
-					let offWidth: number;
-					let offHeight: number;
+					const targetWidth = settings?.size ?? 440;
+					let offWidth = targetWidth;
+					let offHeight = Math.floor(targetWidth * (1431 / 2199));
+
+					if (slot && settings?.size) {
+						slot.style.width = `${settings.size}px`;
+					}
+
+					const pivot = settings?.pivot ?? "left";
+					let startX = Math.round(width * 0.08);
+					let startY = Math.round(height * 0.22);
 
 					if (slot) {
-						const rect = slot.getBoundingClientRect();
-						offWidth = Math.floor(rect.width) || 440;
-						offHeight = Math.floor(rect.height) || Math.floor(offWidth * (1431 / 2199));
-						startX = rect.left;
-						startY = rect.top + window.scrollY;
+						const textCol = slot.closest(".chapter-text-col, .hero-grid > div") || slot.parentElement || slot;
+						const colRect = textCol.getBoundingClientRect();
+						const slotRect = slot.getBoundingClientRect();
+						const slide = slot.closest("section");
+						const slideTop = slide ? slide.getBoundingClientRect().top : 0;
+						offWidth = Math.max(Math.floor(slotRect.width), 100);
+						offHeight = Math.max(Math.floor(slotRect.height), Math.floor(offWidth * (1431 / 2199)));
+
+						if (pivot === "center") {
+							startX = Math.round(colRect.left + (colRect.width - offWidth) / 2);
+							slot.style.marginLeft = "auto";
+							slot.style.marginRight = "auto";
+						} else if (pivot === "right") {
+							startX = Math.round(colRect.left + colRect.width - offWidth);
+							slot.style.marginLeft = "auto";
+							slot.style.marginRight = "0";
+						} else { // "left"
+							startX = Math.round(colRect.left);
+							slot.style.marginLeft = "0";
+							slot.style.marginRight = "auto";
+						}
+
+						// Y-axis always centered in the slot
+						startY = Math.round(slotRect.top - slideTop + (slotRect.height - offHeight) / 2);
 					} else {
-						const maxWidth = Math.min(width * 0.88, 480);
-						const ratio = 1431 / 2199;
-						offWidth = Math.floor(maxWidth);
-						offHeight = Math.floor(maxWidth * ratio);
-						startX = (width - offWidth) / 2;
-						startY = Math.max(60, (height - offHeight) * 0.38);
+						if (pivot === "center") {
+							startX = Math.round((width - offWidth) / 2);
+						} else if (pivot === "right") {
+							startX = Math.round(width * 0.92 - offWidth);
+						} else {
+							startX = Math.round(width * 0.08);
+						}
+						startY = Math.round((height - offHeight) / 2);
 					}
 
 					off.width = offWidth;
 					off.height = offHeight;
 
+					const alphaThreshold = settings?.alphaThreshold ?? DEFAULT_CONSTELLATION.alphaThreshold;
+					const featRatio = settings?.featuredRatio ?? DEFAULT_CONSTELLATION.featuredRatio;
+					const gap = settings?.gap ?? DEFAULT_CONSTELLATION.gap;
+
 					if (img && (img.naturalWidth > 0 || img.complete)) {
-						// Render full authentic SVG logo vector
 						octx.drawImage(img, 0, 0, offWidth, offHeight);
 						const imgData = octx.getImageData(0, 0, offWidth, offHeight).data;
 						const coords: { x: number; y: number; isGold: boolean; isFeatured: boolean; isTviy: boolean }[] = [];
 
-						// Sampling gaps from STAR_CONFIG:
-						const stepGap = Math.max(3, Math.floor(offWidth / STAR_CONFIG.step.gapDivider));
-						const tviyGap = STAR_CONFIG.tviy.gap;
-
-						// 1. Sample TVIY region with high density:
-						// In logo: TVIY is in rows py < offHeight * 0.165, and ends before T at px < offWidth * 0.27
+						const stepGap = Math.max(3, gap);
+						const tviyGap = Math.max(2, gap - 1);
 						const tviyMaxY = Math.floor(offHeight * 0.165);
 						const tviyMaxX = Math.floor(offWidth * 0.27);
 
+						// 1. TVIY region
 						for (let py = 0; py < tviyMaxY; py += tviyGap) {
 							for (let px = 0; px < tviyMaxX; px += tviyGap) {
 								const idx = (py * offWidth + px) * 4;
-								if (imgData[idx + 3] > STAR_CONFIG.tviy.alphaThreshold) {
+								if (imgData[idx + 3] > alphaThreshold) {
 									coords.push({
 										x: startX + px,
 										y: startY + py,
 										isGold: false,
-										isFeatured: Math.random() < STAR_CONFIG.tviy.featuredRatio,
+										isFeatured: Math.random() < featRatio,
 										isTviy: true,
 									});
 								}
 							}
 						}
 
-						// 2. Sample STEP region with standard gap:
+						// 2. STEP region
 						for (let py = 0; py < offHeight; py += stepGap) {
 							for (let px = 0; px < offWidth; px += stepGap) {
 								const isInsideTviy = py < tviyMaxY && px < tviyMaxX;
 								if (!isInsideTviy) {
 									const idx = (py * offWidth + px) * 4;
-									if (imgData[idx + 3] > STAR_CONFIG.step.alphaThreshold) {
+									if (imgData[idx + 3] > alphaThreshold) {
 										coords.push({
 											x: startX + px,
 											y: startY + py,
 											isGold: py > offHeight * 0.20,
-											isFeatured: Math.random() < STAR_CONFIG.step.featuredRatio,
+											isFeatured: Math.random() < featRatio,
 											isTviy: false,
 										});
 									}
@@ -2661,9 +2881,7 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 						if (coords.length > 200) return coords;
 					}
 
-					// Geometric fallback precisely matching the logo layout:
-					// "твій" sits on top left, fitted under & before the crossbar of T,
-					// "STEP" has custom wide T and long descender on P
+					// Fallback
 					octx.fillStyle = "#ffffff";
 					octx.textAlign = "left";
 					octx.textBaseline = "middle";
@@ -2671,58 +2889,53 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 					const sSize = offHeight * 0.52;
 					octx.font = `800 ${sSize}px "Manrope", sans-serif`;
 
-					// S, T, E, P positions
 					const sY = offHeight * 0.55;
 					octx.fillText("S", offWidth * 0.05, sY);
 					octx.fillText("T", offWidth * 0.30, sY);
 					octx.fillText("E", offWidth * 0.52, sY);
 					octx.fillText("P", offWidth * 0.76, sY);
 
-					// Long descender tail for letter P
 					const pStemX = offWidth * 0.76;
 					const pStemW = sSize * 0.14;
 					octx.fillRect(pStemX, sY, pStemW, offHeight * 0.42);
 
-					// "твій" small, fitted above S and left of T stem
 					const tviySize = sSize * 0.26;
 					octx.font = `700 ${tviySize}px "Manrope", sans-serif`;
 					octx.fillText("твій", offWidth * 0.05, offHeight * 0.14);
 
 					const imgData = octx.getImageData(0, 0, offWidth, offHeight).data;
 					const coords: { x: number; y: number; isGold: boolean; isFeatured: boolean; isTviy: boolean }[] = [];
-					const stepGap = Math.max(3, Math.floor(offWidth / STAR_CONFIG.step.gapDivider));
-					const tviyGap = STAR_CONFIG.tviy.gap;
+					const stepGap = Math.max(3, gap);
+					const tviyGap = Math.max(2, gap - 1);
 					const tviyMaxY = Math.floor(offHeight * 0.165);
 					const tviyMaxX = Math.floor(offWidth * 0.27);
 
-					// Sample TVIY in fallback
 					for (let py = 0; py < tviyMaxY; py += tviyGap) {
 						for (let px = 0; px < tviyMaxX; px += tviyGap) {
 							const idx = (py * offWidth + px) * 4;
-							if (imgData[idx + 3] > STAR_CONFIG.tviy.alphaThreshold) {
+							if (imgData[idx + 3] > alphaThreshold) {
 								coords.push({
 									x: startX + px,
 									y: startY + py,
 									isGold: false,
-									isFeatured: Math.random() < STAR_CONFIG.tviy.featuredRatio,
+									isFeatured: Math.random() < featRatio,
 									isTviy: true,
 								});
 							}
 						}
 					}
 
-					// Sample STEP in fallback
 					for (let py = 0; py < offHeight; py += stepGap) {
 						for (let px = 0; px < offWidth; px += stepGap) {
 							const isInsideTviy = py < tviyMaxY && px < tviyMaxX;
 							if (!isInsideTviy) {
 								const idx = (py * offWidth + px) * 4;
-								if (imgData[idx + 3] > STAR_CONFIG.step.alphaThreshold) {
+								if (imgData[idx + 3] > alphaThreshold) {
 									coords.push({
 										x: startX + px,
 										y: startY + py,
 										isGold: py > offHeight * 0.20,
-										isFeatured: Math.random() < STAR_CONFIG.step.featuredRatio,
+										isFeatured: Math.random() < featRatio,
 										isTviy: false,
 									});
 								}
@@ -2732,97 +2945,281 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 					return coords;
 				};
 
-				const updateParticleBuffer = (targets: { x: number; y: number; isGold: boolean; isFeatured: boolean; isTviy: boolean }[]) => {
-					// Layout per vertex (12 floats):
-					// aOrigin: x, y (2)
-					// aSpread: sx, sy (2)
-					// aSize: size (1)
-					// aColor: r, g, b (3)
-					// aBrightness: brightness (1)
-					// aTwinklePhase: phase (1)
-					// aRayStrength: rayStrength (1)
-					// aIsLogo: 1.0 (logo) vs 0.0 (ambient) (1)
-					// Total = 12 floats per star
+				// Sample coordinate points for sport silhouette figures
+				const sampleShapePoints = (
+					img: HTMLImageElement | null,
+					slotEl: HTMLElement | null,
+					count: number,
+					defaultX: number,
+					defaultY: number,
+					defaultSize: number,
+					settings?: ConstellationSettings
+				): { x: number; y: number; isFeatured: boolean }[] => {
+					const targetSize = settings?.size ?? defaultSize;
+					let offW = targetSize;
+					let offH = targetSize;
+					const threshold = settings?.alphaThreshold ?? DEFAULT_CONSTELLATION.alphaThreshold;
+					const stepGap = Math.max(1, Math.round(settings?.gap ?? DEFAULT_CONSTELLATION.gap));
+					const featRatio = settings?.featuredRatio ?? DEFAULT_CONSTELLATION.featuredRatio;
 
-					const ambientCount = Math.floor((width * height) / STAR_CONFIG.ambient.densityDivider);
-					const totalStars = targets.length + ambientCount;
-					particleCount = totalStars;
-					const data = new Float32Array(totalStars * 12);
+					if (slotEl && settings?.size) {
+						slotEl.style.width = `${settings.size}px`;
+						slotEl.style.height = `${settings.size}px`;
+					}
 
-					let offset = 0;
+					const pivot = settings?.pivot ?? "center";
+					let startX: number;
+					let startY: number;
 
-					// 1. Constellation Logo Stars
-					targets.forEach((pt) => {
-						const angle = Math.random() * Math.PI * 2;
-						const dist = Math.random() * Math.max(width, height) * 0.85 + 150;
-						const spreadX = Math.cos(angle) * dist;
-						const spreadY = Math.sin(angle) * dist - Math.random() * 200;
+					if (slotEl) {
+						const textCol = slotEl.closest(".chapter-text-col, .hero-grid > div, .cta-box") || slotEl.parentElement || slotEl;
+						const colRect = textCol.getBoundingClientRect();
+						const slotRect = slotEl.getBoundingClientRect();
+						const slide = slotEl.closest("section");
+						const slideTop = slide ? slide.getBoundingClientRect().top : 0;
 
-						let size: number;
-						let rayStrength: number;
-						let brightness: number;
-						let r: number, g: number, b: number;
-
-						if (pt.isTviy) {
-							const cfg = STAR_CONFIG.tviy;
-							if (pt.isFeatured) {
-								size = Math.random() * (cfg.featuredSizeMax - cfg.featuredSizeMin) + cfg.featuredSizeMin;
-								rayStrength = Math.random() * (cfg.featuredRayMax - cfg.featuredRayMin) + cfg.featuredRayMin;
-								brightness = Math.random() * (cfg.featuredBrightnessMax - cfg.featuredBrightnessMin) + cfg.featuredBrightnessMin;
-							} else {
-								size = Math.random() * (cfg.sizeMax - cfg.sizeMin) + cfg.sizeMin;
-								rayStrength = Math.random() * (cfg.rayStrengthMax - cfg.rayStrengthMin) + cfg.rayStrengthMin;
-								brightness = Math.random() * (cfg.brightnessMax - cfg.brightnessMin) + cfg.brightnessMin;
-							}
-							r = cfg.color.r;
-							g = cfg.color.g;
-							b = cfg.color.b;
-						} else {
-							// STEP
-							const cfg = STAR_CONFIG.step;
-							if (pt.isFeatured) {
-								size = Math.random() * (cfg.featuredSizeMax - cfg.featuredSizeMin) + cfg.featuredSizeMin;
-								rayStrength = Math.random() * (cfg.featuredRayMax - cfg.featuredRayMin) + cfg.featuredRayMin;
-								brightness = Math.random() * (cfg.featuredBrightnessMax - cfg.featuredBrightnessMin) + cfg.featuredBrightnessMin;
-							} else {
-								size = Math.random() * (cfg.sizeMax - cfg.sizeMin) + cfg.sizeMin;
-								rayStrength = Math.random() * (cfg.rayStrengthMax - cfg.rayStrengthMin) + cfg.rayStrengthMin;
-								brightness = Math.random() * (cfg.brightnessMax - cfg.brightnessMin) + cfg.brightnessMin;
-							}
-							const col = pt.isGold ? cfg.colorGold : cfg.colorIvory;
-							r = col.r;
-							g = col.g;
-							b = col.b;
+						if (pivot === "left") {
+							startX = Math.round(colRect.left);
+							slotEl.style.marginLeft = "0";
+							slotEl.style.marginRight = "auto";
+						} else if (pivot === "right") {
+							startX = Math.round(colRect.left + colRect.width - offW);
+							slotEl.style.marginLeft = "auto";
+							slotEl.style.marginRight = "0";
+						} else { // "center"
+							startX = Math.round(colRect.left + (colRect.width - offW) / 2);
+							slotEl.style.marginLeft = "auto";
+							slotEl.style.marginRight = "auto";
 						}
 
-						// aOrigin
-						data[offset++] = pt.x;
-						data[offset++] = pt.y;
-						// aSpread
+						// Y-axis always centered in the slot
+						startY = Math.round(slotRect.top - slideTop + (slotRect.height - offH) / 2);
+					} else {
+						if (pivot === "left") {
+							startX = Math.round(width * 0.08);
+						} else if (pivot === "right") {
+							startX = Math.round(width * 0.92 - offW);
+						} else {
+							startX = Math.round((width - offW) / 2);
+						}
+						startY = Math.round((height - offH) / 2);
+					}
+
+					const off = document.createElement("canvas");
+					off.width = offW;
+					off.height = offH;
+					const ctx = off.getContext("2d", { willReadFrequently: true });
+					if (!ctx) return [];
+
+					if (img && (img.naturalWidth > 0 || img.complete)) {
+						ctx.drawImage(img, 0, 0, offW, offH);
+					} else {
+						ctx.fillStyle = "#ffffff";
+						ctx.beginPath();
+						ctx.arc(offW / 2, offH / 2, offW * 0.38, 0, Math.PI * 2);
+						ctx.fill();
+					}
+
+					const data = ctx.getImageData(0, 0, offW, offH).data;
+					const candidates: { x: number; y: number }[] = [];
+
+					for (let py = 0; py < offH; py += stepGap) {
+						for (let px = 0; px < offW; px += stepGap) {
+							const alpha = data[(py * offW + px) * 4 + 3];
+							if (alpha > threshold) {
+								candidates.push({ x: startX + px, y: startY + py });
+							}
+						}
+					}
+
+					if (candidates.length === 0) {
+						for (let i = 0; i < count; i++) {
+							candidates.push({
+								x: startX + offW * 0.5 + (Math.random() - 0.5) * offW * 0.4,
+								y: startY + offH * 0.5 + (Math.random() - 0.5) * offH * 0.4,
+							});
+						}
+					}
+
+					// Uniformly sample across candidate points according to stepGap
+					const result: { x: number; y: number; isFeatured: boolean }[] = [];
+					const numCandidates = candidates.length;
+					for (let i = 0; i < count; i++) {
+						const candidateIdx = numCandidates > 0 ? (i * 37) % numCandidates : 0;
+						const p = candidates[candidateIdx] || { x: startX + offW * 0.5, y: startY + offH * 0.5 };
+						const jx = (Math.random() - 0.5) * 1.5;
+						const jy = (Math.random() - 0.5) * 1.5;
+						result.push({
+							x: p.x + jx,
+							y: p.y + jy,
+							isFeatured: Math.random() < featRatio,
+						});
+					}
+					return result;
+				};
+
+				const getStarStyleForSlide = (
+					k: number,
+					isFeatured: boolean,
+					configs?: ConstellationConfig[]
+				) => {
+					const s = configs?.[k]?.settings;
+					const def = DEFAULT_CONSTELLATION;
+
+					const sMin = s?.sizeMin ?? def.sizeMin;
+					const sMax = s?.sizeMax ?? def.sizeMax;
+					const featSMin = s?.featuredSizeMin ?? (s?.sizeMin !== undefined ? Math.max(s.sizeMin * 1.5, s.sizeMin + 1) : def.featuredSizeMin);
+					const featSMax = s?.featuredSizeMax ?? (s?.sizeMax !== undefined ? Math.max(s.sizeMax * 1.5, s.sizeMax + 2) : def.featuredSizeMax);
+
+					const rMin = s?.rayStrengthMin ?? def.rayStrengthMin;
+					const rMax = s?.rayStrengthMax ?? def.rayStrengthMax;
+					const featRMin = s?.featuredRayMin ?? def.featuredRayMin;
+					const featRMax = s?.featuredRayMax ?? def.featuredRayMax;
+
+					const bMin = s?.brightnessMin ?? def.brightnessMin;
+					const bMax = s?.brightnessMax ?? def.brightnessMax;
+					const featBMin = s?.featuredBrightnessMin ?? def.featuredBrightnessMin;
+					const featBMax = s?.featuredBrightnessMax ?? def.featuredBrightnessMax;
+
+					let size: number;
+					let ray: number;
+					let bright: number;
+
+					if (isFeatured) {
+						const sLo = Math.min(featSMin, featSMax);
+						const sHi = Math.max(featSMin, featSMax);
+						size = Math.random() * (sHi - sLo) + sLo;
+
+						const rLo = Math.min(featRMin, featRMax);
+						const rHi = Math.max(featRMin, featRMax);
+						ray = Math.random() * (rHi - rLo) + rLo;
+
+						const bLo = Math.min(featBMin, featBMax);
+						const bHi = Math.max(featBMin, featBMax);
+						bright = Math.random() * (bHi - bLo) + bLo;
+					} else {
+						const sLo = Math.min(sMin, sMax);
+						const sHi = Math.max(sMin, sMax);
+						size = Math.random() * (sHi - sLo) + sLo;
+
+						const rLo = Math.min(rMin, rMax);
+						const rHi = Math.max(rMin, rMax);
+						ray = Math.random() * (rHi - rLo) + rLo;
+
+						const bLo = Math.min(bMin, bMax);
+						const bHi = Math.max(bMin, bMax);
+						bright = Math.random() * (bHi - bLo) + bLo;
+					}
+
+					return { size, ray, bright };
+				};
+
+				// Update particle buffer with all 5 silhouette shapes
+				const updateParticleBuffer = (
+					t0: { x: number; y: number; isGold: boolean; isFeatured: boolean; isTviy: boolean }[],
+					t1: { x: number; y: number; isFeatured?: boolean }[],
+					t2: { x: number; y: number; isFeatured?: boolean }[],
+					t3: { x: number; y: number; isFeatured?: boolean }[],
+					t4: { x: number; y: number; isFeatured?: boolean }[],
+					configs?: ConstellationConfig[]
+				) => {
+					// Layout per vertex (32 floats * 4 bytes = 128 bytes):
+					// aPos01: pos0.xy, pos1.xy (4)
+					// aPos23: pos2.xy, pos3.xy (4)
+					// aPos4Spread: pos4.xy, spread.xy (4)
+					// aSize0123: size0, size1, size2, size3 (4)
+					// aRay0123: ray0, ray1, ray2, ray3 (4)
+					// aBright0123: bright0, bright1, bright2, bright3 (4)
+					// aStyle4Misc: size4, ray4, bright4, isLogo (4)
+					// aColorTwinkle: color.r, color.g, color.b, twinklePhase (4)
+					// Total = 32 floats (8 packed vec4 attributes)
+
+					const ambientCount = Math.floor((width * height) / AMBIENT_CONFIG.densityDivider);
+					const constellationCount = t0.length;
+					const totalStars = constellationCount + ambientCount;
+					particleCount = totalStars;
+
+					const data = new Float32Array(totalStars * 32);
+					let offset = 0;
+
+					// 1. Morphing Constellation Stars (Logo -> Calisthenics -> Cyclist -> Runner -> Compass)
+					for (let i = 0; i < constellationCount; i++) {
+						const pt0 = t0[i];
+						const pt1 = t1[i] || pt0;
+						const pt2 = t2[i] || pt0;
+						const pt3 = t3[i] || pt0;
+						const pt4 = t4[i] || pt0;
+
+						const angle = Math.random() * Math.PI * 2;
+						const dist = Math.random() * Math.max(width, height) * 0.75 + 180;
+						const spreadX = Math.cos(angle) * dist;
+						const spreadY = Math.sin(angle) * dist - Math.random() * 150;
+
+						const st0 = getStarStyleForSlide(0, pt0.isFeatured, configs);
+						const st1 = getStarStyleForSlide(1, !!pt1.isFeatured, configs);
+						const st2 = getStarStyleForSlide(2, !!pt2.isFeatured, configs);
+						const st3 = getStarStyleForSlide(3, !!pt3.isFeatured, configs);
+						const st4 = getStarStyleForSlide(4, !!pt4.isFeatured, configs);
+
+						const customCol = configs?.[0]?.settings?.color;
+						const col = customCol ?? (pt0.isGold ? DEFAULT_CONSTELLATION.colorGold : DEFAULT_CONSTELLATION.colorIvory);
+						const twinklePhase = Math.random() * Math.PI * 2;
+
+						// aPos01 (vec4)
+						data[offset++] = pt0.x;
+						data[offset++] = pt0.y;
+						data[offset++] = pt1.x;
+						data[offset++] = pt1.y;
+
+						// aPos23 (vec4)
+						data[offset++] = pt2.x;
+						data[offset++] = pt2.y;
+						data[offset++] = pt3.x;
+						data[offset++] = pt3.y;
+
+						// aPos4Spread (vec4)
+						data[offset++] = pt4.x;
+						data[offset++] = pt4.y;
 						data[offset++] = spreadX;
 						data[offset++] = spreadY;
-						// aSize
-						data[offset++] = size;
-						// aColor
-						data[offset++] = r;
-						data[offset++] = g;
-						data[offset++] = b;
-						// aBrightness
-						data[offset++] = brightness;
-						// aTwinklePhase
-						data[offset++] = Math.random() * Math.PI * 2;
-						// aRayStrength
-						data[offset++] = rayStrength;
-						// aIsLogo: 1.0 indicates logo star (will disperse & smoothly vanish)
-						data[offset++] = 1.0;
-					});
 
-					// 2. Ambient Deep-Sky Cosmic Stars (stay fixed in place across the night sky)
+						// aSize0123 (vec4)
+						data[offset++] = st0.size;
+						data[offset++] = st1.size;
+						data[offset++] = st2.size;
+						data[offset++] = st3.size;
+
+						// aRay0123 (vec4)
+						data[offset++] = st0.ray;
+						data[offset++] = st1.ray;
+						data[offset++] = st2.ray;
+						data[offset++] = st3.ray;
+
+						// aBright0123 (vec4)
+						data[offset++] = st0.bright;
+						data[offset++] = st1.bright;
+						data[offset++] = st2.bright;
+						data[offset++] = st3.bright;
+
+						// aStyle4Misc (vec4: size4, ray4, bright4, isLogo)
+						data[offset++] = st4.size;
+						data[offset++] = st4.ray;
+						data[offset++] = st4.bright;
+						data[offset++] = 1.0;
+
+						// aColorTwinkle (vec4)
+						data[offset++] = col.r;
+						data[offset++] = col.g;
+						data[offset++] = col.b;
+						data[offset++] = twinklePhase;
+					}
+
+					// 2. Ambient Fixed Cosmic Stars
 					for (let i = 0; i < ambientCount; i++) {
 						const rx = Math.random() * width;
 						const ry = Math.random() * height;
 						const isGold = Math.random() > 0.6;
-						const amb = STAR_CONFIG.ambient;
+						const amb = AMBIENT_CONFIG;
 						const isFeatured = Math.random() < amb.featuredRatio;
 
 						let size: number;
@@ -2839,52 +3236,178 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 						const r = isGold ? 0.86 : 0.95;
 						const g = isGold ? 0.77 : 0.94;
 						const b = isGold ? 0.55 : 0.92;
+						const twinklePhase = Math.random() * Math.PI * 2;
 
+						// aPos01
 						data[offset++] = rx;
 						data[offset++] = ry;
-						// aSpread = 0 for ambient stars so dispersion never moves them
-						data[offset++] = 0;
-						data[offset++] = 0;
+						data[offset++] = rx;
+						data[offset++] = ry;
+
+						// aPos23
+						data[offset++] = rx;
+						data[offset++] = ry;
+						data[offset++] = rx;
+						data[offset++] = ry;
+
+						// aPos4Spread (spread = 0.0, 0.0)
+						data[offset++] = rx;
+						data[offset++] = ry;
+						data[offset++] = 0.0;
+						data[offset++] = 0.0;
+
+						// aSize0123
 						data[offset++] = size;
+						data[offset++] = size;
+						data[offset++] = size;
+						data[offset++] = size;
+
+						// aRay0123
+						data[offset++] = rayStrength;
+						data[offset++] = rayStrength;
+						data[offset++] = rayStrength;
+						data[offset++] = rayStrength;
+
+						// aBright0123
+						data[offset++] = brightness;
+						data[offset++] = brightness;
+						data[offset++] = brightness;
+						data[offset++] = brightness;
+
+						// aStyle4Misc (size, ray, bright, isLogo = 0.0)
+						data[offset++] = size;
+						data[offset++] = rayStrength;
+						data[offset++] = brightness;
+						data[offset++] = 0.0;
+
+						// aColorTwinkle
 						data[offset++] = r;
 						data[offset++] = g;
 						data[offset++] = b;
-						data[offset++] = brightness;
-						data[offset++] = Math.random() * Math.PI * 2;
-						data[offset++] = rayStrength;
-						// aIsLogo: 0.0 indicates ambient star (immune to explosion & logo fade)
-						data[offset++] = 0.0;
+						data[offset++] = twinklePhase;
 					}
 
 					gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
 					gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
 
-					// Setup vertex attribute pointers
-					const stride = 12 * 4; // 12 floats * 4 bytes
+					const stride = 32 * 4; // 32 floats * 4 bytes = 128 bytes
 
-					gl.enableVertexAttribArray(aOriginLoc);
-					gl.vertexAttribPointer(aOriginLoc, 2, gl.FLOAT, false, stride, 0);
+					gl.enableVertexAttribArray(aPos01Loc);
+					gl.vertexAttribPointer(aPos01Loc, 4, gl.FLOAT, false, stride, 0 * 4);
 
-					gl.enableVertexAttribArray(aSpreadLoc);
-					gl.vertexAttribPointer(aSpreadLoc, 2, gl.FLOAT, false, stride, 2 * 4);
+					gl.enableVertexAttribArray(aPos23Loc);
+					gl.vertexAttribPointer(aPos23Loc, 4, gl.FLOAT, false, stride, 4 * 4);
 
-					gl.enableVertexAttribArray(aSizeLoc);
-					gl.vertexAttribPointer(aSizeLoc, 1, gl.FLOAT, false, stride, 4 * 4);
+					gl.enableVertexAttribArray(aPos4SpreadLoc);
+					gl.vertexAttribPointer(aPos4SpreadLoc, 4, gl.FLOAT, false, stride, 8 * 4);
 
-					gl.enableVertexAttribArray(aColorLoc);
-					gl.vertexAttribPointer(aColorLoc, 3, gl.FLOAT, false, stride, 5 * 4);
+					gl.enableVertexAttribArray(aSize0123Loc);
+					gl.vertexAttribPointer(aSize0123Loc, 4, gl.FLOAT, false, stride, 12 * 4);
 
-					gl.enableVertexAttribArray(aBrightnessLoc);
-					gl.vertexAttribPointer(aBrightnessLoc, 1, gl.FLOAT, false, stride, 8 * 4);
+					gl.enableVertexAttribArray(aRay0123Loc);
+					gl.vertexAttribPointer(aRay0123Loc, 4, gl.FLOAT, false, stride, 16 * 4);
 
-					gl.enableVertexAttribArray(aTwinklePhaseLoc);
-					gl.vertexAttribPointer(aTwinklePhaseLoc, 1, gl.FLOAT, false, stride, 9 * 4);
+					gl.enableVertexAttribArray(aBright0123Loc);
+					gl.vertexAttribPointer(aBright0123Loc, 4, gl.FLOAT, false, stride, 20 * 4);
 
-					gl.enableVertexAttribArray(aRayStrengthLoc);
-					gl.vertexAttribPointer(aRayStrengthLoc, 1, gl.FLOAT, false, stride, 10 * 4);
+					gl.enableVertexAttribArray(aStyle4MiscLoc);
+					gl.vertexAttribPointer(aStyle4MiscLoc, 4, gl.FLOAT, false, stride, 24 * 4);
 
-					gl.enableVertexAttribArray(aIsLogoLoc);
-					gl.vertexAttribPointer(aIsLogoLoc, 1, gl.FLOAT, false, stride, 11 * 4);
+					gl.enableVertexAttribArray(aColorTwinkleLoc);
+					gl.vertexAttribPointer(aColorTwinkleLoc, 4, gl.FLOAT, false, stride, 28 * 4);
+				};
+
+				// Loaded SVG images for each slide constellation
+				let loadedImages: (HTMLImageElement | null)[] = [];
+
+				const getConstellationConfigs = (): ConstellationConfig[] => {
+					const sections = Array.from(document.querySelectorAll<HTMLElement>("main > section[id]"));
+					const found = sections.map((sec) => {
+						if (sec.dataset.constellation) {
+							try {
+								return JSON.parse(sec.dataset.constellation) as ConstellationConfig;
+							} catch (e) {
+								console.error("Failed to parse constellation data", e);
+							}
+						}
+						return { svg: sec.dataset.constellationSvg || "/images/home/logo.svg" };
+					});
+					if (found.length > 0) return found;
+					return [
+						{ svg: "/images/home/logo.svg", settings: { size: 440, featuredRatio: 0.16 } },
+						{ svg: "/images/home/calisthenics.svg", settings: { size: 160, alphaThreshold: 35 } },
+						{ svg: "/images/home/cyclist.svg", settings: { size: 190, alphaThreshold: 20 } },
+						{ svg: "/images/home/runner.svg", settings: { size: 160, alphaThreshold: 35 } },
+						{ svg: "/images/home/compass.svg", settings: { size: 140, alphaThreshold: 35 } },
+					];
+				};
+
+				const refreshBuffers = () => {
+					const configs = getConstellationConfigs();
+					const t0 = buildTargetsFromLogo(loadedImages[0] || null, configs[0]?.settings);
+					const count = t0.length;
+
+					const t1 = sampleShapePoints(
+						loadedImages[1] || null,
+						document.getElementById("constellationSlot-1"),
+						count,
+						Math.round(width * 0.58),
+						Math.round(height * 0.24),
+						configs[1]?.settings?.size ?? 160,
+						configs[1]?.settings
+					);
+
+					const t2 = sampleShapePoints(
+						loadedImages[2] || null,
+						document.getElementById("constellationSlot-2"),
+						count,
+						Math.round(width * 0.12),
+						Math.round(height * 0.24),
+						configs[2]?.settings?.size ?? 190,
+						configs[2]?.settings
+					);
+
+					const t3 = sampleShapePoints(
+						loadedImages[3] || null,
+						document.getElementById("constellationSlot-3"),
+						count,
+						Math.round(width * 0.58),
+						Math.round(height * 0.24),
+						configs[3]?.settings?.size ?? 160,
+						configs[3]?.settings
+					);
+
+					const t4 = sampleShapePoints(
+						loadedImages[4] || null,
+						document.getElementById("constellationSlot-4"),
+						count,
+						Math.round(width * 0.44),
+						Math.round(height * 0.20),
+						configs[4]?.settings?.size ?? 140,
+						configs[4]?.settings
+					);
+
+					updateParticleBuffer(t0, t1, t2, t3, t4, configs);
+				};
+
+				const loadAllShapes = () => {
+					const configs = getConstellationConfigs();
+					const urls = configs.map((c) => c.svg);
+					let loadedTotal = 0;
+					const imgs = urls.map((url) => {
+						const im = new Image();
+						im.src = url;
+						const onDone = () => {
+							loadedTotal++;
+							if (loadedTotal === urls.length) {
+								loadedImages = imgs;
+								refreshBuffers();
+							}
+						};
+						im.onload = onDone;
+						im.onerror = onDone;
+						return im;
+					});
 				};
 
 				const resize = () => {
@@ -2900,28 +3423,16 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 					gl.uniform2f(uResolutionLoc, width, height);
 					gl.uniform1f(uPixelRatioLoc, dpr);
 
-					updateParticleBuffer(buildTargetsFromImage(logoImage));
+					refreshBuffers();
 				};
 
-				// Initial buffer with typographic fallback
-				let logoImage: HTMLImageElement | null = null;
+				// Initial buffer with fallback
 				resize();
-
-				// Load SVG logo
-				const loadedLogo = new Image();
-				loadedLogo.src = "/images/home/logo.svg";
-				loadedLogo.onload = () => {
-					logoImage = loadedLogo;
-					const exactTargets = buildTargetsFromImage(loadedLogo);
-					if (exactTargets.length > 200) {
-						updateParticleBuffer(exactTargets);
-					}
-				};
+				loadAllShapes();
 
 				window.addEventListener("resize", resize, { passive: true });
 
-				// Scroll states: hero exit controls logo dispersion, while sunrise is exponential across the full page
-				let logoProgress = 0;
+				// Scroll states: sunrise progression spans full page
 				let dawnAlpha = 0;
 				let cachedSkyMaxScroll = 1;
 
@@ -2934,13 +3445,8 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 				const updateSkyOnScroll = () => {
 					const scrollY = window.scrollY;
 
-					// 1. Logo dispersion: logo typography stars disperse as user scrolls away from the hero section
-					const heroRange = Math.max(window.innerHeight * 0.95, 600);
-					logoProgress = Math.min(Math.max(scrollY / heroRange, 0), 1);
-
-					// 2. Sunrise progression: spans the entire page using SUNRISE_CONFIG (1 = linear, n = exponential)
+					// Sunrise progression: spans the entire page using SUNRISE_CONFIG (1 = linear, n = exponential)
 					const pageProgress = Math.min(Math.max(scrollY / cachedSkyMaxScroll, 0), 1);
-
 					dawnAlpha = calculateDawnAlpha(pageProgress, SUNRISE_CONFIG.exponent, SUNRISE_CONFIG.curve);
 
 					if (dawnOverlay) {
@@ -2967,15 +3473,31 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 				const render = () => {
 					time += 0.022;
 
-					// Synchronize sky atmosphere smoothly with each render frame (0 forced layout reflows)
 					updateSkyOnScroll();
 
-					// Cubic hermite dispersion for logo stars
-					const p = logoProgress;
-					const dispersion = p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2;
+					// Map scroll position smoothly across slide indexes (0.0 to 4.0)
+					const scrollY = window.scrollY;
+					const offsets = getSlideOffsets();
+					let slideProgress = 0;
 
-					// Logo stars smoothly disappear as they spread away from the hero (complete fade by p = 1.0)
-					const logoFade = Math.pow(Math.max(1.0 - p, 0.0), 1.5);
+					if (offsets.length > 1) {
+						if (scrollY <= offsets[0].top) {
+							slideProgress = 0;
+						} else if (scrollY >= offsets[offsets.length - 1].top) {
+							slideProgress = offsets.length - 1;
+						} else {
+							for (let i = 0; i < offsets.length - 1; i++) {
+								if (scrollY >= offsets[i].top && scrollY <= offsets[i + 1].top) {
+									const span = offsets[i + 1].top - offsets[i].top;
+									const frac = span > 0 ? (scrollY - offsets[i].top) / span : 0;
+									slideProgress = i + frac;
+									break;
+								}
+							}
+						}
+					} else {
+						slideProgress = Math.min(Math.max(scrollY / (window.innerHeight || 1), 0), 4);
+					}
 
 					// Starlight softly dims as the golden sunrise reaches its peak at the bottom
 					const skyFade = Math.max(
@@ -2988,8 +3510,7 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 
 					gl.useProgram(program);
 					gl.uniform1f(uTimeLoc, time);
-					gl.uniform1f(uDispersionLoc, dispersion);
-					gl.uniform1f(uLogoFadeLoc, logoFade);
+					gl.uniform1f(uSlideProgressLoc, slideProgress);
 					gl.uniform1f(uSkyFadeLoc, skyFade);
 
 					gl.drawArrays(gl.POINTS, 0, particleCount);
