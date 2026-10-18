@@ -2537,7 +2537,12 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 				for (let k = 1; document.getElementById(`constellationSlot-${k}`); k++) {
 					slideIds.push(`constellationSlot-${k}`);
 				}
-				const SLIDE_COUNT = slideIds.length;
+				const REAL_SLIDE_COUNT = slideIds.length;
+				// Shader slot 0 is the virtual slide -1; real slide k is slot k + 1
+				const VIRTUAL_SLOT = 0;
+				const slotOf = (realIndex: number) => realIndex + 1;
+				const HERO_SLOT = slotOf(0);
+				const SLIDE_COUNT = REAL_SLIDE_COUNT + 1;
 				const SLIDE_FLOATS = 5; // pos.xy, size, ray, bright
 				const SPREAD_IDX = SLIDE_COUNT * SLIDE_FLOATS;
 				const ISLOGO_IDX = SPREAD_IDX + 2;
@@ -3137,8 +3142,8 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 				type SlidePoint = { x: number; y: number; isGold?: boolean; isFeatured?: boolean };
 
 				// Update particle buffer: one packed record per star, slide data in order
-				const updateParticleBuffer = (slideTargets: (SlidePoint[] | null)[], configs?: (ConstellationConfig | null)[]) => {
-					const t0 = slideTargets[0] ?? [];
+				const updateParticleBuffer = (slotTargets: (SlidePoint[] | null)[], configs?: (ConstellationConfig | null)[]) => {
+					const t0 = slotTargets[0] ?? [];
 					const ambientCount = Math.floor((width * height) / AMBIENT_CONFIG.densityDivider);
 					const constellationCount = t0.length;
 					const totalStars = constellationCount + ambientCount;
@@ -3161,10 +3166,10 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 						// A slide without points for this star keeps the previous slide's position
 						const pts: SlidePoint[] = [];
 						for (let k = 0; k < SLIDE_COUNT; k++) {
-							pts.push(slideTargets[k]?.[i] ?? pts[k - 1]);
+							pts.push(slotTargets[k]?.[i] ?? pts[k - 1]);
 						}
 						const styles = pts.map((pt, k) =>
-							slideTargets[k] ? getStarStyleForSlide(k, !!pt.isFeatured, configs) : hiddenStyle
+							slotTargets[k] ? getStarStyleForSlide(k, !!pt.isFeatured, configs) : hiddenStyle
 						);
 
 						const angle = Math.random() * Math.PI * 2;
@@ -3271,11 +3276,13 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 
 				const setSlideTops = () => {
 					gl.useProgram(program);
-					slideIds.forEach((id, k) => {
+					const tops = slideIds.map((id) => {
 						const section = document.getElementById(id)?.closest("section");
-						const top = section ? section.getBoundingClientRect().top + window.scrollY : 0;
-						gl.uniform1f(uSlideTopLocs[k], top);
+						return section ? section.getBoundingClientRect().top + window.scrollY : 0;
 					});
+					// Virtual slide -1 sits one viewport above the hero
+					gl.uniform1f(uSlideTopLocs[VIRTUAL_SLOT], tops[0] - height);
+					tops.forEach((top, k) => gl.uniform1f(uSlideTopLocs[slotOf(k)], top));
 				};
 
 				// Fallback placement for slides without an SVG slot: ratios of the viewport, size in px
@@ -3307,13 +3314,15 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 						);
 					};
 
-					const slides: (SlidePoint[] | null)[] = [t0];
-					for (let k = 1; k < SLIDE_COUNT; k++) {
+					// Virtual slot and hero slot both use the hero targets and config
+					const slotTargets: (SlidePoint[] | null)[] = [t0, t0];
+					for (let k = 1; k < REAL_SLIDE_COUNT; k++) {
 						const fb = FALLBACK_SLIDES[Math.min(k - 1, FALLBACK_SLIDES.length - 1)];
-						slides.push(sampleSlide(k, Math.round(width * fb.xRatio), Math.round(height * fb.yRatio), fb.size));
+						slotTargets.push(sampleSlide(k, Math.round(width * fb.xRatio), Math.round(height * fb.yRatio), fb.size));
 					}
 
-					updateParticleBuffer(slides, configs);
+					const slotConfigs = [configs[0] ?? null, ...configs];
+					updateParticleBuffer(slotTargets, slotConfigs);
 				};
 
 				const loadAllShapes = () => {
@@ -3421,10 +3430,11 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 
 				// The slide pair follows the screen at once; the stars chase the current slide
 				const stepFlight = (dt: number) => {
-					const y = getScrollPosition();
+					const y = getScrollPosition() + HERO_SLOT;
 					if (lastScrollPos < 0) {
 						lastScrollPos = y;
-						starsSlidePosition = Math.round(y);
+						// Load at the top: stars start on the virtual slide and fly to the hero
+						starsSlidePosition = Math.round(y) === HERO_SLOT ? VIRTUAL_SLOT : Math.round(y);
 					}
 					const dy = y - lastScrollPos;
 					lastScrollPos = y;
@@ -3435,7 +3445,7 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 					let currentSlideIndex: number;
 					if (Math.abs(y - nearSlide) < SLIDE_REST_ZONE) {
 						if (scrollDir > 0) {
-							currentSlideIndex = Math.min(Math.max(nearSlide, 1), SLIDE_COUNT - 1);
+							currentSlideIndex = Math.min(Math.max(nearSlide, HERO_SLOT), SLIDE_COUNT - 1);
 							prevSlideIndex = currentSlideIndex - 1;
 						} else {
 							currentSlideIndex = Math.min(nearSlide, SLIDE_COUNT - 2);
