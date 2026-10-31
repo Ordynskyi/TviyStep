@@ -15,6 +15,24 @@ const site = {
 // - ambient: Fixed background stars (twinkling cosmic sky)
 // - defaultConstellation: Baseline starlight characteristics inherited by all slide silhouettes
 const STAR_CONFIG = {
+	driftFraction: 0.006, // drift amplitude as a fraction of the hero logo width
+	motion: {
+		staggerSpan: 0.35, // share of the flight window spread across star start times
+		driftSpeedX: 1.4,
+		driftSpeedY: 1.1,
+		swaySpeed: 1.2,
+		swayRankPhase: 0.8, // sway phase offset per rank
+		swayPhasePerWidth: 2.07, // sway phase across one hero logo width (0.006 per px at a 345 px logo)
+		streamWidthFraction: 0.07, // stream width as a fraction of the hero logo width
+		spreadScale: 0.12, // share of the hero spread applied mid-flight
+		twinkleSpeed: 3.2,
+		twinkleBrightnessSwing: 0.3,
+		twinkleBase: 0.72,
+		twinkleAmplitude: 0.28,
+		brightnessBase: 0.8,
+		flightSizeSwell: 0.25, // point size growth at mid-flight
+		swayCycles: 1.5, // sway waves across one flight
+	},
 	ambient: {
 		densityDivider: 2600, // screen area (w*h) / divider gives count
 		sizeMin: 1.5,
@@ -29,20 +47,36 @@ const STAR_CONFIG = {
 		featuredRayMin: 0.65,
 		featuredRayMax: 0.90,
 	},
+	sprite: {
+		discStart: 0.06, // star disc edge start (0-1 of point radius)
+		coreSharpness: 2.2,
+		rayFalloff: 28, // emitted with toFixed(1) because GLSL needs a float literal
+		rayInnerEdge: 0.15,
+		rayGain: 0.95,
+		coreArea: 0.150904, // filtered core coverage area
+		alphaCutoff: 0.01,
+		whiteCoreBase: 0.59228,
+		whiteBrightMin: 0.7,
+		whiteBrightMax: 2.2,
+		whiteCoreGain: 0.85,
+		colorEnergyGain: 0.42,
+	},
 	defaultConstellation: {
 		alphaThreshold: 35, // 0-255 opacity threshold to sample star positions from SVG
-		gap: 3, // sampling resolution step (px)
-		featuredRatio: 0.16, // fraction of stars that become cross-spikes
-		sizeMin: 2.0,
-		sizeMax: 4.2,
+		density: 1, // candidate sample points per star
+		gap: 0.008, // spacing as a fraction of the logo's fitted width
+		featuredRatio: 0.1, // fraction of stars that become cross-spikes
+		goldStarFraction: 0.25, // fraction of hero stars drawn in gold
+		sizeMin: 0.005, // star diameters as fractions of the hero logo width
+		sizeMax: 0.01,
 		brightnessMin: 1.1,
 		brightnessMax: 1.6,
 		rayStrengthMin: 0.25,
 		rayStrengthMax: 0.60,
-		featuredSizeMin: 2.5,
-		featuredSizeMax: 8.5,
-		featuredRayMin: 0.80,
-		featuredRayMax: 1.10,
+		featuredSizeMin: 0.01,
+		featuredSizeMax: 0.02,
+		featuredRayMin: 1,
+		featuredRayMax: 5,
 		featuredBrightnessMin: 1.8,
 		featuredBrightnessMax: 2.5,
 		colorIvory: { r: 0.96, g: 0.94, b: 0.92 },
@@ -61,10 +95,19 @@ const infoBlocks = [
 		constellationEffect: {
 			svg: '/images/home/logo.svg',
 			settings: {
-				size: 440,
-				featuredRatio: 0.15,
-				alphaThreshold: 200,
 				pivot: 'left',
+				// Top-left TVIY wordmark: finer sampling
+				regions: [
+					{ 	
+						minX: 0, minY: 0, 
+						maxX: 0.27, maxY: 0.165, 
+						gap: 0.003, 
+						sizeMin: 0.0025, // star diameters as fractions of the hero logo width
+						sizeMax: 0.005,
+						featuredSizeMin: 0.005,
+						featuredSizeMax: 0.01,
+					},
+				],
 			},
 		},
 		texts: [
@@ -81,7 +124,6 @@ const infoBlocks = [
 		constellationEffect: {
 			svg: '/images/home/calisthenics.svg',
 			settings: {
-				size: 350,
 				pivot: 'center',
 			},
 		},
@@ -98,7 +140,6 @@ const infoBlocks = [
 		constellationEffect: {
 			svg: '/images/home/cyclist.svg',
 			settings: {
-				size: 300,
 				alphaThreshold: 20,
 				pivot: 'center',
 			},
@@ -120,7 +161,6 @@ const infoBlocks = [
 		constellationEffect: {
 			svg: '/images/home/runner.svg',
 			settings: {
-				size: 350,
 				pivot: 'center',
 			},
 		},
@@ -461,112 +501,11 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 			box-shadow: 0 4px 18px rgba(216, 194, 138, 0.3);
 		}
 
-		/* ========================================================
-		   HERO SECTION (Dusk / Night-to-Dawn Duality)
-		   ======================================================== */
-		.hero-section {
-			height: 100vh;
-			height: 100dvh;
-			min-height: 100vh;
-			min-height: 100dvh;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			position: relative;
-			padding: calc(var(--topbar-height) + 16px) 0 40px;
-			background: transparent;
-			border-bottom: 1px solid var(--line-graphite);
-			overflow: hidden;
-			scroll-snap-align: start;
-			scroll-snap-stop: always;
-			box-sizing: border-box;
-		}
-
-		.hero-glow-line {
-			position: absolute;
-			bottom: 0;
-			left: 0;
-			width: 100%;
-			height: 1px;
-			background: linear-gradient(90deg, transparent 0%, var(--sand) 50%, transparent 100%);
-			opacity: 0.6;
-		}
-
-		.hero-grid {
-			display: grid;
-			grid-template-columns: 1.15fr 0.85fr;
-			gap: clamp(32px, 5vw, 64px);
-			align-items: center;
-		}
-
-		.hero-badge {
-			display: inline-flex;
-			align-items: center;
-			gap: 8px;
-			padding: 6px 14px;
-			border-radius: 999px;
-			background: var(--sand-subtle);
-			border: 1px solid var(--line-gold);
-			color: var(--sand);
-			font-size: 0.78rem;
-			font-weight: 600;
-			letter-spacing: 0.14em;
-			text-transform: uppercase;
-			margin-bottom: 24px;
-		}
-
-		.hero-badge-pulse {
-			width: 6px;
-			height: 6px;
-			border-radius: 50%;
-			background: var(--sand);
-			box-shadow: 0 0 8px var(--sand);
-			animation: pulseDot 2s infinite;
-		}
-
-		@keyframes pulseDot {
-			0%, 100% { opacity: 0.4; transform: scale(0.9); }
-			50% { opacity: 1; transform: scale(1.3); }
-		}
-
-		.hero-title {
-			font-family: var(--font-display);
-			font-size: clamp(2.4rem, 5.2vw, 4.2rem);
-			font-weight: 700;
-			line-height: 1.05;
-			letter-spacing: -0.02em;
-			margin: 0 0 16px;
-			color: var(--ivory);
-			text-wrap: balance;
-		}
-
-		.hero-title em {
-			font-style: italic;
-			color: var(--sand);
-			font-weight: 500;
-		}
-
-		.hero-logo-slot {
-			width: min(100%, 460px);
-			aspect-ratio: 2199 / 1431;
-			margin: 0 0 20px;
-			pointer-events: none;
-		}
-
-		.hero-subtitle {
-			font-size: clamp(1.05rem, 1.8vw, 1.25rem);
-			line-height: 1.65;
-			color: var(--muted-ivory);
-			max-width: 560px;
-			margin: 0 0 36px;
-			font-weight: 400;
-		}
-
 		.hero-actions {
 			display: flex;
 			align-items: center;
 			gap: 16px;
-			flex-wrap: wrap;
+			flex-wrap: nowrap;
 		}
 
 		.btn-primary {
@@ -615,115 +554,6 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 			transform: translateY(-2px);
 		}
 
-		.hero-visual-card {
-			position: relative;
-			border-radius: 32px;
-			padding: 8px;
-			background: linear-gradient(145deg, rgba(216, 194, 138, 0.22), rgba(24, 25, 29, 0.6));
-			box-shadow: 0 32px 80px rgba(0, 0, 0, 0.5);
-			animation: floatCard 6s ease-in-out infinite;
-		}
-
-		@keyframes floatCard {
-			0%, 100% { transform: translateY(0); }
-			50% { transform: translateY(-8px); }
-		}
-
-		.hero-img-inner {
-			position: relative;
-			border-radius: 26px;
-			overflow: hidden;
-			aspect-ratio: 4 / 5;
-		}
-
-		.hero-img-inner img {
-			width: 100%;
-			height: 100%;
-			object-fit: cover;
-			display: block;
-			transition: transform 0.6s ease;
-		}
-
-		.hero-visual-card:hover .hero-img-inner img {
-			transform: scale(1.03);
-		}
-
-		.hero-img-overlay {
-			position: absolute;
-			inset: 0;
-			background: linear-gradient(to top, rgba(17, 18, 21, 0.85) 0%, transparent 60%);
-			pointer-events: none;
-		}
-
-		.hero-card-caption {
-			position: absolute;
-			bottom: 24px;
-			left: 24px;
-			right: 24px;
-			display: flex;
-			align-items: center;
-			justify-content: space-between;
-			gap: 12px;
-		}
-
-		.hero-caption-pill {
-			font-size: 0.82rem;
-			font-weight: 600;
-			letter-spacing: 0.04em;
-			color: var(--ivory);
-			background: rgba(17, 18, 21, 0.72);
-			backdrop-filter: blur(8px);
-			padding: 6px 14px;
-			border-radius: 999px;
-			border: 1px solid rgba(255, 255, 255, 0.12);
-		}
-
-		.hero-scroll-cue {
-			position: absolute;
-			bottom: 20px;
-			left: 50%;
-			transform: translateX(-50%);
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-			gap: 8px;
-			color: var(--muted-ivory);
-			font-size: 0.74rem;
-			letter-spacing: 0.16em;
-			text-transform: uppercase;
-			opacity: 0.7;
-			transition: opacity 0.3s ease;
-		}
-
-		.hero-scroll-cue:hover {
-			opacity: 1;
-		}
-
-		.scroll-arrow-anim {
-			width: 18px;
-			height: 28px;
-			border: 1px solid var(--line-gold);
-			border-radius: 12px;
-			display: flex;
-			justify-content: center;
-			padding-top: 4px;
-		}
-
-		.scroll-arrow-anim::before {
-			content: "";
-			width: 3px;
-			height: 6px;
-			background: var(--sand);
-			border-radius: 2px;
-			animation: scrollBob 1.6s ease-in-out infinite;
-		}
-
-		@keyframes scrollBob {
-			0% { transform: translateY(0); opacity: 0.8; }
-			50% { transform: translateY(8px); opacity: 1; }
-			100% { transform: translateY(0); opacity: 0.8; }
-		}
-
 		/* ========================================================
 		   SCROLLTELLING CHAPTERS (Cinematic Option B)
 		   ======================================================== */
@@ -737,22 +567,12 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 			aspect-ratio: 1 / 1;
 			margin-bottom: 24px;
 			pointer-events: none;
+			border: 1px solid #fff; /* TEMP debug border */
 		}
 
 		.cta-constellation-slot {
 			width: min(150px, 30vw);
 			margin: 0 auto 20px;
-		}
-
-		.hero-visual-slider {
-			border-radius: 28px;
-			box-shadow: 0 32px 80px rgba(0, 0, 0, 0.5);
-			aspect-ratio: 4 / 3.4;
-			max-height: min(480px, calc(100vh - var(--topbar-height) - 80px));
-		}
-
-		.hero-slide {
-			aspect-ratio: 4 / 3.4;
 		}
 
 		.chapter-block {
@@ -794,19 +614,23 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 			order: 1;
 		}
 
-		.chapter-num-tag {
-			display: inline-flex;
-			align-items: center;
-			gap: 12px;
-			margin-bottom: 18px;
-		}
+		@media (min-width: 961px) {
+			.chapter-layout {
+				align-items: stretch;
+			}
 
-		.chapter-index {
-			font-family: var(--font-display);
-			font-size: 1.1rem;
-			font-weight: 700;
-			color: var(--sand);
-			letter-spacing: 0.05em;
+			.chapter-text-col {
+				display: flex;
+				flex-direction: column;
+			}
+
+			/* Fills the text column width and the vertical space left under the text */
+			.slide-constellation-slot {
+				width: 100%;
+				aspect-ratio: auto;
+				flex: 1 1 0;
+				min-height: 160px;
+			}
 		}
 
 		.chapter-badge {
@@ -1375,38 +1199,31 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 			transform: translateY(0);
 		}
 
-		/* Text rises out of a blur, pictures open from a rounded frame; both replay when re-entering view */
+		/* Text and pictures fade in while rising; both replay when re-entering view */
 		@media (prefers-reduced-motion: no-preference) {
 			.spawn-text {
 				opacity: 0;
 				transform: translateY(36px);
-				filter: blur(10px);
-				transition: opacity 400ms ease, transform 400ms ease, filter 400ms ease;
+				transition: opacity 400ms ease, transform 400ms ease;
 			}
 
 			.spawn-text.in-view {
 				opacity: 1;
 				transform: none;
-				filter: none;
-				transition: opacity 1100ms cubic-bezier(0.16, 1, 0.3, 1), transform 1100ms cubic-bezier(0.16, 1, 0.3, 1), filter 900ms ease;
+				transition: opacity 1100ms cubic-bezier(0.16, 1, 0.3, 1), transform 1100ms cubic-bezier(0.16, 1, 0.3, 1);
 				transition-delay: var(--spawn-delay, 0ms);
 			}
 
 			.spawn-media {
 				opacity: 0;
 				transform: translateY(36px);
-				filter: blur(10px);
-				clip-path: inset(22% 22% 22% 22% round 32px);
-				transition: opacity 400ms ease, transform 400ms ease, filter 400ms ease, clip-path 400ms ease;
+				transition: opacity 400ms ease, transform 400ms ease;
 			}
 
-			/* Negative insets keep the hero box-shadow visible after the frame opens */
 			.spawn-media.in-view {
 				opacity: 1;
 				transform: none;
-				filter: none;
-				clip-path: inset(-60px -60px -160px -60px round 32px);
-				transition: opacity 800ms ease, transform 1100ms cubic-bezier(0.16, 1, 0.3, 1), filter 900ms ease, clip-path 1300ms cubic-bezier(0.16, 1, 0.3, 1);
+				transition: opacity 800ms ease, transform 1100ms cubic-bezier(0.16, 1, 0.3, 1);
 				transition-delay: var(--spawn-delay, 0ms);
 			}
 
@@ -1511,18 +1328,21 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 		}
 
 		/* ========================================================
-		   RESPONSIVE DESIGN
+		   RESPONSIVE DESIGN (Option 1: Mobile Editorial Flow)
 		   ======================================================== */
 		@media (max-width: 960px) {
+			:root {
+				--topbar-height: 56px;
+			}
+
 			html {
-				scroll-snap-type: y proximity;
+				scroll-snap-type: y mandatory;
 			}
 
 			.slide-indicator {
 				display: none;
 			}
 
-			.hero-section,
 			.chapter-block,
 			.chapter-cta-block,
 			.section-how,
@@ -1530,9 +1350,15 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 				height: auto;
 				min-height: 100vh;
 				min-height: 100dvh;
-				padding: calc(var(--topbar-height) + 24px) 0 48px;
+				padding: calc(var(--topbar-height) + 32px) 0 48px;
 				scroll-snap-align: start;
-				scroll-snap-stop: normal;
+				scroll-snap-stop: always;
+			}
+
+			/* Section-level reveal offset would shift snap positions while scrolling */
+			.chapter-block.reveal,
+			.chapter-cta-block.reveal {
+				transform: none;
 			}
 
 			.nav-menu {
@@ -1543,20 +1369,52 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 				display: inline-flex;
 			}
 
-			.hero-grid {
-				grid-template-columns: 1fr;
-				text-align: left;
+			.chapter-layout > * {
+				min-width: 0;
 			}
 
-			.hero-visual-card {
-				max-width: 440px;
-				margin: 0 auto;
+			.slide-constellation-slot,
+			.cta-constellation-slot {
+				max-width: 100%;
+			}
+
+			.slider-track,
+			.slider-slide {
+				min-width: 0;
+				width: 100%;
+			}
+
+			.chapter-block {
+				flex-direction: column;
+				align-items: stretch;
+			}
+
+			.chapter-block > .container {
+				flex: 1 0 auto;
+				display: flex;
+				flex-direction: column;
 			}
 
 			.chapter-layout,
 			.chapter-layout.reverse {
-				grid-template-columns: 1fr;
-				gap: 36px;
+				display: flex;
+				flex-direction: column;
+				flex: 1 0 auto;
+				gap: 28px;
+			}
+
+			.chapter-layout > .chapter-text-col {
+				display: flex;
+				flex-direction: column;
+				flex: 1 0 auto;
+			}
+
+			.chapter-text-col > .slide-constellation-slot {
+				width: 100%;
+				aspect-ratio: auto;
+				flex: 1 1 0;
+				min-height: 120px;
+				margin-bottom: 28px;
 			}
 
 			.chapter-layout.reverse .chapter-text-col,
@@ -1586,6 +1444,117 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 				flex-direction: column;
 				gap: 16px;
 				padding: 24px 0;
+			}
+		}
+
+		@media (max-width: 640px) {
+			.nav-actions .social-link,
+			.nav-actions .btn-cta-nav {
+				display: none;
+			}
+
+			/* Editorial Flow: comfortable breathing room without rigid vertical clipping */
+			/* Hero keeps extra top space to clear the fixed navbar */
+			#hero {
+				padding-top: calc(var(--topbar-height) + 24px);
+				padding-bottom: 48px;
+			}
+
+			.chapter-block {
+				padding: calc(var(--topbar-height) + 24px) 0 44px;
+			}
+
+			.chapter-cta-block {
+				padding: calc(var(--topbar-height) + 24px) 0 52px;
+			}
+
+			.hero-actions {
+				gap: 10px;
+			}
+
+			.hero-actions .btn-primary,
+			.hero-actions .btn-secondary {
+				flex: 1 1 0;
+				min-width: 0;
+				padding: 0 14px;
+				font-size: 0.85rem;
+				white-space: nowrap;
+				justify-content: center;
+			}
+
+			.chapter-desc {
+				font-size: 0.9rem;
+				line-height: 1.65;
+				margin-bottom: 16px;
+			}
+
+			/* Photography: beautiful proportion with natural mobile swipe */
+			.media-slider-container {
+				width: 100%;
+				max-height: none;
+				border-radius: 20px;
+				margin: 0 auto;
+			}
+
+			.slider-slide {
+				aspect-ratio: 4 / 3;
+				height: auto;
+				max-height: none;
+			}
+
+			/* Hide manual desktop arrows on touch, keep clean dot indicators */
+			.slider-buttons {
+				display: none;
+			}
+
+			.slider-controls-bar {
+				justify-content: center;
+				bottom: 12px;
+				left: 12px;
+				right: 12px;
+			}
+
+			.cta-box {
+				padding: 32px 20px;
+				border-radius: 24px;
+			}
+
+			.cta-constellation-slot {
+				width: min(130px, 32vw);
+				margin-bottom: 28px;
+			}
+
+			.cta-title {
+				font-size: 2.1rem;
+				margin-bottom: 14px;
+			}
+
+			.cta-lead {
+				font-size: 1.05rem;
+				line-height: 1.6;
+				margin-bottom: 24px;
+			}
+
+			.cta-actions {
+				flex-direction: column;
+				gap: 12px;
+				margin-bottom: 24px;
+			}
+
+			.cta-actions .btn-primary,
+			.cta-actions .btn-secondary {
+				width: 100%;
+				justify-content: center;
+				padding: 0 20px;
+				height: 52px;
+				font-size: 0.95rem;
+			}
+
+			.cta-proof-strip {
+				flex-direction: column;
+				align-items: center;
+				gap: 10px;
+				padding-top: 18px;
 			}
 		}
 
@@ -1740,94 +1709,88 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 				if (isHero) {
 					return (
 						/* HERO SECTION - Powered by first infoBlock (Logo Constellation) */
-						<section id="hero" class="hero-section" data-slide-title="Головна" data-constellation={JSON.stringify(ch.constellationEffect)}>
-							<div class="container hero-grid">
-								<div>
-									<div id="heroLogoSlot" class="hero-logo-slot" aria-hidden="true"></div>
+						<section id="hero" class="chapter-block reveal" data-slide-title="Головна" data-constellation={JSON.stringify(ch.constellationEffect)}>
+							<div class="container">
+								<div class="chapter-layout">
+									<!-- TEXT COLUMN -->
+									<div class="chapter-text-col">
+										<div id="heroLogoSlot" class="slide-constellation-slot" aria-hidden="true"></div>
 
-									{ch.texts.map((p) => (
-										<p class="hero-subtitle spawn spawn-text" style="--spawn-delay: 150ms" set:html={p} />
-									))}
+										{ch.texts.map((p, pIdx) => (
+											<p class="chapter-desc spawn spawn-text" style={`--spawn-delay: ${pIdx * 120 + 150}ms`} set:html={p} />
+										))}
 
-									<div class="hero-actions reveal">
-										<a
-											class="btn-primary"
-											href={site.social.telegram}
-											target="_blank"
-											rel="noreferrer"
-										>
-											<Fragment set:html={icons.telegram} />
-											<span>Приєднатися</span>
-										</a>
-										<a class="btn-secondary" href="#chapter-02">
-											<span>Дізнатися більше</span>
-											<Fragment set:html={icons.arrowRight} />
-										</a>
+										<div class="hero-actions reveal">
+											<a
+												class="btn-primary"
+												href={site.social.telegram}
+												target="_blank"
+												rel="noreferrer"
+											>
+												<Fragment set:html={icons.telegram} />
+												<span>Приєднатися</span>
+											</a>
+											<a class="btn-secondary" href="#chapter-02">
+												<span>Дізнатися більше</span>
+												<Fragment set:html={icons.arrowRight} />
+											</a>
+										</div>
 									</div>
-								</div>
 
-								<div class="spawn spawn-media" style="--spawn-delay: 300ms">
-									{ch.images.length > 0 && (
-										<div class="media-slider-container hero-visual-slider" data-slider>
-											<div class="slider-track" data-track>
-												{ch.images.map((imgSrc, slideIdx) => (
-													<figure class="slider-slide hero-slide">
-														<img
-															src={imgSrc}
-															alt={`Спільнота Твій STEP ${slideIdx + 1}`}
-															loading="eager"
-														/>
-														<div class="slider-overlay-gradient" />
-														<div class="hero-card-caption">
-															<span class="hero-caption-pill">Київські горизонти</span>
-															<span class="hero-caption-pill">#TviyStep</span>
+									<!-- MEDIA COLUMN (AUTO/MANUAL CAROUSEL) -->
+									<div class="chapter-media-col spawn spawn-media" style="--spawn-delay: 300ms">
+										{ch.images.length > 0 && (
+											<div class="media-slider-container" data-slider>
+												<div class="slider-track" data-track>
+													{ch.images.map((imgSrc, slideIdx) => (
+														<figure class="slider-slide">
+															<img
+																src={imgSrc}
+																alt={`Спільнота Твій STEP ${slideIdx + 1}`}
+																loading="eager"
+															/>
+															<div class="slider-overlay-gradient" />
+														</figure>
+													))}
+												</div>
+
+												{ch.images.length > 1 && (
+													<div class="slider-controls-bar">
+														<div class="slider-dots" data-dots>
+															{ch.images.map((_, dotIdx) => (
+																<button
+																	type="button"
+																	class={`slider-dot ${dotIdx === 0 ? "active" : ""}`}
+																	data-slide-index={dotIdx}
+																	aria-label={`Перейти до слайду ${dotIdx + 1}`}
+																/>
+															))}
 														</div>
-													</figure>
-												))}
-											</div>
-
-											{ch.images.length > 1 && (
-												<div class="slider-controls-bar">
-													<div class="slider-dots" data-dots>
-														{ch.images.map((_, dotIdx) => (
+														<div class="slider-buttons">
 															<button
 																type="button"
-																class={`slider-dot ${dotIdx === 0 ? "active" : ""}`}
-																data-slide-index={dotIdx}
-																aria-label={`Перейти до слайду ${dotIdx + 1}`}
-															/>
-														))}
+																class="slider-btn"
+																data-action="prev"
+																aria-label="Попереднє фото"
+															>
+																←
+															</button>
+															<button
+																type="button"
+																class="slider-btn"
+																data-action="next"
+																aria-label="Наступне фото"
+															>
+																→
+															</button>
+														</div>
 													</div>
-													<div class="slider-buttons">
-														<button
-															type="button"
-															class="slider-btn"
-															data-action="prev"
-															aria-label="Попереднє фото"
-														>
-															←
-														</button>
-														<button
-															type="button"
-															class="slider-btn"
-															data-action="next"
-															aria-label="Наступне фото"
-														>
-															→
-														</button>
-													</div>
-												</div>
-											)}
-										</div>
-									)}
+												)}
+											</div>
+										)}
+									</div>
 								</div>
 							</div>
-
-							<a href="#chapter-02" class="hero-scroll-cue" aria-label="Гортати вниз">
-								<span>Гортати вниз</span>
-								<div class="scroll-arrow-anim"></div>
-							</a>
-							<div class="hero-glow-line"></div>
 						</section>
 					);
 				}
@@ -1844,10 +1807,6 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 										class="slide-constellation-slot cta-constellation-slot"
 										aria-hidden="true"
 									></div>
-
-									<div class="chapter-num-tag" style="justify-content: center;">
-										<span class="chapter-index">КРОК {ch.num}</span>
-									</div>
 
 									{ch.texts.map((p, pIdx) => (
 										pIdx === ch.texts.length - 1 ? (
@@ -1902,17 +1861,13 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 					<section
 						id={`chapter-${ch.num}`}
 						class="chapter-block reveal"
-						data-slide-title={`Крок ${ch.num}`}
+						data-slide-title={`Розділ ${ch.num}`}
 						data-constellation={JSON.stringify(ch.constellationEffect)}
 					>
 						<div class="container">
 							<div class={`chapter-layout ${isEven ? "reverse" : ""}`}>
 								<!-- TEXT COLUMN -->
 								<div class="chapter-text-col">
-									<div class="chapter-num-tag">
-										<span class="chapter-index">КРОК {ch.num}</span>
-									</div>
-
 									<!-- Sport Constellation Slot (Calisthenics, Cyclist, Runner) -->
 									<div
 										id={`constellationSlot-${idx}`}
@@ -2270,6 +2225,22 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 			getSlideOffsets();
 		};
 		window.addEventListener("resize", refreshSlideOffsets, { passive: true });
+		// Offsets cached before late layout changes (fonts, images, section growth) would leave the starlight off-target
+		window.addEventListener("load", refreshSlideOffsets, { passive: true });
+		document.fonts?.ready.then(refreshSlideOffsets);
+		if ("ResizeObserver" in window) {
+			const sectionObserver = new ResizeObserver(refreshSlideOffsets);
+			document.querySelectorAll<HTMLElement>("main > section[id]").forEach((el) => sectionObserver.observe(el));
+		}
+
+		// Clean transform reset on containers
+		const resetContainersTransform = () => {
+			document.querySelectorAll<HTMLElement>("main > section[id] > .container").forEach((container) => {
+				container.style.transform = "";
+			});
+		};
+		resetContainersTransform();
+		window.addEventListener("resize", resetContainersTransform, { passive: true });
 
 		const smoothScrollToTarget = (targetY: number, onComplete?: () => void) => {
 			if (slideAnimationId !== null) {
@@ -2291,6 +2262,7 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 			const startY = window.scrollY;
 			const distance = clampedTargetY - startY;
 			if (Math.abs(distance) < 2) {
+				document.documentElement.style.scrollSnapType = "";
 				isSlideTransitioning = false;
 				wheelBlocked = false;
 				if (onComplete) onComplete();
@@ -2314,6 +2286,7 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 					slideAnimationId = requestAnimationFrame(step);
 				} else {
 					window.scrollTo(0, clampedTargetY);
+					document.documentElement.style.scrollSnapType = "";
 					isSlideTransitioning = false;
 					slideAnimationId = null;
 
@@ -2490,52 +2463,12 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 
 			// =========================================================================
 			// GLOBAL STARLIGHT & SUNRISE SETTINGS
-			// Defaults inherited from top-level STAR_CONFIG (with fallback defaults)
+			// Read from top-level STAR_CONFIG, serialized onto the backdrop element
 			// =========================================================================
 			const backdropEl = document.querySelector<HTMLElement>(".sky-backdrop-fixed");
-			let parsedGlobalStarConfig: any = null;
-			if (backdropEl?.dataset.starConfig) {
-				try {
-					parsedGlobalStarConfig = JSON.parse(backdropEl.dataset.starConfig);
-				} catch (e) {
-					console.error("Failed to parse star config", e);
-				}
-			}
-
-			const AMBIENT_CONFIG = parsedGlobalStarConfig?.ambient ?? {
-				densityDivider: 2600,
-				sizeMin: 1.5,
-				sizeMax: 3.3,
-				brightnessMin: 0.8,
-				brightnessMax: 1.2,
-				rayStrengthMin: 0.10,
-				rayStrengthMax: 0.30,
-				featuredRatio: 0.08,
-				featuredSizeMin: 5.0,
-				featuredSizeMax: 9.0,
-				featuredRayMin: 0.65,
-				featuredRayMax: 0.90,
-			};
-
-			const DEFAULT_CONSTELLATION = parsedGlobalStarConfig?.defaultConstellation ?? {
-				alphaThreshold: 35,
-				gap: 3,
-				featuredRatio: 0.16,
-				sizeMin: 2.0,
-				sizeMax: 4.2,
-				brightnessMin: 1.1,
-				brightnessMax: 1.6,
-				rayStrengthMin: 0.25,
-				rayStrengthMax: 0.60,
-				featuredSizeMin: 2.5,
-				featuredSizeMax: 8.5,
-				featuredRayMin: 0.80,
-				featuredRayMax: 1.10,
-				featuredBrightnessMin: 1.8,
-				featuredBrightnessMax: 2.5,
-				colorIvory: { r: 0.96, g: 0.94, b: 0.92 },
-				colorGold: { r: 0.88, g: 0.78, b: 0.56 },
-			};
+			const STAR_SETTINGS = JSON.parse(backdropEl!.dataset.starConfig!);
+			const AMBIENT_CONFIG = STAR_SETTINGS.ambient;
+			const DEFAULT_CONSTELLATION = STAR_SETTINGS.defaultConstellation;
 
 			// =========================================================================
 			// TUNING PARAMETERS FOR SUNRISE PROGRESSION
@@ -2641,6 +2574,7 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 					uniform float uSkyFade;
 					uniform float uPixelRatio;
 					uniform float uScrollY;
+					uniform float uHeroWidth;
 					${uniformDecls}
 					uniform float uRubberStiffness;
 
@@ -2670,7 +2604,7 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 						float viewCenterRel = uScrollY + uResolution.y * 0.5 - destTop;
 						float rubberDist = isLogo * clamp(abs(viewCenterRel - destPos.y) / (uResolution.y * 0.5), 0.0, 1.0);
 						// Stars whose target sits far from the view center (relative to the target slide) fly faster
-						float flow = clamp((t - rank * 0.35) * (1.0 + uRubberStiffness * rubberDist) / 0.65, 0.0, 1.0);
+						float flow = clamp((t - rank * ${STAR_SETTINGS.motion.staggerSpan}) * (1.0 + uRubberStiffness * rubberDist) / ${1 - STAR_SETTINGS.motion.staggerSpan}, 0.0, 1.0);
 						float morphT = smoothstep(0.0, 1.0, flow);
 
 						// Stream envelope: zero at both slides, peaks mid-flight
@@ -2683,8 +2617,9 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 						float targetTop;
 						${segmentChain((s) => `targetPos = mix(pos${s}, pos${s + 1}, morphT); targetSize = mix(size${s}, size${s + 1}, morphT); targetRay = mix(ray${s}, ray${s + 1}, morphT); targetBright = mix(bright${s}, bright${s + 1}, morphT); targetTop = mix(uSlideTop${s}, uSlideTop${s + 1}, morphT);`)}
 
-						float driftX = sin(uTime * 1.4 + twinklePhase) * 2.0;
-						float driftY = cos(uTime * 1.1 + twinklePhase) * 2.0;
+						float drift = uHeroWidth * ${STAR_SETTINGS.driftFraction};
+						float driftX = sin(uTime * ${STAR_SETTINGS.motion.driftSpeedX} + twinklePhase) * drift;
+						float driftY = cos(uTime * ${STAR_SETTINGS.motion.driftSpeedY} + twinklePhase) * drift;
 
 						vec2 travel;
 						${segmentChain((s) => `travel = pos${s + 1} - pos${s};`)}
@@ -2692,26 +2627,24 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 						vec2 streamNormal = travelLen > 0.001 ? vec2(-travel.y, travel.x) / travelLen : vec2(0.0);
 
 						// Sideways sway: neighbours share a phase, so the stream bends as one body
-						float sway = sin(flow * 9.42477796 + (pos0.x + pos0.y) * 0.006 + rank * 0.8 + uTime * 1.2);
-						float streamWidth = min(uResolution.x, uResolution.y) * 0.07;
+						float sway = sin(flow * ${2 * Math.PI * STAR_SETTINGS.motion.swayCycles} + (pos0.x + pos0.y) * ${STAR_SETTINGS.motion.swayPhasePerWidth} / max(uHeroWidth, 1.0) + rank * ${STAR_SETTINGS.motion.swayRankPhase} + uTime * ${STAR_SETTINGS.motion.swaySpeed});
+						float streamWidth = uHeroWidth * ${STAR_SETTINGS.motion.streamWidthFraction};
 						vec2 streamOffset = streamNormal * sway * dispersion * streamWidth * isLogo;
 
 						float docOffsetY = isLogo * (targetTop - uScrollY);
-						vec2 pos = targetPos + vec2(0.0, docOffsetY) + streamOffset + spread * (dispersion * isLogo * 0.12) + vec2(driftX, driftY);
+						vec2 pos = targetPos + vec2(0.0, docOffsetY) + streamOffset + spread * (dispersion * isLogo * ${STAR_SETTINGS.motion.spreadScale}) + vec2(driftX, driftY);
 
 						vec2 zeroToOne = pos / uResolution;
 						vec2 clipSpace = (zeroToOne * 2.0 - 1.0) * vec2(1.0, -1.0);
 						gl_Position = vec4(clipSpace, 0.0, 1.0);
 
-						float twinkle = 0.72 + 0.28 * sin(uTime * 3.2 + twinklePhase);
-						// Fades stars that shrink below the 1.5px minimum point size
-						float visibility = clamp(targetSize / 1.5, 0.0, 1.0);
-						vOpacity = twinkle * uSkyFade * visibility;
-						vBrightness = targetBright * (0.8 + 0.3 * twinkle);
+						float twinkle = ${STAR_SETTINGS.motion.twinkleBase} + ${STAR_SETTINGS.motion.twinkleAmplitude} * sin(uTime * ${STAR_SETTINGS.motion.twinkleSpeed} + twinklePhase);
+						vOpacity = twinkle * uSkyFade;
+						vBrightness = targetBright * (${STAR_SETTINGS.motion.brightnessBase} + ${STAR_SETTINGS.motion.twinkleBrightnessSwing} * twinkle);
 						vColor = starColor;
 						vRayStrength = targetRay;
 
-						float diam = targetSize * uPixelRatio * (1.0 + dispersion * 0.25 * isLogo);
+						float diam = targetSize * uPixelRatio * (1.0 + dispersion * ${STAR_SETTINGS.motion.flightSizeSwell} * isLogo);
 						gl_PointSize = targetSize > 0.0 ? max(diam, 1.5) : 0.0;
 						vParticleDiameter = gl_PointSize;
 					}
@@ -2745,24 +2678,24 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 						vec2 pixel = (gl_PointCoord - vec2(0.5)) * max(vParticleDiameter, 4.0);
 						vec2 point = pixel * 2.0 / max(vParticleDiameter, 0.0001);
 						float distanceToCenter = length(point);
-						float disc = 1.0 - smoothstep(0.06, 1.0, distanceToCenter);
-						float core = pow(disc, 2.2);
+						float disc = 1.0 - smoothstep(${STAR_SETTINGS.sprite.discStart}, 1.0, distanceToCenter);
+						float core = pow(disc, ${STAR_SETTINGS.sprite.coreSharpness});
 
 						// Exact OpenAI Astra 4-pointed cross needle diffraction rays:
-						float horizontalRay = exp(-abs(point.y) * 28.0) * (1.0 - smoothstep(0.15, 1.0, abs(point.x)));
-						float verticalRay = exp(-abs(point.x) * 28.0) * (1.0 - smoothstep(0.15, 1.0, abs(point.y)));
-						float rays = max(horizontalRay, verticalRay) * 0.95 * vRayStrength;
+						float horizontalRay = exp(-abs(point.y) * ${STAR_SETTINGS.sprite.rayFalloff.toFixed(1)}) * (1.0 - smoothstep(${STAR_SETTINGS.sprite.rayInnerEdge}, 1.0, abs(point.x)));
+						float verticalRay = exp(-abs(point.x) * ${STAR_SETTINGS.sprite.rayFalloff.toFixed(1)}) * (1.0 - smoothstep(${STAR_SETTINGS.sprite.rayInnerEdge}, 1.0, abs(point.y)));
+						float rays = max(horizontalRay, verticalRay) * ${STAR_SETTINGS.sprite.rayGain} * vRayStrength;
 
 						float resolved = smoothstep(2.0, 4.0, vParticleDiameter);
-						float alpha = mix(astraFilteredCore(pixel, 0.150904), max(core, rays), resolved) * vOpacity;
+						float alpha = mix(astraFilteredCore(pixel, ${STAR_SETTINGS.sprite.coreArea}), max(core, rays), resolved) * vOpacity;
 
-						if (alpha <= 0.01) {
+						if (alpha <= ${STAR_SETTINGS.sprite.alphaCutoff}) {
 							discard;
 						}
 
-						float whiteCore = mix(0.59228, core, resolved) * smoothstep(0.7, 2.2, vBrightness) * 0.85;
+						float whiteCore = mix(${STAR_SETTINGS.sprite.whiteCoreBase}, core, resolved) * smoothstep(${STAR_SETTINGS.sprite.whiteBrightMin}, ${STAR_SETTINGS.sprite.whiteBrightMax}, vBrightness) * ${STAR_SETTINGS.sprite.whiteCoreGain};
 						float colorEnergy = 1.0 - min(vColor.r, min(vColor.g, vColor.b));
-						vec3 emission = mix(vColor, vec3(1.0), whiteCore) * vBrightness * (1.0 + colorEnergy * 0.42);
+						vec3 emission = mix(vColor, vec3(1.0), whiteCore) * vBrightness * (1.0 + colorEnergy * ${STAR_SETTINGS.sprite.colorEnergyGain});
 
 						gl_FragColor = vec4(emission * alpha, alpha);
 					}
@@ -2806,6 +2739,7 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 				const uScrollYLoc = gl.getUniformLocation(program, "uScrollY");
 				const uSlideTopLocs = Array.from({ length: SLIDE_COUNT }, (_, k) => gl.getUniformLocation(program, `uSlideTop${k}`));
 				const uRubberLoc = gl.getUniformLocation(program, "uRubberStiffness");
+				const uHeroWidthLoc = gl.getUniformLocation(program, "uHeroWidth");
 
 				// Attribute locations: VEC4_COUNT packed vec4 attributes per vertex
 				const aDLocs = Array.from({ length: VEC4_COUNT }, (_, i) => gl.getAttribLocation(program, `aD${i}`));
@@ -2818,14 +2752,8 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 				const vbo = gl.createBuffer();
 
 				interface ConstellationSettings {
-					size?: number;
 					alphaThreshold?: number;
-					gap?: number;
 					featuredRatio?: number;
-					sizeMin?: number;
-					sizeMax?: number;
-					featuredSizeMin?: number;
-					featuredSizeMax?: number;
 					brightnessMin?: number;
 					brightnessMax?: number;
 					featuredBrightnessMin?: number;
@@ -2834,8 +2762,23 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 					rayStrengthMax?: number;
 					featuredRayMin?: number;
 					featuredRayMax?: number;
+					sizeMin?: number;
+					sizeMax?: number;
+					featuredSizeMin?: number;
+					featuredSizeMax?: number;
 					color?: { r: number; g: number; b: number };
 					pivot?: "left" | "center" | "right";
+					gap?: number;
+					goldStarFraction?: number;
+					regions?: ConstellationRegion[];
+				}
+
+				// Bounds are fractions of the hero slot; other settings override the constellation settings inside the box
+				interface ConstellationRegion extends Omit<ConstellationSettings, "regions"> {
+					minX: number;
+					minY: number;
+					maxX: number;
+					maxY: number;
 				}
 
 				interface ConstellationConfig {
@@ -2844,180 +2787,123 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 				}
 
 				// Sample authentic logo graphic (Slide 0)
+				// Document-space layout position of `el`. Unlike getBoundingClientRect(), ignores CSS transforms
+				// (reveal/spawn animations that are still offset when the page first measures)
+				const getLayoutDocPos = (el: HTMLElement) => {
+					let top = 0;
+					let left = 0;
+					let cur: HTMLElement | null = el;
+					while (cur) {
+						top += cur.offsetTop;
+						left += cur.offsetLeft;
+						cur = cur.offsetParent as HTMLElement | null;
+					}
+					return { top, left };
+				};
+
+				// Layout position of `el` relative to `ancestor`
+				const getLayoutOffset = (el: HTMLElement, ancestor: HTMLElement) => {
+					const a = getLayoutDocPos(el);
+					const b = getLayoutDocPos(ancestor);
+					return { top: a.top - b.top, left: a.left - b.left };
+				};
+
+				// Contain-fit of `img` in a w×h box, aligned horizontally by pivot and centered vertically
+				const fitImageInBox = (img: HTMLImageElement, w: number, h: number, pivot: string) => {
+					const iw = img.naturalWidth || w;
+					const ih = img.naturalHeight || h;
+					const scale = Math.min(w / iw, h / ih);
+					const dw = iw * scale;
+					const dh = ih * scale;
+					const dx = pivot === "left" ? 0 : pivot === "right" ? w - dw : (w - dw) / 2;
+					return { dx, dy: (h - dh) / 2, dw, dh };
+				};
+
 				const buildTargetsFromLogo = (
 					img: HTMLImageElement | null,
 					settings?: ConstellationSettings
-				): { x: number; y: number; isGold: boolean; isFeatured: boolean; isTviy: boolean }[] => {
+				): { x: number; y: number; isGold: boolean; isFeatured: boolean; settings: ConstellationSettings }[] => {
 					const off = document.createElement("canvas");
 					const octx = off.getContext("2d", { willReadFrequently: true });
 					if (!octx) return [];
 
 					const slot = document.getElementById("heroLogoSlot");
-					const targetWidth = settings?.size ?? 440;
-					let offWidth = targetWidth;
-					let offHeight = Math.floor(targetWidth * (1431 / 2199));
-
-					if (slot && settings?.size) {
-						slot.style.width = `${settings.size}px`;
-					}
-
+					if (!slot || !img || !img.naturalWidth || !slot.offsetWidth || !slot.offsetHeight) return [];
 					const pivot = settings?.pivot ?? "left";
-					let startX = Math.round(width * 0.08);
-					let startY = Math.round(height * 0.22);
+					// Grid is the logo's fitted size in CSS pixels; `gap` is a fraction of its width
+					const fit = fitImageInBox(img, slot.offsetWidth, slot.offsetHeight, pivot);
+					const offWidth = Math.max(1, Math.round(fit.dw));
+					const offHeight = Math.max(1, Math.round(fit.dh));
+					const figWidth = offWidth;
+					const figHeight = offHeight;
 
-					if (slot) {
-						const textCol = slot.closest(".chapter-text-col, .hero-grid > div") || slot.parentElement || slot;
-						const colRect = textCol.getBoundingClientRect();
-						const slotRect = slot.getBoundingClientRect();
-						const slide = slot.closest("section");
-						const slideTop = slide ? slide.getBoundingClientRect().top : 0;
-						offWidth = Math.max(Math.floor(slotRect.width), 100);
-						offHeight = Math.max(Math.floor(slotRect.height), Math.floor(offWidth * (1431 / 2199)));
-
-						if (pivot === "center") {
-							startX = Math.round(colRect.left + (colRect.width - offWidth) / 2);
-							slot.style.marginLeft = "auto";
-							slot.style.marginRight = "auto";
-						} else if (pivot === "right") {
-							startX = Math.round(colRect.left + colRect.width - offWidth);
-							slot.style.marginLeft = "auto";
-							slot.style.marginRight = "0";
-						} else { // "left"
-							startX = Math.round(colRect.left);
-							slot.style.marginLeft = "0";
-							slot.style.marginRight = "auto";
-						}
-
-						// Y-axis always centered in the slot
-						startY = Math.round(slotRect.top - slideTop + (slotRect.height - offHeight) / 2);
+					const textCol = slot.closest(".chapter-text-col") || slot.parentElement || slot;
+					const colRect = textCol.getBoundingClientRect();
+					const slotRect = slot.getBoundingClientRect();
+					const slide = slot.closest("section");
+					const slotLayout = slide ? getLayoutOffset(slot, slide) : { top: 0, left: 0 };
+					let startX: number;
+					if (pivot === "center") {
+						startX = Math.round(colRect.left + (colRect.width - figWidth) / 2);
+						slot.style.marginLeft = "auto";
+						slot.style.marginRight = "auto";
+					} else if (pivot === "right") {
+						startX = Math.round(colRect.left + colRect.width - figWidth);
+						slot.style.marginLeft = "auto";
+						slot.style.marginRight = "0";
 					} else {
-						if (pivot === "center") {
-							startX = Math.round((width - offWidth) / 2);
-						} else if (pivot === "right") {
-							startX = Math.round(width * 0.92 - offWidth);
-						} else {
-							startX = Math.round(width * 0.08);
-						}
-						startY = Math.round((height - offHeight) / 2);
+						startX = Math.round(colRect.left);
+						slot.style.marginLeft = "0";
+						slot.style.marginRight = "auto";
 					}
+					// Y-axis always centered in the slot
+					const startY = Math.round(slotLayout.top + (slotRect.height - figHeight) / 2);
 
 					off.width = offWidth;
 					off.height = offHeight;
 
-					const alphaThreshold = settings?.alphaThreshold ?? DEFAULT_CONSTELLATION.alphaThreshold;
-					const featRatio = settings?.featuredRatio ?? DEFAULT_CONSTELLATION.featuredRatio;
-					const gap = settings?.gap ?? DEFAULT_CONSTELLATION.gap;
+					const regions = settings?.regions ?? [];
+					// Index of the first region containing grid point (px, py), or -1 for the constellation defaults
+					const regionIndexAt = (px: number, py: number) =>
+						regions.findIndex(
+							(r) =>
+								px >= Math.floor(r.minX * offWidth) && px < Math.floor(r.maxX * offWidth) &&
+								py >= Math.floor(r.minY * offHeight) && py < Math.floor(r.maxY * offHeight)
+						);
+					// Stable per grid point, so gold stars do not reshuffle on resize
+					const hashUnit = (px: number, py: number) => {
+						const v = Math.sin(px * 12.9898 + py * 78.233) * 43758.5453;
+						return v - Math.floor(v);
+					};
 
-					if (img && (img.naturalWidth > 0 || img.complete)) {
-						octx.drawImage(img, 0, 0, offWidth, offHeight);
-						const imgData = octx.getImageData(0, 0, offWidth, offHeight).data;
-						const coords: { x: number; y: number; isGold: boolean; isFeatured: boolean; isTviy: boolean }[] = [];
-
-						const stepGap = Math.max(3, gap);
-						const tviyGap = Math.max(2, gap - 1);
-						const tviyMaxY = Math.floor(offHeight * 0.165);
-						const tviyMaxX = Math.floor(offWidth * 0.27);
-
-						// 1. TVIY region
-						for (let py = 0; py < tviyMaxY; py += tviyGap) {
-							for (let px = 0; px < tviyMaxX; px += tviyGap) {
-								const idx = (py * offWidth + px) * 4;
-								if (imgData[idx + 3] > alphaThreshold) {
+					const sampleCoords = (imgData: Uint8ClampedArray) => {
+						const coords: { x: number; y: number; isGold: boolean; isFeatured: boolean; settings: ConstellationSettings }[] = [];
+						// Regions in order, then the constellation defaults for everything they do not claim
+						const layers = [...regions.map((_, i) => i), -1];
+						for (const layer of layers) {
+							const s = { ...DEFAULT_CONSTELLATION, ...settings, ...regions[layer] };
+							const step = Math.max(1, s.gap * offWidth);
+							for (let fy = 0; fy < offHeight; fy += step) {
+								for (let fx = 0; fx < offWidth; fx += step) {
+									const px = Math.min(offWidth - 1, Math.round(fx));
+									const py = Math.min(offHeight - 1, Math.round(fy));
+									if (regionIndexAt(px, py) !== layer) continue;
+									if (imgData[(py * offWidth + px) * 4 + 3] <= s.alphaThreshold) continue;
 									coords.push({
 										x: startX + px,
 										y: startY + py,
-										isGold: false,
-										isFeatured: Math.random() < featRatio,
-										isTviy: true,
+										isGold: hashUnit(px, py) < s.goldStarFraction,
+										isFeatured: Math.random() < s.featuredRatio,
+										settings: s,
 									});
 								}
 							}
 						}
+						return coords;
+					};
 
-						// 2. STEP region
-						for (let py = 0; py < offHeight; py += stepGap) {
-							for (let px = 0; px < offWidth; px += stepGap) {
-								const isInsideTviy = py < tviyMaxY && px < tviyMaxX;
-								if (!isInsideTviy) {
-									const idx = (py * offWidth + px) * 4;
-									if (imgData[idx + 3] > alphaThreshold) {
-										coords.push({
-											x: startX + px,
-											y: startY + py,
-											isGold: py > offHeight * 0.20,
-											isFeatured: Math.random() < featRatio,
-											isTviy: false,
-										});
-									}
-								}
-							}
-						}
-
-						if (coords.length > 200) return coords;
-					}
-
-					// Fallback
-					octx.fillStyle = "#ffffff";
-					octx.textAlign = "left";
-					octx.textBaseline = "middle";
-
-					const sSize = offHeight * 0.52;
-					octx.font = `800 ${sSize}px "Manrope", sans-serif`;
-
-					const sY = offHeight * 0.55;
-					octx.fillText("S", offWidth * 0.05, sY);
-					octx.fillText("T", offWidth * 0.30, sY);
-					octx.fillText("E", offWidth * 0.52, sY);
-					octx.fillText("P", offWidth * 0.76, sY);
-
-					const pStemX = offWidth * 0.76;
-					const pStemW = sSize * 0.14;
-					octx.fillRect(pStemX, sY, pStemW, offHeight * 0.42);
-
-					const tviySize = sSize * 0.26;
-					octx.font = `700 ${tviySize}px "Manrope", sans-serif`;
-					octx.fillText("твій", offWidth * 0.05, offHeight * 0.14);
-
-					const imgData = octx.getImageData(0, 0, offWidth, offHeight).data;
-					const coords: { x: number; y: number; isGold: boolean; isFeatured: boolean; isTviy: boolean }[] = [];
-					const stepGap = Math.max(3, gap);
-					const tviyGap = Math.max(2, gap - 1);
-					const tviyMaxY = Math.floor(offHeight * 0.165);
-					const tviyMaxX = Math.floor(offWidth * 0.27);
-
-					for (let py = 0; py < tviyMaxY; py += tviyGap) {
-						for (let px = 0; px < tviyMaxX; px += tviyGap) {
-							const idx = (py * offWidth + px) * 4;
-							if (imgData[idx + 3] > alphaThreshold) {
-								coords.push({
-									x: startX + px,
-									y: startY + py,
-									isGold: false,
-									isFeatured: Math.random() < featRatio,
-									isTviy: true,
-								});
-							}
-						}
-					}
-
-					for (let py = 0; py < offHeight; py += stepGap) {
-						for (let px = 0; px < offWidth; px += stepGap) {
-							const isInsideTviy = py < tviyMaxY && px < tviyMaxX;
-							if (!isInsideTviy) {
-								const idx = (py * offWidth + px) * 4;
-								if (imgData[idx + 3] > alphaThreshold) {
-									coords.push({
-										x: startX + px,
-										y: startY + py,
-										isGold: py > offHeight * 0.20,
-										isFeatured: Math.random() < featRatio,
-										isTviy: false,
-									});
-								}
-							}
-						}
-					}
-					return coords;
+					octx.drawImage(img, 0, 0, offWidth, offHeight);
+					return sampleCoords(octx.getImageData(0, 0, offWidth, offHeight).data);
 				};
 
 				// Sample coordinate points for sport silhouette figures
@@ -3025,60 +2911,38 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 					img: HTMLImageElement | null,
 					slotEl: HTMLElement | null,
 					count: number,
-					defaultX: number,
-					defaultY: number,
-					defaultSize: number,
 					settings?: ConstellationSettings
 				): { x: number; y: number; isFeatured: boolean }[] => {
-					const targetSize = settings?.size ?? defaultSize;
-					let offW = targetSize;
-					let offH = targetSize;
+					if (!img || !img.naturalWidth || !slotEl) return [];
 					const threshold = settings?.alphaThreshold ?? DEFAULT_CONSTELLATION.alphaThreshold;
-					const stepGap = Math.max(1, Math.round(settings?.gap ?? DEFAULT_CONSTELLATION.gap));
 					const featRatio = settings?.featuredRatio ?? DEFAULT_CONSTELLATION.featuredRatio;
 
-					if (slotEl && settings?.size) {
-						slotEl.style.width = `${settings.size}px`;
-						slotEl.style.height = `${settings.size}px`;
-					}
-
 					const pivot = settings?.pivot ?? "center";
+					const textCol = slotEl.closest(".chapter-text-col, .cta-box") || slotEl.parentElement || slotEl;
+					const colRect = textCol.getBoundingClientRect();
+					const slotRect = slotEl.getBoundingClientRect();
+					const slide = slotEl.closest("section");
+					const slotLayout = slide ? getLayoutOffset(slotEl, slide) : { top: 0, left: 0 };
+					const offW = Math.max(Math.floor(slotRect.width), 100);
+					const offH = Math.max(Math.floor(slotRect.height), 100);
+
 					let startX: number;
-					let startY: number;
-
-					if (slotEl) {
-						const textCol = slotEl.closest(".chapter-text-col, .hero-grid > div, .cta-box") || slotEl.parentElement || slotEl;
-						const colRect = textCol.getBoundingClientRect();
-						const slotRect = slotEl.getBoundingClientRect();
-						const slide = slotEl.closest("section");
-						const slideTop = slide ? slide.getBoundingClientRect().top : 0;
-
-						if (pivot === "left") {
-							startX = Math.round(colRect.left);
-							slotEl.style.marginLeft = "0";
-							slotEl.style.marginRight = "auto";
-						} else if (pivot === "right") {
-							startX = Math.round(colRect.left + colRect.width - offW);
-							slotEl.style.marginLeft = "auto";
-							slotEl.style.marginRight = "0";
-						} else { // "center"
-							startX = Math.round(colRect.left + (colRect.width - offW) / 2);
-							slotEl.style.marginLeft = "auto";
-							slotEl.style.marginRight = "auto";
-						}
-
-						// Y-axis always centered in the slot
-						startY = Math.round(slotRect.top - slideTop + (slotRect.height - offH) / 2);
-					} else {
-						if (pivot === "left") {
-							startX = Math.round(width * 0.08);
-						} else if (pivot === "right") {
-							startX = Math.round(width * 0.92 - offW);
-						} else {
-							startX = Math.round((width - offW) / 2);
-						}
-						startY = Math.round((height - offH) / 2);
+					if (pivot === "left") {
+						startX = Math.round(colRect.left);
+						slotEl.style.marginLeft = "0";
+						slotEl.style.marginRight = "auto";
+					} else if (pivot === "right") {
+						startX = Math.round(colRect.left + colRect.width - offW);
+						slotEl.style.marginLeft = "auto";
+						slotEl.style.marginRight = "0";
+					} else { // "center"
+						startX = Math.round(colRect.left + (colRect.width - offW) / 2);
+						slotEl.style.marginLeft = "auto";
+						slotEl.style.marginRight = "auto";
 					}
+
+					// Y-axis always centered in the slot
+					const startY = Math.round(slotLayout.top + (slotRect.height - offH) / 2);
 
 					const off = document.createElement("canvas");
 					off.width = offW;
@@ -3086,25 +2950,27 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 					const ctx = off.getContext("2d", { willReadFrequently: true });
 					if (!ctx) return [];
 
-					if (img && (img.naturalWidth > 0 || img.complete)) {
-						ctx.drawImage(img, 0, 0, offW, offH);
-					} else {
-						ctx.fillStyle = "#ffffff";
-						ctx.beginPath();
-						ctx.arc(offW / 2, offH / 2, offW * 0.38, 0, Math.PI * 2);
-						ctx.fill();
-					}
+					const fit = fitImageInBox(img, offW, offH, pivot);
+					ctx.drawImage(img, fit.dx, fit.dy, fit.dw, fit.dh);
 
 					const data = ctx.getImageData(0, 0, offW, offH).data;
-					const candidates: { x: number; y: number }[] = [];
-
-					for (let py = 0; py < offH; py += stepGap) {
-						for (let px = 0; px < offW; px += stepGap) {
-							const alpha = data[(py * offW + px) * 4 + 3];
-							if (alpha > threshold) {
-								candidates.push({ x: startX + px, y: startY + py });
+					const collectCandidates = (step: number) => {
+						const found: { x: number; y: number }[] = [];
+						for (let py = 0; py < offH; py += step) {
+							for (let px = 0; px < offW; px += step) {
+								if (data[(py * offW + px) * 4 + 3] > threshold) {
+									found.push({ x: startX + px, y: startY + py });
+								}
 							}
 						}
+						return found;
+					};
+					// Coarsest grid that still leaves `density` candidates per star
+					const neededCandidates = count * DEFAULT_CONSTELLATION.density;
+					let candidates: { x: number; y: number }[] = [];
+					for (let step = 8; step >= 1; step--) {
+						candidates = collectCandidates(step);
+						if (candidates.length >= neededCandidates) break;
 					}
 
 					if (candidates.length === 0) {
@@ -3116,11 +2982,11 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 						}
 					}
 
-					// Uniformly sample across candidate points according to stepGap
+					// Evenly spaced picks across all candidates; a fixed stride aliases with the row order
 					const result: { x: number; y: number; isFeatured: boolean }[] = [];
 					const numCandidates = candidates.length;
 					for (let i = 0; i < count; i++) {
-						const candidateIdx = numCandidates > 0 ? (i * 37) % numCandidates : 0;
+						const candidateIdx = numCandidates > 0 ? Math.floor(((i + 0.5) * numCandidates) / count) % numCandidates : 0;
 						const p = candidates[candidateIdx] || { x: startX + offW * 0.5, y: startY + offH * 0.5 };
 						const jx = (Math.random() - 0.5) * 1.5;
 						const jy = (Math.random() - 0.5) * 1.5;
@@ -3136,15 +3002,17 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 				const getStarStyleForSlide = (
 					k: number,
 					isFeatured: boolean,
-					configs?: (ConstellationConfig | null)[]
+					configs?: (ConstellationConfig | null)[],
+					sizeScale = 1,
+					pointSettings?: ConstellationSettings
 				) => {
-					const s = configs?.[k]?.settings;
+					const s = pointSettings ?? configs?.[k]?.settings;
 					const def = DEFAULT_CONSTELLATION;
 
 					const sMin = s?.sizeMin ?? def.sizeMin;
 					const sMax = s?.sizeMax ?? def.sizeMax;
-					const featSMin = s?.featuredSizeMin ?? (s?.sizeMin !== undefined ? Math.max(s.sizeMin * 1.5, s.sizeMin + 1) : def.featuredSizeMin);
-					const featSMax = s?.featuredSizeMax ?? (s?.sizeMax !== undefined ? Math.max(s.sizeMax * 1.5, s.sizeMax + 2) : def.featuredSizeMax);
+					const featSMin = s?.featuredSizeMin ?? def.featuredSizeMin;
+					const featSMax = s?.featuredSizeMax ?? def.featuredSizeMax;
 
 					const rMin = s?.rayStrengthMin ?? def.rayStrengthMin;
 					const rMax = s?.rayStrengthMax ?? def.rayStrengthMax;
@@ -3186,13 +3054,13 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 						bright = Math.random() * (bHi - bLo) + bLo;
 					}
 
-					return { size, ray, bright };
+					return { size: size * sizeScale, ray, bright };
 				};
 
-				type SlidePoint = { x: number; y: number; isGold?: boolean; isFeatured?: boolean };
+				type SlidePoint = { x: number; y: number; isGold?: boolean; isFeatured?: boolean; settings?: ConstellationSettings };
 
 				// Update particle buffer: one packed record per star, slide data in order
-				const updateParticleBuffer = (slotTargets: (SlidePoint[] | null)[], configs?: (ConstellationConfig | null)[]) => {
+				const updateParticleBuffer = (slotTargets: (SlidePoint[] | null)[], configs: (ConstellationConfig | null)[] | undefined, slotScales: number[], heroWidth: number) => {
 					const t0 = slotTargets[0] ?? [];
 					const ambientCount = Math.floor((width * height) / AMBIENT_CONFIG.densityDivider);
 					const constellationCount = t0.length;
@@ -3219,7 +3087,7 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 							pts.push(slotTargets[k]?.[i] ?? pts[k - 1]);
 						}
 						const styles = pts.map((pt, k) =>
-							slotTargets[k] ? getStarStyleForSlide(k, !!pt.isFeatured, configs) : hiddenStyle
+							slotTargets[k] ? getStarStyleForSlide(k, !!pt.isFeatured, configs, slotScales[k] * heroWidth, slotTargets[k]?.[i]?.settings) : hiddenStyle
 						);
 
 						const angle = Math.random() * Math.PI * 2;
@@ -3316,11 +3184,11 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 					});
 					if (found.length > 0) return found;
 					return [
-						{ svg: "/images/home/logo.svg", settings: { size: 440, featuredRatio: 0.16 } },
-						{ svg: "/images/home/calisthenics.svg", settings: { size: 160, alphaThreshold: 35 } },
-						{ svg: "/images/home/cyclist.svg", settings: { size: 190, alphaThreshold: 20 } },
-						{ svg: "/images/home/runner.svg", settings: { size: 160, alphaThreshold: 35 } },
-						{ svg: "/images/home/compass.svg", settings: { size: 140, alphaThreshold: 35 } },
+						{ svg: "/images/home/logo.svg", settings: { featuredRatio: 0.16 } },
+						{ svg: "/images/home/calisthenics.svg", settings: { alphaThreshold: 35 } },
+						{ svg: "/images/home/cyclist.svg", settings: { alphaThreshold: 20 } },
+						{ svg: "/images/home/runner.svg", settings: { alphaThreshold: 35 } },
+						{ svg: "/images/home/compass.svg", settings: { alphaThreshold: 35 } },
 					];
 				};
 
@@ -3328,20 +3196,26 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 					gl.useProgram(program);
 					const tops = slideIds.map((id) => {
 						const section = document.getElementById(id)?.closest("section");
-						return section ? section.getBoundingClientRect().top + window.scrollY : 0;
+						return section ? getLayoutDocPos(section).top : 0;
 					});
 					// Virtual slide -1 sits one viewport above the hero
 					gl.uniform1f(uSlideTopLocs[VIRTUAL_SLOT], tops[0] - height);
 					tops.forEach((top, k) => gl.uniform1f(uSlideTopLocs[slotOf(k)], top));
 				};
 
-				// Fallback placement for slides without an SVG slot: ratios of the viewport, size in px
-				const FALLBACK_SLIDES = [
-					{ xRatio: 0.58, yRatio: 0.24, size: 160 },
-					{ xRatio: 0.12, yRatio: 0.24, size: 190 },
-					{ xRatio: 0.58, yRatio: 0.24, size: 160 },
-					{ xRatio: 0.44, yRatio: 0.2, size: 140 },
-				];
+				// Star size follows the fitted figure area relative to the hero figure
+				const figureArea = (img: HTMLImageElement | null, el: HTMLElement | null) => {
+					if (!img || !img.naturalWidth || !el) return 0;
+					const fit = fitImageInBox(img, el.offsetWidth, el.offsetHeight, "center");
+					return fit.dw * fit.dh;
+				};
+
+				const MAX_SIZE_DEVIATION = 0.4;
+
+				const sizeScale = (area: number, referenceArea: number, maxDeviation: number) => {
+					if (area <= 0 || referenceArea <= 0) return 1;
+					return Math.min(1 + maxDeviation, Math.max(1 - maxDeviation, Math.sqrt(area / referenceArea)));
+				};
 
 				const refreshBuffers = () => {
 					setSlideTops();
@@ -3350,29 +3224,32 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 					const count = t0.length;
 
 					// Slides without a constellation config yield null and their stars shrink in place
-					const sampleSlide = (k: number, defaultX: number, defaultY: number, defaultSize: number) => {
+					const sampleSlide = (k: number) => {
 						const cfg = configs[k];
 						if (!cfg) return null;
 						return sampleShapePoints(
 							loadedImages[k] || null,
 							document.getElementById(`constellationSlot-${k}`),
 							count,
-							defaultX,
-							defaultY,
-							cfg.settings?.size ?? defaultSize,
 							cfg.settings
 						);
 					};
 
 					// Virtual slot and hero slot both use the hero targets and config
+					const heroSlot = document.getElementById("heroLogoSlot");
+					const heroImg = loadedImages[0] || null;
+					const referenceArea = figureArea(heroImg, heroSlot);
+					const heroFigureWidth = heroImg && heroSlot ? fitImageInBox(heroImg, heroSlot.offsetWidth, heroSlot.offsetHeight, "left").dw : 0;
+					gl.uniform1f(uHeroWidthLoc, heroFigureWidth);
 					const slotTargets: (SlidePoint[] | null)[] = [t0, t0];
+					const slotScales = [1, 1];
 					for (let k = 1; k < REAL_SLIDE_COUNT; k++) {
-						const fb = FALLBACK_SLIDES[Math.min(k - 1, FALLBACK_SLIDES.length - 1)];
-						slotTargets.push(sampleSlide(k, Math.round(width * fb.xRatio), Math.round(height * fb.yRatio), fb.size));
+						slotTargets.push(sampleSlide(k));
+						slotScales.push(sizeScale(figureArea(loadedImages[k] || null, document.getElementById(`constellationSlot-${k}`)), referenceArea, MAX_SIZE_DEVIATION));
 					}
 
 					const slotConfigs = [configs[0] ?? null, ...configs];
-					updateParticleBuffer(slotTargets, slotConfigs);
+					updateParticleBuffer(slotTargets, slotConfigs, slotScales, heroFigureWidth);
 				};
 
 				const loadAllShapes = () => {
@@ -3418,6 +3295,9 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 				loadAllShapes();
 
 				window.addEventListener("resize", resize, { passive: true });
+				// Late layout changes (web fonts, images) move sections; re-read their tops so stars match the final layout
+				window.addEventListener("load", refreshBuffers, { passive: true });
+				document.fonts?.ready.then(refreshBuffers);
 
 				// Scroll states: sunrise progression spans full page
 				let dawnAlpha = 0;
@@ -3518,6 +3398,7 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 					const nextStarsProgress = starsProgress + rubberPower * dt;
 					starsSlidePosition = prevSlideIndex + distance * nextStarsProgress;
 					if (Math.abs(1 - nextStarsProgress) < SLIDE_SNAP_EPSILON) starsSlidePosition = currentSlideIndex;
+					if (!Number.isFinite(starsSlidePosition)) starsSlidePosition = currentSlideIndex;
 				};
 
 				let time = 0;
@@ -3527,9 +3408,11 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 					updateSkyOnScroll();
 
 					const now = performance.now();
-					const dt = Math.min((now - lastFrameTime) / 1000, 0.1);
+					const frameDt = Math.min((now - lastFrameTime) / 1000, 0.1);
 					lastFrameTime = now;
-					stepFlight(dt);
+					// Long frames are split into 60 Hz steps; one big explicit step can diverge to NaN
+					const steps = Math.max(1, Math.ceil(frameDt * 60));
+					for (let s = 0; s < steps; s++) stepFlight(frameDt / steps);
 					const slideProgress = starsSlidePosition;
 
 					// Starlight softly dims as the golden sunrise reaches its peak at the bottom
