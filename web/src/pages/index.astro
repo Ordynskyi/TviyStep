@@ -253,8 +253,6 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 		.sky-backdrop-fixed {
 			position: fixed;
 			inset: 0;
-			width: 100vw;
-			height: 100vh;
 			pointer-events: none;
 			z-index: 0;
 			overflow: hidden;
@@ -577,9 +575,9 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 
 		.chapter-block {
 			height: 100vh;
-			height: 100dvh;
+			height: 100svh;
 			min-height: 100vh;
-			min-height: 100dvh;
+			min-height: 100svh;
 			display: flex;
 			align-items: center;
 			justify-content: center;
@@ -874,9 +872,9 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 		/* CHAPTER 05 (FINAL CTA BLOCK) */
 		.chapter-cta-block {
 			height: 100vh;
-			height: 100dvh;
+			height: 100svh;
 			min-height: 100vh;
-			min-height: 100dvh;
+			min-height: 100svh;
 			display: flex;
 			align-items: center;
 			justify-content: center;
@@ -969,9 +967,9 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 		   ======================================================== */
 		.section-how {
 			height: 100vh;
-			height: 100dvh;
+			height: 100svh;
 			min-height: 100vh;
-			min-height: 100dvh;
+			min-height: 100svh;
 			display: flex;
 			align-items: center;
 			justify-content: center;
@@ -1066,7 +1064,7 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 		   ======================================================== */
 		.section-faq {
 			min-height: 100vh;
-			min-height: 100dvh;
+			min-height: 100svh;
 			display: flex;
 			align-items: center;
 			justify-content: center;
@@ -1349,7 +1347,7 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 			.section-faq {
 				height: auto;
 				min-height: 100vh;
-				min-height: 100dvh;
+				min-height: 100svh;
 				padding: calc(var(--topbar-height) + 32px) 0 48px;
 				scroll-snap-align: start;
 				scroll-snap-stop: always;
@@ -3274,9 +3272,20 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 					});
 				};
 
+				// Sizes of the slots the star targets were sampled for; a change means resampling is needed
+				let lastSlotSizeKey = "";
+				const slotSizeKey = () =>
+					slideIds
+						.map((id) => {
+							const el = document.getElementById(id);
+							return el ? `${el.offsetWidth}x${el.offsetHeight}` : "";
+						})
+						.join("|");
+
 				const resize = () => {
-					width = window.innerWidth;
-					height = window.innerHeight;
+					// Canvas box follows the visible viewport, so mobile toolbar changes do not stretch it
+					width = canvas.clientWidth;
+					height = canvas.clientHeight;
 					dpr = Math.min(window.devicePixelRatio || 1, 2);
 
 					canvas.width = width * dpr;
@@ -3287,7 +3296,14 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 					gl.uniform2f(uResolutionLoc, width, height);
 					gl.uniform1f(uPixelRatioLoc, dpr);
 
-					refreshBuffers();
+					// Toolbar-only height changes keep the layout; resampling would reshuffle the random stars
+					const sizeKey = slotSizeKey();
+					if (sizeKey !== lastSlotSizeKey) {
+						lastSlotSizeKey = sizeKey;
+						refreshBuffers();
+					} else {
+						setSlideTops();
+					}
 				};
 
 				// Initial buffer with fallback
@@ -3298,6 +3314,27 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 				// Late layout changes (web fonts, images) move sections; re-read their tops so stars match the final layout
 				window.addEventListener("load", refreshBuffers, { passive: true });
 				document.fonts?.ready.then(refreshBuffers);
+
+				// Lazy images grow chapter slots after load; resample once per frame when a slot size changes
+				let slotSyncQueued = false;
+				const syncSlotSizes = () => {
+					if (slotSyncQueued) return;
+					slotSyncQueued = true;
+					requestAnimationFrame(() => {
+						slotSyncQueued = false;
+						const sizeKey = slotSizeKey();
+						if (sizeKey === lastSlotSizeKey) return;
+						lastSlotSizeKey = sizeKey;
+						refreshBuffers();
+					});
+				};
+				if ("ResizeObserver" in window) {
+					const slotObserver = new ResizeObserver(syncSlotSizes);
+					slideIds.forEach((id) => {
+						const el = document.getElementById(id);
+						if (el) slotObserver.observe(el);
+					});
+				}
 
 				// Scroll states: sunrise progression spans full page
 				let dawnAlpha = 0;
