@@ -267,7 +267,7 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 			z-index: 1;
 		}
 
-		/* Sunrise Sky Gradient Overlay: starts dark at top, scrolls into warm Kyiv dawn */
+		/* Sky overlay: scroll-driven fade from graphite night to the steppe photo palette */
 		.dawn-overlay {
 			position: absolute;
 			inset: 0;
@@ -278,23 +278,7 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 			pointer-events: none;
 			will-change: opacity;
 			transform: translateZ(0);
-			background:
-				radial-gradient(ellipse 120% 75% at 50% 100%, rgba(216, 194, 138, 0.52) 0%, rgba(216, 170, 110, 0.3) 35%, rgba(160, 110, 70, 0.12) 65%, transparent 85%),
-				linear-gradient(180deg, rgba(24, 25, 29, 0) 0%, rgba(32, 29, 36, 0.25) 40%, rgba(55, 45, 42, 0.5) 70%, rgba(100, 75, 50, 0.4) 100%);
-		}
-
-		.dawn-sun-disc {
-			position: absolute;
-			bottom: -80px;
-			left: 50%;
-			transform: translateX(-50%) translateY(85px) scale(0.85) translateZ(0);
-			width: min(850px, 92vw);
-			height: 400px;
-			border-radius: 50% 50% 0 0;
-			background: radial-gradient(circle at 50% 85%, rgba(255, 248, 235, 0.75) 0%, rgba(244, 240, 232, 0.55) 20%, rgba(216, 194, 138, 0.35) 45%, rgba(200, 140, 90, 0.12) 65%, rgba(17, 18, 21, 0) 80%);
-			opacity: 0;
-			pointer-events: none;
-			will-change: opacity, transform;
+			background: linear-gradient(180deg, #111215 0%, #171f2b 40%, #3b3747 72%, #1a1d18 100%);
 		}
 
 		a {
@@ -881,6 +865,7 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 			text-align: center;
 			padding: calc(var(--topbar-height) + 16px) 0 32px;
 			position: relative;
+			isolation: isolate;
 			scroll-snap-align: start;
 			scroll-snap-stop: always;
 			box-sizing: border-box;
@@ -1143,6 +1128,24 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 			z-index: 2;
 			scroll-snap-align: end;
 			scroll-snap-stop: normal;
+		}
+
+		.steppe-landscape {
+			position: absolute;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			z-index: -1;
+			pointer-events: none;
+			line-height: 0;
+		}
+
+		.steppe-landscape img {
+			display: block;
+			width: 100%;
+			height: auto;
+			-webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 35%);
+			mask-image: linear-gradient(to bottom, transparent 0%, #000 35%);
 		}
 
 		.footer-inner {
@@ -1590,7 +1593,6 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 	<div class="sky-backdrop-fixed" aria-hidden="true" data-star-config={JSON.stringify(STAR_CONFIG)}>
 		<canvas id="starCanvas"></canvas>
 		<div class="dawn-overlay" id="dawnOverlay"></div>
-		<div class="dawn-sun-disc" id="dawnSunDisc"></div>
 	</div>
 
 	<!-- BACKGROUND SELF-DRAWING RIBBON / GPS RUN-TRACK VECTOR -->
@@ -1849,6 +1851,9 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 										</div>
 									</div>
 								</div>
+							</div>
+							<div class="steppe-landscape" aria-hidden="true">
+								<img src="/images/home/steppe_background.jpeg" alt="" width="1408" height="768" loading="lazy" decoding="async" />
 							</div>
 						</section>
 					);
@@ -2195,13 +2200,12 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 		const getSlideOffsets = () => {
 			if (cachedSlideOffsets.length > 0) return cachedSlideOffsets;
 			const sections = Array.from(document.querySelectorAll<HTMLElement>("main > section[id]"));
-			const scrollY = window.scrollY;
 			cachedDocHeight = document.documentElement.scrollHeight;
 			const maxScrollY = Math.max(cachedDocHeight - window.innerHeight, 0);
 
+			// offsetTop ignores the reveal transform that getBoundingClientRect would include
 			const raw = sections.map((el) => {
-				const rect = el.getBoundingClientRect();
-				return { id: el.id, top: Math.min(Math.max(0, Math.round(rect.top + scrollY)), maxScrollY) };
+				return { id: el.id, top: Math.min(Math.max(0, el.offsetTop), maxScrollY) };
 			});
 
 			if (raw.length > 0 && maxScrollY > raw[raw.length - 1].top + 20) {
@@ -2373,8 +2377,10 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 							return;
 						}
 
+						// Native scroll is never allowed here; small deltas only skip the slide jump
+						e.preventDefault();
 						const delta = e.deltaY;
-						if (Math.abs(delta) < 25) return; // ignore micro-jitter
+						if (Math.abs(delta) < 25) return;
 
 						const offsets = getSlideOffsets();
 						const currentScroll = Math.round(window.scrollY);
@@ -2400,7 +2406,6 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 						}
 
 						if (targetTop !== null) {
-							e.preventDefault();
 							smoothScrollToTarget(targetTop);
 						}
 					},
@@ -2455,7 +2460,6 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 		const initCosmicField = () => {
 			const canvas = document.getElementById("starCanvas") as HTMLCanvasElement | null;
 			const dawnOverlay = document.getElementById("dawnOverlay");
-			const dawnSunDisc = document.getElementById("dawnSunDisc");
 
 			if (!canvas || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
@@ -2491,14 +2495,6 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 				// skyFade = max(1.0 - dawnAlpha * starDimmingFactor, minStarOpacity)
 				starDimmingFactor: 0.74,
 				minStarOpacity: 0.16,
-
-				// Rising sun disc properties
-				sunDisc: {
-					exponent: 1.25, // secondary exponent for disc emergence
-					translateYStart: 85, // starting px offset below horizon
-					scaleMin: 0.85,
-					scaleMax: 1.2,
-				},
 			};
 
 			// Helper: evaluate dawn progress from linear (1.0) to exponential (n)
@@ -3355,15 +3351,6 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 
 					if (dawnOverlay) {
 						dawnOverlay.style.opacity = `${dawnAlpha * SUNRISE_CONFIG.maxOverlayOpacity}`;
-					}
-					if (dawnSunDisc) {
-						const discOpacity = Math.pow(dawnAlpha, SUNRISE_CONFIG.sunDisc.exponent);
-						const discTranslateY = (1 - dawnAlpha) * SUNRISE_CONFIG.sunDisc.translateYStart;
-						const discScale =
-							SUNRISE_CONFIG.sunDisc.scaleMin +
-							dawnAlpha * (SUNRISE_CONFIG.sunDisc.scaleMax - SUNRISE_CONFIG.sunDisc.scaleMin);
-						dawnSunDisc.style.opacity = `${discOpacity}`;
-						dawnSunDisc.style.transform = `translateX(-50%) translateY(${discTranslateY}px) scale(${discScale}) translateZ(0)`;
 					}
 				};
 
