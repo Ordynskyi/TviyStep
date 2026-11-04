@@ -2571,6 +2571,7 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 					uniform float uHeroWidth;
 					${uniformDecls}
 					uniform float uRubberStiffness;
+					uniform float uScrollDir;
 
 					varying float vBrightness;
 					varying vec3 vColor;
@@ -2594,7 +2595,7 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 						float rank = fract(twinklePhase * 0.15915494);
 						vec2 destPos;
 						float destTop;
-						${segmentChain((s) => `destPos = pos${s + 1}; destTop = uSlideTop${s + 1};`)}
+						${segmentChain((s) => `destPos = uScrollDir > 0.0 ? pos${s + 1} : pos${s}; destTop = uScrollDir > 0.0 ? uSlideTop${s + 1} : uSlideTop${s};`)}
 						float viewCenterRel = uScrollY + uResolution.y * 0.5 - destTop;
 						float rubberDist = isLogo * clamp(abs(viewCenterRel - destPos.y) / (uResolution.y * 0.5), 0.0, 1.0);
 						// Stars whose target sits far from the view center (relative to the target slide) fly faster
@@ -2733,6 +2734,7 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 				const uScrollYLoc = gl.getUniformLocation(program, "uScrollY");
 				const uSlideTopLocs = Array.from({ length: SLIDE_COUNT }, (_, k) => gl.getUniformLocation(program, `uSlideTop${k}`));
 				const uRubberLoc = gl.getUniformLocation(program, "uRubberStiffness");
+				const uScrollDirLoc = gl.getUniformLocation(program, "uScrollDir");
 				const uHeroWidthLoc = gl.getUniformLocation(program, "uHeroWidth");
 
 				// Attribute locations: VEC4_COUNT packed vec4 attributes per vertex
@@ -3453,6 +3455,7 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 					gl.uniform1f(uSlideProgressLoc, slideProgress);
 					gl.uniform1f(uScrollYLoc, window.scrollY);
 					gl.uniform1f(uRubberLoc, STAR_RUBBER_STIFFNESS);
+					gl.uniform1f(uScrollDirLoc, scrollDir);
 					gl.uniform1f(uSkyFadeLoc, skyFade);
 
 					gl.drawArrays(gl.POINTS, 0, particleCount);
