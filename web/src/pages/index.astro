@@ -72,7 +72,7 @@ const STAR_CONFIG = {
 		brightnessMin: 1.1,
 		brightnessMax: 1.6,
 		rayStrengthMin: 0.25,
-		rayStrengthMax: 0.60,
+		rayStrengthMax: 0.6,
 		featuredSizeMin: 0.01,
 		featuredSizeMax: 0.02,
 		featuredRayMin: 1,
@@ -101,11 +101,11 @@ const infoBlocks = [
 					{ 	
 						minX: 0, minY: 0, 
 						maxX: 0.27, maxY: 0.165, 
-						gap: 0.003, 
-						sizeMin: 0.0025, // star diameters as fractions of the hero logo width
-						sizeMax: 0.005,
-						featuredSizeMin: 0.005,
-						featuredSizeMax: 0.01,
+						gap: 0.001, 
+						sizeMin: 0.004, // star diameters as fractions of the hero logo width
+						sizeMax: 0.008,
+						featuredSizeMin: 0.004,
+						featuredSizeMax: 0.012,
 					},
 				],
 			},
@@ -122,7 +122,7 @@ const infoBlocks = [
 	{
 		num: '02',
 		constellationEffect: {
-			svg: '/images/home/calisthenics.svg',
+			svg: '/images/home/runner.svg',
 			settings: {
 				pivot: 'center',
 			},
@@ -140,8 +140,9 @@ const infoBlocks = [
 		constellationEffect: {
 			svg: '/images/home/cyclist.svg',
 			settings: {
-				alphaThreshold: 20,
 				pivot: 'center',
+				brightnessMin: 2.5,
+				brightnessMax: 4,
 			},
 		},
 		texts: [
@@ -159,9 +160,11 @@ const infoBlocks = [
 	{
 		num: '04',
 		constellationEffect: {
-			svg: '/images/home/runner.svg',
+			svg: '/images/home/calisthenics.svg',
 			settings: {
 				pivot: 'center',
+				brightnessMin: 2.5,
+				brightnessMax: 4,
 			},
 		},
 		texts: [
