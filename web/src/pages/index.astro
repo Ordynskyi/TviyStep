@@ -178,7 +178,6 @@ const infoBlocks = [
 			'/images/home/friends4.webp',
 			'/images/home/friends1.webp',
 			'/images/home/friends2.webp',
-			'/images/home/friends5.webp',
 		],
 	},
 	{
@@ -344,9 +343,8 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 			left: 0;
 			width: 100%;
 			z-index: 100;
-			background: rgba(24, 25, 29, 0.76);
-			backdrop-filter: blur(16px);
-			-webkit-backdrop-filter: blur(16px);
+			/* No backdrop blur: it is recomputed every frame over the animated star canvas */
+			background: rgba(24, 25, 29, 0.92);
 			border-bottom: 1px solid var(--line-graphite);
 			transition: background 0.3s ease, border-color 0.3s ease;
 		}
@@ -1275,9 +1273,7 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 			flex-direction: column;
 			gap: 12px;
 			padding: 10px 8px;
-			background: rgba(24, 25, 29, 0.45);
-			backdrop-filter: blur(12px);
-			-webkit-backdrop-filter: blur(12px);
+			background: rgba(24, 25, 29, 0.7);
 			border: 1px solid rgba(244, 240, 232, 0.08);
 			border-radius: 24px;
 		}
@@ -1750,7 +1746,8 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 															<img
 																src={imgSrc}
 																alt={`Спільнота Твій STEP ${slideIdx + 1}`}
-																loading="eager"
+																loading="lazy"
+																decoding="async"
 															/>
 															<div class="slider-overlay-gradient" />
 														</figure>
@@ -1896,7 +1893,7 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 														<img
 															src={imgSrc}
 															alt={`Кадр спільноти Твій STEP ${slideIdx + 1}`}
-															loading="lazy"
+															loading="lazy" decoding="async"
 														/>
 														<div class="slider-overlay-gradient" />
 													</figure>
@@ -2747,8 +2744,19 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 				let height = window.innerHeight;
 				let dpr = Math.min(window.devicePixelRatio || 1, 2);
 
-				let particleCount = 0;
+				let constellationDrawCount = 0;
+				let ambientDrawCount = 0;
 				const vbo = gl.createBuffer();
+				const ambientVbo = gl.createBuffer();
+
+				const bindStarBuffer = (buf: WebGLBuffer) => {
+					gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+					aDLocs.forEach((loc, i) => {
+						if (loc < 0) return;
+						gl.enableVertexAttribArray(loc);
+						gl.vertexAttribPointer(loc, 4, gl.FLOAT, false, STRIDE_BYTES, i * 16);
+					});
+				};
 
 				interface ConstellationSettings {
 					alphaThreshold?: number;
@@ -2972,21 +2980,13 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 						if (candidates.length >= neededCandidates) break;
 					}
 
-					if (candidates.length === 0) {
-						for (let i = 0; i < count; i++) {
-							candidates.push({
-								x: startX + offW * 0.5 + (Math.random() - 0.5) * offW * 0.4,
-								y: startY + offH * 0.5 + (Math.random() - 0.5) * offH * 0.4,
-							});
-						}
-					}
+					if (candidates.length === 0) return [];
 
 					// Evenly spaced picks across all candidates; a fixed stride aliases with the row order
 					const result: { x: number; y: number; isFeatured: boolean }[] = [];
 					const numCandidates = candidates.length;
 					for (let i = 0; i < count; i++) {
-						const candidateIdx = numCandidates > 0 ? Math.floor(((i + 0.5) * numCandidates) / count) % numCandidates : 0;
-						const p = candidates[candidateIdx] || { x: startX + offW * 0.5, y: startY + offH * 0.5 };
+						const p = candidates[Math.floor(((i + 0.5) * numCandidates) / count)];
 						const jx = (Math.random() - 0.5) * 1.5;
 						const jy = (Math.random() - 0.5) * 1.5;
 						result.push({
@@ -3061,13 +3061,11 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 				// Update particle buffer: one packed record per star, slide data in order
 				const updateParticleBuffer = (slotTargets: (SlidePoint[] | null)[], configs: (ConstellationConfig | null)[] | undefined, slotScales: number[], heroWidth: number) => {
 					const t0 = slotTargets[0] ?? [];
-					const ambientCount = Math.floor((width * height) / AMBIENT_CONFIG.densityDivider);
 					const constellationCount = t0.length;
-					const totalStars = constellationCount + ambientCount;
-					particleCount = totalStars;
+					constellationDrawCount = constellationCount;
 
 					const floatsPerVertex = VEC4_COUNT * 4;
-					const data = new Float32Array(totalStars * floatsPerVertex);
+					const data = new Float32Array(constellationCount * floatsPerVertex);
 					let offset = 0;
 					const put = (value: number) => {
 						data[offset++] = value;
@@ -3080,13 +3078,12 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 					// 1. Morphing Constellation Stars
 					const hiddenStyle = { size: 0, ray: 0, bright: 0 };
 					for (let i = 0; i < constellationCount; i++) {
-						// A slide without points for this star keeps the previous slide's position
-						const pts: SlidePoint[] = [];
+						const pts: (SlidePoint | undefined)[] = [];
 						for (let k = 0; k < SLIDE_COUNT; k++) {
-							pts.push(slotTargets[k]?.[i] ?? pts[k - 1]);
+							pts.push(slotTargets[k]?.[i]);
 						}
 						const styles = pts.map((pt, k) =>
-							slotTargets[k] ? getStarStyleForSlide(k, !!pt.isFeatured, configs, slotScales[k] * heroWidth, slotTargets[k]?.[i]?.settings) : hiddenStyle
+							pt ? getStarStyleForSlide(k, !!pt.isFeatured, configs, slotScales[k] * heroWidth, pt.settings) : hiddenStyle
 						);
 
 						const angle = Math.random() * Math.PI * 2;
@@ -3095,12 +3092,12 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 						const spreadY = Math.sin(angle) * dist - Math.random() * 150;
 
 						const customCol = configs?.[0]?.settings?.color;
-						const col = customCol ?? (pts[0].isGold ? DEFAULT_CONSTELLATION.colorGold : DEFAULT_CONSTELLATION.colorIvory);
+						const col = customCol ?? (t0[i].isGold ? DEFAULT_CONSTELLATION.colorGold : DEFAULT_CONSTELLATION.colorIvory);
 						const twinklePhase = Math.random() * Math.PI * 2;
 
 						pts.forEach((pt, k) => {
-							put(pt.x);
-							put(pt.y);
+							put(pt?.x ?? 0);
+							put(pt?.y ?? 0);
 							put(styles[k].size);
 							put(styles[k].ray);
 							put(styles[k].bright);
@@ -3115,7 +3112,24 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 						endRecord();
 					}
 
-					// 2. Ambient Fixed Cosmic Stars (same position on every slide)
+					gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
+					gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
+				};
+
+				// Ambient stars get their own buffer so they draw before the constellation is ready
+				const buildAmbientStars = () => {
+					const ambientCount = Math.floor((width * height) / AMBIENT_CONFIG.densityDivider);
+					ambientDrawCount = ambientCount;
+					const floatsPerVertex = VEC4_COUNT * 4;
+					const data = new Float32Array(ambientCount * floatsPerVertex);
+					let offset = 0;
+					const put = (value: number) => {
+						data[offset++] = value;
+					};
+					const endRecord = () => {
+						offset += floatsPerVertex - FLOATS_PER_STAR;
+					};
+
 					for (let i = 0; i < ambientCount; i++) {
 						const rx = Math.random() * width;
 						const ry = Math.random() * height;
@@ -3156,18 +3170,13 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 						endRecord();
 					}
 
-					gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
+					gl.bindBuffer(gl.ARRAY_BUFFER, ambientVbo);
 					gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
-
-					aDLocs.forEach((loc, i) => {
-						if (loc < 0) return;
-						gl.enableVertexAttribArray(loc);
-						gl.vertexAttribPointer(loc, 4, gl.FLOAT, false, STRIDE_BYTES, i * 16);
-					});
 				};
 
 				// Loaded SVG images for each slide constellation
 				let loadedImages: (HTMLImageElement | null)[] = [];
+				let buildReady = false;
 
 				const getConstellationConfigs = (): (ConstellationConfig | null)[] => {
 					const sections = Array.from(document.querySelectorAll<HTMLElement>("main > section[id]"));
@@ -3181,14 +3190,7 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 						}
 						return sec.dataset.constellationSvg ? { svg: sec.dataset.constellationSvg } : null;
 					});
-					if (found.length > 0) return found;
-					return [
-						{ svg: "/images/home/logo.svg", settings: { featuredRatio: 0.16 } },
-						{ svg: "/images/home/calisthenics.svg", settings: { alphaThreshold: 35 } },
-						{ svg: "/images/home/cyclist.svg", settings: { alphaThreshold: 20 } },
-						{ svg: "/images/home/runner.svg", settings: { alphaThreshold: 35 } },
-						{ svg: "/images/home/compass.svg", settings: { alphaThreshold: 35 } },
-					];
+					return found;
 				};
 
 				const setSlideTops = () => {
@@ -3217,6 +3219,7 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 				};
 
 				const refreshBuffers = () => {
+					if (!buildReady) return;
 					setSlideTops();
 					const configs = getConstellationConfigs();
 					const t0 = buildTargetsFromLogo(loadedImages[0] || null, configs[0]?.settings);
@@ -3256,20 +3259,24 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 					const urls = configs.map((c) => c?.svg ?? null);
 					const pendingCount = urls.filter((url) => url !== null).length;
 					let loadedTotal = 0;
-					const imgs = urls.map((url) => {
-						if (url === null) return null;
-						const im = new Image();
-						im.src = url;
-						const onDone = () => {
-							loadedTotal++;
-							if (loadedTotal === pendingCount) {
-								loadedImages = imgs;
-								refreshBuffers();
-							}
-						};
-						im.onload = onDone;
-						im.onerror = onDone;
-						return im;
+					return new Promise<void>((resolve) => {
+						const imgs = urls.map((url) => {
+							if (url === null) return null;
+							const im = new Image();
+							im.src = url;
+							const onDone = () => {
+								loadedTotal++;
+								if (loadedTotal === pendingCount) {
+									loadedImages = imgs;
+									refreshBuffers();
+									resolve();
+								}
+							};
+							im.onload = onDone;
+							im.onerror = onDone;
+							return im;
+						});
+						if (pendingCount === 0) resolve();
 					});
 				};
 
@@ -3283,11 +3290,17 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 						})
 						.join("|");
 
+				let lastCanvasKey = "";
 				const resize = () => {
 					// Canvas box follows the visible viewport, so mobile toolbar changes do not stretch it
 					width = canvas.clientWidth;
 					height = canvas.clientHeight;
 					dpr = Math.min(window.devicePixelRatio || 1, 2);
+					// Mobile scroll fires resize on every toolbar move; resetting the canvas then flickers the stars
+					const canvasKey = `${width}x${height}@${dpr}`;
+					if (canvasKey === lastCanvasKey) return;
+					lastCanvasKey = canvasKey;
+					buildAmbientStars();
 
 					canvas.width = width * dpr;
 					canvas.height = height * dpr;
@@ -3307,14 +3320,15 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 					}
 				};
 
-				// Initial buffer with fallback
 				resize();
-				loadAllShapes();
+				const loadEvent = document.readyState === "complete" ? Promise.resolve() : new Promise<void>((r) => window.addEventListener("load", () => r(), { once: true }));
+
+				Promise.all([loadAllShapes(), loadEvent, document.fonts?.ready]).then(() => {
+					buildReady = true;
+					refreshBuffers();
+				});
 
 				window.addEventListener("resize", resize, { passive: true });
-				// Late layout changes (web fonts, images) move sections; re-read their tops so stars match the final layout
-				window.addEventListener("load", refreshBuffers, { passive: true });
-				document.fonts?.ready.then(refreshBuffers);
 
 				// Lazy images grow chapter slots after load; resample once per frame when a slot size changes
 				let slotSyncQueued = false;
@@ -3432,16 +3446,19 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 
 				let time = 0;
 				const render = () => {
-					time += 0.022;
-
 					updateSkyOnScroll();
 
 					const now = performance.now();
 					const frameDt = Math.min((now - lastFrameTime) / 1000, 0.1);
 					lastFrameTime = now;
-					// Long frames are split into 60 Hz steps; one big explicit step can diverge to NaN
-					const steps = Math.max(1, Math.ceil(frameDt * 60));
-					for (let s = 0; s < steps; s++) stepFlight(frameDt / steps);
+					// 0.022 per 60 Hz frame, so 120 Hz screens do not animate twice as fast
+					time += frameDt * 60 * 0.022;
+					// Flight waits for the constellation buffer, so the intro plays from the start
+					if (buildReady) {
+						// Long frames are split into 60 Hz steps; one big explicit step can diverge to NaN
+						const steps = Math.max(1, Math.ceil(frameDt * 60));
+						for (let s = 0; s < steps; s++) stepFlight(frameDt / steps);
+					}
 					const slideProgress = starsSlidePosition;
 
 					// Starlight softly dims as the golden sunrise reaches its peak at the bottom
@@ -3461,7 +3478,12 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 					gl.uniform1f(uScrollDirLoc, scrollDir);
 					gl.uniform1f(uSkyFadeLoc, skyFade);
 
-					gl.drawArrays(gl.POINTS, 0, particleCount);
+					bindStarBuffer(ambientVbo);
+					gl.drawArrays(gl.POINTS, 0, ambientDrawCount);
+					if (buildReady) {
+						bindStarBuffer(vbo);
+						gl.drawArrays(gl.POINTS, 0, constellationDrawCount);
+					}
 
 					requestAnimationFrame(render);
 				};
