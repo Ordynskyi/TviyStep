@@ -2593,13 +2593,12 @@ const pageDescription = 'Вільна спортивна спільнота Ки
 
 						// Per-star order: stars leave and arrive in a staggered wave, so the group reads as a stream
 						float rank = fract(twinklePhase * 0.15915494);
-						vec2 destPos;
-						float destTop;
-						${segmentChain((s) => `destPos = uScrollDir > 0.0 ? pos${s + 1} : pos${s}; destTop = uScrollDir > 0.0 ? uSlideTop${s + 1} : uSlideTop${s};`)}
-						float viewCenterRel = uScrollY + uResolution.y * 0.5 - destTop;
-						float rubberDist = isLogo * clamp(abs(viewCenterRel - destPos.y) / (uResolution.y * 0.5), 0.0, 1.0);
-						// Stars whose target sits far from the view center (relative to the target slide) fly faster
-						float flow = clamp((t - rank * ${STAR_SETTINGS.motion.staggerSpan}) * (1.0 + uRubberStiffness * rubberDist) / ${1 - STAR_SETTINGS.motion.staggerSpan}, 0.0, 1.0);
+						// Flight progress from the departure slide (0) to the destination slide (1), the same for both scroll directions
+						float flightProgress = uScrollDir > 0.0 ? t : 1.0 - t;
+						// The further a star is along its flight, the faster it flies
+						float flightFlow = clamp((flightProgress - rank * ${STAR_SETTINGS.motion.staggerSpan}) * (1.0 + uRubberStiffness * isLogo * flightProgress) / ${1 - STAR_SETTINGS.motion.staggerSpan}, 0.0, 1.0);
+						// Segment flow runs from slide s to s+1, so an upward flight is the mirrored downward one
+						float flow = uScrollDir > 0.0 ? flightFlow : 1.0 - flightFlow;
 						float morphT = smoothstep(0.0, 1.0, flow);
 
 						// Stream envelope: zero at both slides, peaks mid-flight
